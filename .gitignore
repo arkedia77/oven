@@ -1,0 +1,5 @@
+logs/
+musicxml/
+__pycache__/
+*.pyc
+.DS_Store
