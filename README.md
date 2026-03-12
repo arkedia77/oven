@@ -1,81 +1,84 @@
-# musicscore
+# MusicScore + Liszt 피아노 엔진
 
-MuseScore 대량 메타데이터 + MusicXML 수집기 (AI 학습용)
+## 프로젝트 개요
+- 데이터 수집 파이프라인 + **Liszt 피아노 AI 엔진** 개발
+- Aria (EleutherAI) 기반 파인튜닝 → 키스케이프 VST 렌더링
+- 수노와 다른 방향: MIDI 생성 → VST 렌더링 → 뮤지션 협업 툴
 
-**목표**: 10,000곡 이상의 악보 메타데이터 + MusicXML 파일 수집
-
----
-
-## 디렉토리 구조
-
-```
-musicscore/
-├── 01_collect_urls.py   # Step 1: 검색 페이지에서 메타데이터 수집
-├── 02_download.sh       # Step 2: MusicXML 파일 다운로드
-├── NOTES.md             # 시도한 방법들 + 문제점 정리
-├── data/
-│   ├── urls.jsonl       # 수집된 메타데이터 (JSONL, 한 줄 = 한 곡)
-│   └── done_ids.txt     # 다운로드 완료된 ID 목록
-├── logs/
-│   ├── collect.log      # 수집 로그
-│   └── download.log     # 다운로드 로그
-└── musicxml/            # 다운로드된 MusicXML 파일들
-```
+## 핵심 문서
+| 문서 | 설명 |
+|------|------|
+| `ENGINE_PLAN.md` | Liszt 엔진 Phase 1~7 전체 로드맵 |
+| `KANBAN.md` | 현재 작업 상태 |
+| `TODO.md` | 상세 할일 목록 |
 
 ---
 
-## 빠른 시작 (맥북 / Cloudflare 우회 가능한 환경)
+## 스크립트
 
-### 1. 의존성 설치
+### 데이터 수집
+| 파일 | 설명 |
+|------|------|
+| `00_login.py` | Chrome 프로필 로그인 (1회용) |
+| `01_collect_urls.py` | MuseScore URL 수집 (새벽 2시 자동) |
+| `02_download.py` | MuseScore MXL 다운로드 (Selenium) |
+| `03_download_api.py` | MuseScore MXL 다운로드 (curl_cffi) ← 현재 사용 |
+| `04_bitmidi.py` | BitMIDI 다운로더 (mukl에서 실행) |
+| `monitor_bitmidi.py` | BitMIDI 진행 모니터 (3시간마다 자동) |
+| `utils.py` | 공통 유틸리티 |
 
-```bash
-pip install playwright
-playwright install chromium
-npm install -g dl-librescore
-```
-
-### 2. 메타데이터 수집 (Step 1)
-
-```bash
-python3 01_collect_urls.py
-```
-
-- `data/urls.jsonl`에 누적 저장 (중단 후 재시작 가능)
-- 진행 상황: `tail -f logs/collect.log`
-
-### 3. MusicXML 다운로드 (Step 2)
-
-```bash
-bash 02_download.sh
-```
-
-- `urls.jsonl`의 URL들을 `dl-librescore`로 다운로드
-- 완료된 ID는 `data/done_ids.txt`에 기록 (재시작 안전)
+### Liszt 엔진
+| 파일 | 설명 |
+|------|------|
+| `prepare_piano_data.py` | 피아노 MIDI 추출 + 품질 필터 + 중복 제거 |
 
 ---
 
-## 수집 데이터 구조 (urls.jsonl 한 줄 예시)
+## 데이터 현황 (`/Volumes/data/score/`)
 
-```json
-{
-  "url": "https://musescore.com/user/16006641/scores/4197961",
-  "id": "4197961",
-  "title": "Merry-Go-Round of Life: Howl's Moving Castle Piano Tutorial",
-  "author": "PianoChannel",
-  "difficulty_label": "Intermediate",
-  "difficulty": 3,
-  "parts": 1,
-  "pages": 7,
-  "duration": "05:15",
-  "date_added": "Jul 5, 2017",
-  "views": 7400000,
-  "saves": 254300,
-  "collected_at": "2026-03-06T12:37:56.952076"
-}
-```
+### ✅ 완료
+| 폴더 | 내용 | 수량 |
+|------|------|------|
+| `PDMX/` | 공개도메인 MXL + MIDI | 254,035개 |
+| `gigamidi/` | 다악기 MIDI (train/val/test) | 3,409,419개 |
+| `lakh/` | Lakh MIDI (Million Song 매핑) | 178,561개 |
+
+### 🔄 다운로드 중 (Liszt 핵심)
+| 폴더 | 내용 | 중요도 |
+|------|------|--------|
+| `aria-midi/` | ARIA-MIDI 피아노 118만곡, 품질 0.95+ | ★★★ |
+| `maestro/` | 실제 피아니스트 퍼포먼스 MIDI 1,276곡 | ★★★ |
+| `atepp/` | 49명 피아니스트 11,742곡 다중 해석 | ★★★ |
+| `asap/` | 악보+퍼포먼스 정렬 1,068곡 | ★★★ |
+| `aria-amt/` | EleutherAI 오디오→MIDI 변환 모델 | 검증용 |
+| `pop909/` | 팝 구조 909곡 (멜로디/코드/반주 분리) | ★★ |
+| `pop-k-midi/` | K-pop 멜로디 30만개 | ★★ |
+| `midicaps/` | MIDI + 텍스트 캡션 | 향후 |
+| `musescore/` | 최신 K-pop/팝 MXL | 자동 수집 중 |
+| `bitmidi/` | 다장르 MIDI | mukl 수집 중 |
+
+### 🔜 대기 중
+| 데이터셋 | 내용 |
+|---------|------|
+| PianoCoRe | 16만 퍼포먼스 정렬 — 정식 출시 시 즉시 확보 |
 
 ---
 
-## 중요: NOTES.md 반드시 읽을 것
+## 설치된 도구
+```
+demucs       오디오 소스 분리 (보컬/악기 분리)
+basic-pitch  오디오 → MIDI 변환 (Spotify)
+pedalboard   Python VST 호스팅 (키스케이프 등 DAW 없이)
+pretty_midi  MIDI 분석/가공
+miditok      MIDI 토큰화 (Aria 파인튜닝 전처리)
+```
 
-Cloudflare 우회 이슈, 시도한 방법들, 현재 동작하는 방법이 정리되어 있음.
+## 자동화 (launchd)
+| 시간 | 스크립트 |
+|------|---------|
+| 새벽 2시 | `01_collect_urls.py` |
+| 새벽 3시 | `03_download_api.py` |
+| 3시간마다 | `monitor_bitmidi.py` |
+
+## mukl 협업 채널
+`~/projects/agent-comm/musicscore/tasks/` → push → mukl → `results/`

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MusicScore — Coming Soon</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  .container { max-width: 600px; padding: 40px; }
+  h1 { font-size: 48px; margin-bottom: 8px; }
+  h1 span { color: #58a6ff; }
+  .tagline { color: #8b949e; font-size: 18px; margin-bottom: 40px; }
+  .construction {
+    font-size: 80px;
+    margin-bottom: 24px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .status {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .status h3 { color: #d29922; margin-bottom: 12px; }
+  .status p { color: #8b949e; font-size: 14px; line-height: 1.8; }
+  .link {
+    display: inline-block;
+    color: #58a6ff;
+    text-decoration: none;
+    border: 1px solid #58a6ff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .link:hover { background: #58a6ff; color: #000; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="construction">🎹</div>
+  <h1>Music<span>Score</span></h1>
+  <div class="tagline">AI 음악 엔진 — 사람처럼 연주하는 AI</div>
+
+  <div class="status">
+    <p>국산 음악 엔진 개발 중</p>
+  </div>
+</div>
+</body>
+</html>

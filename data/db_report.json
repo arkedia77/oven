@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-03-11T00:10:56.899227",
+  "total": 3147338,
+  "sources": [
+    {
+      "name": "aria-midi",
+      "count": 1142466,
+      "size_gb": 15
+    },
+    {
+      "name": "gigamidi-drums",
+      "count": 1022084,
+      "size_gb": 0
+    },
+    {
+      "name": "gigamidi",
+      "count": 543003,
+      "size_gb": 11
+    },
+    {
+      "name": "pdmx",
+      "count": 254035,
+      "size_gb": 1
+    },
+    {
+      "name": "gigamidi-allinst",
+      "count": 104181,
+      "size_gb": 2
+    },
+    {
+      "name": "lakh",
+      "count": 77429,
+      "size_gb": 2
+    },
+    {
+      "name": "atepp",
+      "count": 2725,
+      "size_gb": 0
+    },
+    {
+      "name": "pop909",
+      "count": 586,
+      "size_gb": 0
+    },
+    {
+      "name": "asap",
+      "count": 565,
+      "size_gb": 0
+    },
+    {
+      "name": "maestro",
+      "count": 189,
+      "size_gb": 0
+    },
+    {
+      "name": "musescore",
+      "count": 57,
+      "size_gb": 0
+    },
+    {
+      "name": "pop-k-midi",
+      "count": 15,
+      "size_gb": 0
+    },
+    {
+      "name": "bitmidi",
+      "count": 3,
+      "size_gb": 0
+    }
+  ],
+  "quality": {
+    "high (>=0.7)": 2445097,
+    "medium (0-0.7)": 156634,
+    "low (<=0)": 545607
+  },
+  "formats": {
+    "mid": 2892705,
+    "midi": 396,
+    "mxl": 254237
+  }
+}

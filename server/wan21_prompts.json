@@ -1,0 +1,79 @@
+{
+  "project": "Liszt 뮤직비디오",
+  "model": "Wan2.1-T2V-14B",
+  "concept": "AI 피아노 엔진 Liszt 소개 영상 — 피아니스트 + AI 협주",
+  "prompts": [
+    {
+      "id": "mv01_pianist_closeup",
+      "scene": "오프닝 — 피아니스트 클로즈업",
+      "prompt": "Cinematic close-up of a pianist's hands playing a grand piano, soft warm lighting, shallow depth of field, slow motion fingers pressing ivory keys, concert hall ambiance, 4K, dramatic lighting from above",
+      "duration": "5s",
+      "style": "cinematic",
+      "notes": "Liszt 인트로에 사용"
+    },
+    {
+      "id": "mv02_ai_visualization",
+      "scene": "AI 뉴럴넷 시각화",
+      "prompt": "Abstract visualization of neural network processing music, glowing blue and gold particles forming musical notes and piano keys, data flowing through transformer architecture, dark background with luminous connections, futuristic holographic display",
+      "duration": "5s",
+      "style": "abstract/tech",
+      "notes": "Aria 모델 학습 과정 표현"
+    },
+    {
+      "id": "mv03_piano_concert",
+      "scene": "콘서트홀 전경",
+      "prompt": "Wide shot of an empty grand concert hall with a single Steinway grand piano on stage, dramatic spotlight, rows of velvet seats, golden architectural details, anticipation atmosphere, 4K cinematic",
+      "duration": "5s",
+      "style": "cinematic",
+      "notes": "AI가 혼자 연주하는 무대"
+    },
+    {
+      "id": "mv04_keys_moving",
+      "scene": "자동 연주 피아노",
+      "prompt": "Player piano with keys moving by themselves, no pianist visible, ghost performance, dramatic side lighting casting long shadows on white keys, close-up tracking shot moving along the keyboard, haunting beautiful atmosphere",
+      "duration": "5s",
+      "style": "cinematic/mysterious",
+      "notes": "AI 자동 연주 — Liszt의 정체성"
+    },
+    {
+      "id": "mv05_data_to_music",
+      "scene": "데이터 → 음악 변환",
+      "prompt": "Millions of glowing MIDI notes floating in dark space, converging into a grand piano shape, particles of light transforming into musical score sheets, cinematic camera orbit, blue and white color palette",
+      "duration": "5s",
+      "style": "abstract",
+      "notes": "143만곡 데이터가 하나의 엔진으로"
+    },
+    {
+      "id": "mv06_human_ai_duet",
+      "scene": "사람 + AI 듀엣",
+      "prompt": "Split screen: left side shows human pianist playing passionately, right side shows digital holographic pianist mirroring the performance, both sides merging in the center, warm vs cool color contrast, concert stage",
+      "duration": "5s",
+      "style": "cinematic/concept",
+      "notes": "사람과 AI 협주 비전"
+    },
+    {
+      "id": "mv07_franz_liszt",
+      "scene": "프란츠 리스트 오마주",
+      "prompt": "19th century concert hall, romantic era atmosphere, a silhouette of Franz Liszt at the piano, candlelight, dramatic shadows, oil painting coming to life, golden baroque interior, cinematic slow zoom",
+      "duration": "5s",
+      "style": "period/artistic",
+      "notes": "이름의 유래 — 피아노의 신"
+    },
+    {
+      "id": "mv08_finale",
+      "scene": "피날레 — 로고 리빌",
+      "prompt": "Dark space with a single beam of light illuminating floating musical notes that arrange themselves to spell 'LISZT', grand piano silhouette in background, particles dispersing like stardust, epic cinematic reveal, warm golden glow",
+      "duration": "5s",
+      "style": "cinematic/branding",
+      "notes": "Liszt 로고 공개"
+    }
+  ],
+  "workflow": {
+    "step1": "Wan2.1 T2V로 각 장면 5초 클립 생성",
+    "step2": "최적 take 선별",
+    "step3": "Liszt 엔진이 생성한 피아노 MIDI → 오디오 렌더링",
+    "step4": "영상 + 오디오 편집 (DaVinci Resolve 또는 ffmpeg)",
+    "step5": "YouTube 업로드"
+  },
+  "generation_command": "python generate.py --task t2v-14B --size 1280*720 --ckpt_dir ./Wan2.1-T2V-14B --prompt \"{prompt}\" --output_dir ./output"
+}

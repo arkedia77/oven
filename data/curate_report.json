@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-03-12T10:28:57.501202",
+  "total_files": 3147338,
+  "analyzed": 2893101,
+  "piano_count": 1973039,
+  "exact_unique": 1595242,
+  "exact_dupes": 377797,
+  "exact_dupe_groups": 135821,
+  "near_dupes_removed": 0,
+  "training_set": {
+    "training_set_size": 1433433,
+    "min_suitability": 40.0,
+    "by_source": [
+      {
+        "source": "aria-midi",
+        "count": 1140132,
+        "avg_suitability": 75.7,
+        "avg_quality": 75.7
+      },
+      {
+        "source": "gigamidi-drums",
+        "count": 188543,
+        "avg_suitability": 49.9,
+        "avg_quality": 49.9
+      },
+      {
+        "source": "gigamidi",
+        "count": 91587,
+        "avg_suitability": 68.2,
+        "avg_quality": 69.2
+      },
+      {
+        "source": "lakh",
+        "count": 5576,
+        "avg_suitability": 62.0,
+        "avg_quality": 66.6
+      },
+      {
+        "source": "gigamidi-allinst",
+        "count": 4208,
+        "avg_suitability": 49.8,
+        "avg_quality": 58.3
+      },
+      {
+        "source": "atepp",
+        "count": 2551,
+        "avg_suitability": 85.1,
+        "avg_quality": 85.1
+      },
+      {
+        "source": "asap",
+        "count": 502,
+        "avg_suitability": 78.5,
+        "avg_quality": 78.5
+      },
+      {
+        "source": "pop909",
+        "count": 169,
+        "avg_suitability": 74.5,
+        "avg_quality": 74.5
+      },
+      {
+        "source": "maestro",
+        "count": 165,
+        "avg_suitability": 85.6,
+        "avg_quality": 85.6
+      }
+    ],
+    "by_difficulty": {
+      "advanced": 604300,
+      "upper_intermediate": 427899,
+      "intermediate": 375766,
+      "elementary": 21061,
+      "beginner": 4407
+    },
+    "by_velocity": {
+      "moderate_expression": 1165363,
+      "high_expression": 145191,
+      "low_expression": 70586,
+      "step_quantized": 26990,
+      "flat": 25303
+    },
+    "by_timing": {
+      "human_performance": 1281598,
+      "lightly_humanized": 98795,
+      "perfectly_quantized": 29802,
+      "loose_timing": 23238
+    },
+    "by_pedal": {
+      "binary": 1164741,
+      "none": 252707,
+      "continuous": 15985
+    }
+  }
+}

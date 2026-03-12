@@ -1,0 +1,313 @@
+{
+  "filters": {
+    "Community Scores": [
+      {
+        "count": "2489544",
+        "href": "/sheetmusic/non-official",
+        "uri": "/non-official",
+        "value": "non-official"
+      }
+    ],
+    "Interactive": [
+      {
+        "count": "2580612",
+        "href": "/sheetmusic/interactive",
+        "uri": "/interactive",
+        "value": "interactive"
+      }
+    ],
+    "Official Scores": [
+      {
+        "count": "1252586",
+        "href": "/sheetmusic/official",
+        "uri": "/official",
+        "value": "official"
+      }
+    ],
+    "PDF": [
+      {
+        "count": "1161518",
+        "href": "/sheetmusic/pdf",
+        "uri": "/pdf",
+        "value": "pdf"
+      }
+    ],
+    "Piano": [
+      {
+        "count": "1921173",
+        "href": "/sheetmusic/piano",
+        "uri": "/piano",
+        "value": "2"
+      }
+    ],
+    "Saxophone alto": [
+      {
+        "count": "215049",
+        "href": "/sheetmusic/saxophone-alto",
+        "uri": "/saxophone-alto",
+        "value": "54"
+      }
+    ],
+    "Violin": [
+      {
+        "count": "351696",
+        "href": "/sheetmusic/violin",
+        "uri": "/violin",
+        "value": "68"
+      }
+    ],
+    "advanced": [
+      {
+        "count": null,
+        "href": null,
+        "uri": null,
+        "value": "3"
+      }
+    ],
+    "beginner": [
+      {
+        "count": "1085160",
+        "href": "/sheetmusic/beginner",
+        "uri": "/beginner",
+        "value": "1"
+      },
+      {
+        "count": null,
+        "href": null,
+        "uri": null,
+        "value": "1"
+      }
+    ],
+    "blues": [
+      {
+        "count": "17091",
+        "href": "/sheetmusic/blues",
+        "uri": "/blues",
+        "value": "99"
+      }
+    ],
+    "classical": [
+      {
+        "count": "759881",
+        "href": "/sheetmusic/classical",
+        "uri": "/classical",
+        "value": "216"
+      },
+      {
+        "count": "759881",
+        "href": "/sheetmusic/classical",
+        "uri": "/classical",
+        "value": "216"
+      }
+    ],
+    "comedy": [
+      {
+        "count": "14078",
+        "href": "/sheetmusic/comedy",
+        "uri": "/comedy",
+        "value": "79"
+      }
+    ],
+    "country": [
+      {
+        "count": "98488",
+        "href": "/sheetmusic/country",
+        "uri": "/country",
+        "value": "49"
+      }
+    ],
+    "darkwave": [
+      {
+        "count": "1669",
+        "href": "/sheetmusic/darkwave",
+        "uri": "/darkwave",
+        "value": "211"
+      }
+    ],
+    "disco": [
+      {
+        "count": "8032",
+        "href": "/sheetmusic/disco",
+        "uri": "/disco",
+        "value": "85"
+      }
+    ],
+    "electronic": [
+      {
+        "count": "37868",
+        "href": "/sheetmusic/electronic",
+        "uri": "/electronic",
+        "value": "16"
+      }
+    ],
+    "experimental": [
+      {
+        "count": "23196",
+        "href": "/sheetmusic/experimental",
+        "uri": "/experimental",
+        "value": "667"
+      }
+    ],
+    "folk": [
+      {
+        "count": "174965",
+        "href": "/sheetmusic/folk",
+        "uri": "/folk",
+        "value": "666"
+      }
+    ],
+    "hip hop": [
+      {
+        "count": "23405",
+        "href": "/sheetmusic/hip-hop",
+        "uri": "/hip-hop",
+        "value": "45"
+      }
+    ],
+    "intermediate": [
+      {
+        "count": null,
+        "href": null,
+        "uri": null,
+        "value": "2"
+      }
+    ],
+    "jazz": [
+      {
+        "count": "155657",
+        "href": "/sheetmusic/jazz",
+        "uri": "/jazz",
+        "value": "84"
+      }
+    ],
+    "metal": [
+      {
+        "count": "16056",
+        "href": "/sheetmusic/metal",
+        "uri": "/metal",
+        "value": "8"
+      }
+    ],
+    "modify commercially": [
+      {
+        "count": "297875",
+        "href": "/sheetmusic?license=to_modify_commercially",
+        "uri": "?license=to_modify_commercially",
+        "value": "to_modify_commercially"
+      }
+    ],
+    "new age": [
+      {
+        "count": "20780",
+        "href": "/sheetmusic/new-age",
+        "uri": "/new-age",
+        "value": "695"
+      }
+    ],
+    "original": [
+      {
+        "count": "567840",
+        "href": "/sheetmusic/original",
+        "uri": "/original",
+        "value": "original"
+      }
+    ],
+    "personal use": [
+      {
+        "count": "3250771",
+        "href": "/sheetmusic?license=to_play",
+        "uri": "?license=to_play",
+        "value": "to_play"
+      }
+    ],
+    "pop": [
+      {
+        "count": "330731",
+        "href": "/sheetmusic/pop",
+        "uri": "/pop",
+        "value": "14"
+      },
+      {
+        "count": "330731",
+        "href": "/sheetmusic/pop",
+        "uri": "/pop",
+        "value": "14"
+      }
+    ],
+    "r&b, funk & soul": [
+      {
+        "count": "79489",
+        "href": "/sheetmusic/rb-funk-soul",
+        "uri": "/rb-funk-soul",
+        "value": "1787"
+      }
+    ],
+    "reggae & ska": [
+      {
+        "count": "86387",
+        "href": "/sheetmusic/reggae-ska",
+        "uri": "/reggae-ska",
+        "value": "1781"
+      }
+    ],
+    "religious music": [
+      {
+        "count": "252070",
+        "href": "/sheetmusic/religious-music",
+        "uri": "/religious-music",
+        "value": "1016"
+      }
+    ],
+    "rock": [
+      {
+        "count": "274917",
+        "href": "/sheetmusic/rock",
+        "uri": "/rock",
+        "value": "4"
+      }
+    ],
+    "share": [
+      {
+        "count": "378588",
+        "href": "/sheetmusic?license=to_share",
+        "uri": "?license=to_share",
+        "value": "to_share"
+      }
+    ],
+    "soundtrack": [
+      {
+        "count": "350588",
+        "href": "/sheetmusic/soundtrack",
+        "uri": "/soundtrack",
+        "value": "680"
+      }
+    ],
+    "use commercially": [
+      {
+        "count": "303245",
+        "href": "/sheetmusic?license=to_use_commercially",
+        "uri": "?license=to_use_commercially",
+        "value": "to_use_commercially"
+      }
+    ],
+    "world music": [
+      {
+        "count": "103062",
+        "href": "/sheetmusic/world-music",
+        "uri": "/world-music",
+        "value": "195"
+      }
+    ]
+  },
+  "sorts": [],
+  "page_limits": {
+    "50": 20,
+    "100": 20,
+    "200": 20,
+    "500": 20,
+    "1000": 20
+  },
+  "type_official": "524141",
+  "type_community": "1921174",
+  "type_all": "1921174"
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liszt — AI Piano Engine Dashboard</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --yellow: #d29922;
+    --red: #f85149;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h1 span { font-size: 14px; color: var(--text-dim); font-weight: normal; }
+  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; margin-bottom: 16px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  .card h2 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-full { grid-column: 1 / -1; }
+
+  /* Stats */
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-row:last-child { border: none; }
+  .stat-name { font-weight: 500; min-width: 120px; }
+  .stat-count { color: var(--accent); font-weight: 600; min-width: 80px; text-align: right; }
+  .stat-bar-wrap {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    margin: 0 12px;
+    overflow: hidden;
+  }
+  .stat-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .stat-pct { font-size: 12px; color: var(--text-dim); min-width: 50px; text-align: right; }
+
+  /* Quality */
+  .quality-grid { display: flex; gap: 12px; }
+  .quality-box {
+    flex: 1;
+    text-align: center;
+    padding: 16px 8px;
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .quality-box .num { font-size: 24px; font-weight: 700; }
+  .quality-box .label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Kanban */
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .kanban-col { background: var(--bg); border-radius: 8px; padding: 12px; }
+  .kanban-col h3 {
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid;
+  }
+  .kanban-col.done h3 { border-color: var(--green); color: var(--green); }
+  .kanban-col.progress h3 { border-color: var(--yellow); color: var(--yellow); }
+  .kanban-col.todo h3 { border-color: var(--accent); color: var(--accent); }
+  .kanban-item {
+    font-size: 13px;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: var(--surface);
+    border-radius: 6px;
+    border-left: 3px solid;
+    line-height: 1.4;
+  }
+  .kanban-col.done .kanban-item { border-color: var(--green); opacity: 0.6; }
+  .kanban-col.progress .kanban-item { border-color: var(--yellow); }
+  .kanban-col.todo .kanban-item { border-color: var(--accent); }
+
+  /* Files */
+  .file-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .file-row:hover { background: var(--bg); }
+  .file-name { font-weight: 500; font-size: 14px; }
+  .file-desc { font-size: 12px; color: var(--text-dim); }
+  .file-size { font-size: 12px; color: var(--text-dim); }
+
+  /* Download status */
+  .dl-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .dl-name { font-weight: 600; min-width: 100px; }
+  .dl-bar-wrap {
+    flex: 1;
+    height: 12px;
+    background: var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .dl-bar {
+    height: 100%;
+    border-radius: 6px;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    transition: width 0.5s ease;
+  }
+  .dl-text { font-size: 13px; color: var(--text-dim); min-width: 120px; text-align: right; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 80%;
+    max-width: 900px;
+    max-height: 80vh;
+    overflow: auto;
+    padding: 24px;
+  }
+  .modal h3 { margin-bottom: 12px; color: var(--accent); }
+  .modal pre {
+    background: var(--bg);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+  .modal-close {
+    float: right;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .refresh-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .refresh-btn:hover { opacity: 0.8; }
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .last-update { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+
+  /* Milestone */
+  .milestone-track {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin: 0 0 32px;
+    padding: 0 8px;
+  }
+  .milestone-track::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 24px;
+    right: 24px;
+    height: 3px;
+    background: var(--border);
+    z-index: 0;
+  }
+  .milestone-track .ms-progress {
+    position: absolute;
+    top: 18px;
+    left: 24px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--accent));
+    z-index: 1;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+  .ms-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .ms-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 3px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+  }
+  .ms-step.done .ms-dot { border-color: var(--green); background: var(--green); color: #000; }
+  .ms-step.active .ms-dot { border-color: var(--accent); background: var(--accent); color: #000; box-shadow: 0 0 12px var(--accent); }
+  .ms-step.future .ms-dot { border-color: var(--border); color: var(--text-dim); }
+  .ms-label { font-size: 11px; text-align: center; max-width: 100px; line-height: 1.3; }
+  .ms-step.done .ms-label { color: var(--green); }
+  .ms-step.active .ms-label { color: var(--accent); font-weight: 600; }
+  .ms-step.future .ms-label { color: var(--text-dim); }
+  .ms-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 2px;
+  }
+  .ms-step.active .ms-sub { color: var(--yellow); }
+
+  @media (max-width: 900px) {
+    .kanban { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .milestone-track { flex-wrap: wrap; gap: 8px; }
+    .ms-step { min-width: 80px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-row">
+  <div>
+    <h1>Liszt <span>AI Piano Engine</span></h1>
+    <div class="subtitle">"사람처럼 연주하는 AI 피아노" — 데이터 수집 → 파인튜닝 → 렌더링</div>
+  </div>
+  <div style="text-align: right">
+    <button class="refresh-btn" onclick="loadAll()">Refresh</button>
+    <div class="last-update" id="lastUpdate"></div>
+  </div>
+</div>
+
+<!-- 마일스톤 -->
+<div class="card" style="margin-bottom: 16px">
+  <h2>Project Milestones</h2>
+  <div class="milestone-track" id="milestoneTrack"></div>
+</div>
+
+<!-- 데이터셋 현황 -->
+<div class="grid">
+  <div class="card card-full">
+    <h2>Dataset Collection</h2>
+    <div id="statsContainer"></div>
+  </div>
+</div>
+
+<!-- 품질 + 다운로드 -->
+<div class="grid">
+  <div class="card">
+    <h2>Quality Distribution</h2>
+    <div class="quality-grid" id="qualityContainer"></div>
+  </div>
+  <div class="card">
+    <h2>Active Downloads</h2>
+    <div id="downloadsContainer"></div>
+  </div>
+</div>
+
+<!-- 칸반 -->
+<div class="grid">
+  <div class="card card-full">
+    <h2>Kanban Board</h2>
+    <div class="kanban" id="kanbanContainer"></div>
+  </div>
+</div>
+
+<!-- 파일 -->
+<div class="grid">
+  <div class="card card-full">
+    <h2>Project Files</h2>
+    <div id="filesContainer"></div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('active')">&times;</button>
+    <h3 id="modalTitle"></h3>
+    <pre id="modalContent"></pre>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin;
+
+function fmt(n) {
+  return n ? n.toLocaleString() : '0';
+}
+
+function barColor(pct) {
+  if (pct >= 90) return 'var(--green)';
+  if (pct >= 50) return 'var(--yellow)';
+  if (pct > 0) return 'var(--accent)';
+  return 'var(--red)';
+}
+
+async function loadStats() {
+  const res = await fetch(`${API}/api/stats`);
+  const data = await res.json();
+  const el = document.getElementById('statsContainer');
+
+  el.innerHTML = data.sources.map(s => `
+    <div class="stat-row">
+      <span class="stat-name">${s.source}</span>
+      <span class="stat-count">${fmt(s.count)}</span>
+      <div class="stat-bar-wrap">
+        <div class="stat-bar" style="width: ${Math.min(s.progress_pct, 100)}%; background: ${barColor(s.progress_pct)}"></div>
+      </div>
+      <span class="stat-pct">${s.progress_pct}%</span>
+    </div>
+  `).join('');
+
+  // Quality
+  const q = data.quality;
+  const qEl = document.getElementById('qualityContainer');
+  const total = q.total || 1;
+  qEl.innerHTML = `
+    <div class="quality-box" style="border: 1px solid var(--green)">
+      <div class="num" style="color: var(--green)">${fmt(q.high)}</div>
+      <div class="label">High Quality (≥0.7)</div>
+      <div class="label">${(q.high / total * 100).toFixed(1)}%</div>
+    </div>
+    <div class="quality-box" style="border: 1px solid var(--yellow)">
+      <div class="num" style="color: var(--yellow)">${fmt(q.medium)}</div>
+      <div class="label">Medium (0~0.7)</div>
+      <div class="label">${(q.medium / total * 100).toFixed(1)}%</div>
+    </div>
+    <div class="quality-box" style="border: 1px solid var(--red)">
+      <div class="num" style="color: var(--red)">${fmt(q.low)}</div>
+      <div class="label">Low (≤0)</div>
+      <div class="label">${(q.low / total * 100).toFixed(1)}%</div>
+    </div>
+    <div class="quality-box" style="border: 1px solid var(--text-dim)">
+      <div class="num">${fmt(total)}</div>
+      <div class="label">Total Files</div>
+      <div class="label">DB: ${data.db_size_mb}MB</div>
+    </div>
+  `;
+
+  document.getElementById('lastUpdate').textContent = `Updated: ${new Date(data.updated_at).toLocaleTimeString('ko-KR')}`;
+}
+
+async function loadDownloads() {
+  const res = await fetch(`${API}/api/downloads`);
+  const data = await res.json();
+  const el = document.getElementById('downloadsContainer');
+
+  let html = '';
+  if (data.bitmidi) {
+    html += `
+      <div class="dl-status">
+        <span class="dl-name">BitMIDI</span>
+        <div class="dl-bar-wrap">
+          <div class="dl-bar" style="width: ${data.bitmidi.pct}%"></div>
+        </div>
+        <span class="dl-text">${fmt(data.bitmidi.done)} / ${fmt(data.bitmidi.target)} (${data.bitmidi.pct}%)</span>
+      </div>`;
+  }
+  if (data.musescore) {
+    html += `
+      <div class="dl-status">
+        <span class="dl-name">MuseScore</span>
+        <div class="dl-bar-wrap">
+          <div class="dl-bar" style="width: 100%"></div>
+        </div>
+        <span class="dl-text">${fmt(data.musescore.done)} files (auto)</span>
+      </div>`;
+  }
+  if (data.bitmidi_log) {
+    html += `<div style="font-size:12px; color:var(--text-dim); margin-top:8px; font-family:monospace">
+      ${data.bitmidi_log.map(l => l.trim()).join('<br>')}
+    </div>`;
+  }
+  el.innerHTML = html || '<div style="color:var(--text-dim)">No active downloads</div>';
+}
+
+async function loadKanban() {
+  const res = await fetch(`${API}/api/kanban`);
+  const data = await res.json();
+  const el = document.getElementById('kanbanContainer');
+
+  function renderItems(items, max) {
+    const show = items.slice(0, max || items.length);
+    let html = show.map(i => `<div class="kanban-item">${i.text}</div>`).join('');
+    if (items.length > (max || items.length)) {
+      html += `<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:4px">+${items.length - max} more</div>`;
+    }
+    return html;
+  }
+
+  el.innerHTML = `
+    <div class="kanban-col done">
+      <h3>Done (${data.done?.length || 0})</h3>
+      ${renderItems(data.done || [], 8)}
+    </div>
+    <div class="kanban-col progress">
+      <h3>In Progress (${data.in_progress?.length || 0})</h3>
+      ${renderItems(data.in_progress || [])}
+    </div>
+    <div class="kanban-col todo">
+      <h3>TODO (${(data.todo_data?.length || 0) + (data.todo_engine?.length || 0)})</h3>
+      ${renderItems([...(data.todo_data || []), ...(data.todo_engine || [])])}
+    </div>
+  `;
+}
+
+async function loadFiles() {
+  const res = await fetch(`${API}/api/files`);
+  const data = await res.json();
+  const el = document.getElementById('filesContainer');
+
+  el.innerHTML = data.map(f => `
+    <div class="file-row" onclick="openFile('${f.name}')">
+      <div>
+        <div class="file-name">${f.exists ? '📄' : '❌'} ${f.name}</div>
+        <div class="file-desc">${f.description}</div>
+      </div>
+      <div class="file-size">${f.size_kb} KB</div>
+    </div>
+  `).join('');
+}
+
+async function openFile(name) {
+  const res = await fetch(`${API}/api/file/${name}`);
+  const text = await res.text();
+  document.getElementById('modalTitle').textContent = name;
+  document.getElementById('modalContent').textContent = text;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+}
+
+function renderMilestones() {
+  const milestones = [
+    { phase: 1, label: "인프라 & 데이터 수집", sub: "400만곡+ 수집", status: "active",
+      detail: "DB 875K 구축 완료\nARIA-MIDI/MAESTRO 대기" },
+    { phase: 2, label: "피아노 솔로 엔진", sub: "Aria → Liszt", status: "future",
+      detail: "RTX 5090 연결 대기\n파인튜닝 준비 완료" },
+    { phase: 3, label: "밴드 악기 확장", sub: "기타/베이스/드럼", status: "future",
+      detail: "" },
+    { phase: 4, label: "뮤지션 협업 툴", sub: "Leo 3,000곡 커버", status: "future",
+      detail: "" },
+    { phase: 5, label: "트로트 전문 모델", sub: "프로 협업", status: "future",
+      detail: "" },
+    { phase: 6, label: "악기 연습 서비스", sub: "OSMD 렌더링", status: "future",
+      detail: "" },
+    { phase: 7, label: "보컬 엔진", sub: "Demucs + Basic Pitch", status: "future",
+      detail: "" },
+  ];
+
+  const el = document.getElementById('milestoneTrack');
+  const activeIdx = milestones.findIndex(m => m.status === 'active');
+  const progressPct = ((activeIdx + 0.5) / milestones.length) * 100;
+
+  el.innerHTML = `<div class="ms-progress" style="width: ${progressPct}%"></div>` +
+    milestones.map((m, i) => {
+      const st = i < activeIdx ? 'done' : m.status;
+      const icon = st === 'done' ? '✓' : m.phase;
+      return `
+        <div class="ms-step ${st}" title="${m.detail}">
+          <div class="ms-dot">${icon}</div>
+          <div class="ms-label">${m.label}</div>
+          <div class="ms-sub">${m.sub}</div>
+        </div>`;
+    }).join('');
+}
+
+async function loadAll() {
+  renderMilestones();
+  await Promise.all([loadStats(), loadDownloads(), loadKanban(), loadFiles()]);
+}
+
+// 초기 로드 + 30초마다 자동 갱신
+loadAll();
+setInterval(loadAll, 30000);
+</script>
+</body>
+</html>
