@@ -1,50 +1,43 @@
 # MusicScore (Liszt) KANBAN
-업데이트: 2026-03-14 (22시)
+업데이트: 2026-03-23 (세션 15 완료)
 
 ---
 
-## 🔄 IN PROGRESS
+## IN PROGRESS
 
-- [ ] **Aria 파인튜닝 파이프라인** — 50cli — 2026-03-14
-  - dataset.jsonl 7.4GB 완성, split → 토큰화 → 학습 진행 중
-  - 50cli에 agent-comm 태스크 전달 완료
-  - 출력: `C:\Users\leo\liszt\output\liszt_v1\`
-- [ ] **Wan2.1 + Qwen2.5-VL Google Drive → 5090 싱크** — 자동 — 2026-03-14
-  - 201GB, 전처리 워커 해제 후 싱크 시작 예정
-- [ ] **MuseScore 자동 수집** — launchd — 매일 새벽 2시 URL + 3시 다운로드
+- [ ] **MuseScore 수동 다운로드** — Leo — 매일 20개
 
 ---
 
-## 📋 TODO
+## TODO
 
-- [ ] **파인튜닝 결과 확인** — reklcli — loss 곡선, 체크포인트 검증
-- [ ] **생성 테스트** — reklcli/50cli — 체크포인트에서 MIDI 샘플 생성
-- [ ] **MXL→MIDI 변환 완료 확인** — reklcli — 247K 대상
-- [ ] **curate 재실행** — reklcli — 변환 완료 + 다양성 보강분 반영
-- [ ] **코드 진행(chord) 데이터 추가 검토** — reklcli — 학습 결과 보고 판단
-- [ ] **Leo 직접 청취 퀄리티 평가** — Leo
-- [ ] **Pedalboard + 키스케이프 렌더링 파이프라인** — reklcli
-
----
-
-## 🚫 BLOCKED
-
-- [ ] **MuseScore 다운로드** — CF rate limit 자연 해제 대기 — 2026-03-14
+- [ ] **V7 청취 피드백** — Leo — V5 LoRA vs V7 Grid 비교, 멜로디-반주 동기화
+- [ ] **NAS 백업 (V5 Pop + V5 LoRA + V6 + V7)** — reklcli
+- [ ] **WAN 2.2 / Qwen 다운로드 완료 확인** — reklcli
+- [ ] **V8 방향 결정** — Leo/reklcli — V7 피드백 기반
+- [ ] **5090 모델 테스트** — reklcli — Wan2.2, FLUX, F5-TTS, Whisper 등
+- [ ] **Splice 다운로드** — Leo — Tier1+Tier2 (~1,200개 WAV)
+- [ ] **NAS Gitea 설치** — reklcli — DS420+
 
 ---
 
-## ✅ DONE (최근)
+## BLOCKED
 
-- [x] **5090 서버 접속 확인** — reklcli — 2026-03-14 — 랜카드 교체, 이더넷 131Mbps
-- [x] **학습셋 MIDI 전송** — reklcli — 2026-03-14 — SCP 17.4GB (1,433,433곡)
-- [x] **5090 Python 환경 세팅** — reklcli — 2026-03-14 — venv, PyTorch, Aria, accelerate
-- [x] **agent-comm from_50cli 채널 생성** — reklcli — 2026-03-14
-- [x] **MIDI→JSONL 전처리 완료** — 50cli — 2026-03-14 — 7.4GB
-- [x] **Wan2.1/Qwen2.5-VL Google Drive 복사** — reklcli — 2026-03-14
-- [x] **학습셋 큐레이션** — reklcli — 2026-03-12 — 1,433,433곡 (tier1: 152K, tier2: 1,070K, tier3: 211K)
-- [x] **피아노 분류 파이프라인** — reklcli — 2026-03-12 — classify_piano.py + curate_training_set.py
-- [x] **ATEPP 전체 등록** — reklcli — 2026-03-13 — +9,562개
-- [x] **MAESTRO 전체 등록** — reklcli — 2026-03-13 — +1,087개
-- [x] **장르 분류** — reklcli — 2026-03-13 — 3,147,469개
-- [x] **대시보드 mukl 배포** — mukl — musicscore.arkedia.work/liszt/
-- [x] **DB 전체 등록** — reklcli — ~3,450,000+ 파일
+(없음)
+
+---
+
+## DONE (최근)
+
+- [x] **V7 Grid 학습 + eval + 대시보드** — reklcli/5090 — 2026-03-23
+  - val_loss 1.7322, rep% 0~1.3% (반복 사실상 해결)
+  - unique_pitches 60~73, 7 스타일 × 3 = 21 MIDI
+- [x] **V7 학습 스크립트 작성 + 시작** — reklcli — 2026-03-23
+- [x] **onset quantization 후처리 스크립트** — reklcli — 2026-03-23
+  - quantize_onsets.py, V5 LoRA nocturne/classical/waltz에 적용
+- [x] **대시보드 대규모 업데이트** — reklcli — 2026-03-23
+  - V5 Pop 23 + V5 LoRA 21 + V6 Tempo 30 + Q16 9 + V7 Grid 21 = 104개 MIDI
+  - V5 LoRA "실패"->"성공", V6/Q16/V7 탭 추가
+- [x] **V6 Tempo 학습 완료** — 5090 — 2026-03-23
+- [x] **V5 LoRA 학습 완료** — 5090 — 2026-03-22
+- [x] **V5 Pop 학습 완료** — 5090 — 2026-03-21
