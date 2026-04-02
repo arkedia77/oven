@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quincy P2 — Eval Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.js"></script>
+<style>
+:root {
+  --bg: #09090b; --card: #111114; --card2: #18181b;
+  --border: #27272a; --accent: #6366f1; --accent2: #8b5cf6;
+  --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #3b82f6;
+  --text: #fafafa; --muted: #71717a; --dim: #3f3f46;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,system-ui,sans-serif; }
+
+.header { padding:2rem 2.5rem 1.5rem; border-bottom:1px solid var(--border); }
+.header h1 { font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; }
+.header h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header p { color:var(--muted); font-size:0.85rem; margin-top:0.3rem; }
+.header-meta { display:flex; gap:1.5rem; margin-top:0.75rem; flex-wrap:wrap; }
+.header-meta .hm { font-size:0.75rem; color:var(--muted); }
+.header-meta .hm strong { color:var(--text); }
+
+/* Tabs */
+.tabs { display:flex; padding:0 2.5rem; border-bottom:1px solid var(--border); overflow-x:auto; }
+.tab { background:none; border:none; color:var(--muted); padding:0.9rem 1.5rem; font-size:0.9rem; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+main { padding:2rem 2.5rem; max-width:1400px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+
+/* Summary stats */
+.summary-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:1rem; margin-bottom:2rem; }
+.stat-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; }
+.stat-box .num { font-size:1.8rem; font-weight:800; }
+.stat-box .lbl { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.2rem; }
+
+/* Issue banner */
+.issue-banner { background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.25); border-radius:10px; padding:1rem 1.25rem; margin-bottom:2rem; font-size:0.85rem; line-height:1.6; }
+.issue-banner strong { color:var(--yellow); }
+
+/* Heatmap */
+.heatmap-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:2rem; }
+.heatmap-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:1rem; }
+.heatmap { display:grid; gap:2px; }
+.hm-cell { border-radius:4px; padding:0.4rem 0.3rem; text-align:center; font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.hm-cell:hover { transform:scale(1.05); z-index:1; }
+.hm-header { background:transparent; color:var(--muted); font-weight:600; font-size:0.7rem; }
+.hm-row-label { background:transparent; color:var(--muted); font-weight:600; font-size:0.7rem; text-align:right; padding-right:0.5rem; display:flex; align-items:center; justify-content:flex-end; }
+
+/* Sample grid */
+.sample-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1rem; margin-bottom:2rem; }
+.sample-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; transition:all 0.2s; }
+.sample-card:hover { border-color:var(--dim); }
+.sample-card.playing { border-color:var(--green); box-shadow:0 0 24px rgba(34,197,94,0.1); }
+
+.sample-top { padding:0.75rem 1rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+.sample-top h4 { font-size:0.85rem; font-weight:600; }
+.sample-tags { display:flex; gap:0.3rem; }
+.tag { font-size:0.6rem; padding:0.1rem 0.4rem; border-radius:3px; font-weight:600; }
+.tag.tempo { background:rgba(59,130,246,0.12); color:var(--blue); }
+.tag.form { background:rgba(139,92,246,0.12); color:var(--accent2); }
+.tag.genre { background:rgba(34,197,94,0.12); color:var(--green); }
+
+.sample-metrics { display:grid; grid-template-columns:repeat(4,1fr); }
+.sm { padding:0.5rem 0.6rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+.sm:nth-child(4n) { border-right:none; }
+.sm .sl { font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+.sm .sv { font-size:0.95rem; font-weight:700; margin-top:0.1rem; }
+.sv.good { color:var(--green); } .sv.warn { color:var(--yellow); } .sv.bad { color:var(--red); }
+
+.piano-roll { height:64px; background:#07070a; position:relative; }
+.piano-roll canvas { width:100%; height:100%; }
+
+.player-bar { padding:0.6rem 1rem; display:flex; align-items:center; gap:0.6rem; }
+.pbtn { width:32px; height:32px; border-radius:50%; border:2px solid var(--accent); background:none; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+.pbtn:hover { background:var(--accent); color:white; }
+.pbtn.on { background:var(--green); border-color:var(--green); color:white; }
+.pbtn svg { width:12px; height:12px; }
+.pbar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; cursor:pointer; position:relative; }
+.pfill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; width:0; transition:width 0.1s linear; }
+.ptime { font-size:0.7rem; color:var(--muted); min-width:60px; text-align:right; }
+
+/* Filter bar */
+.filter-bar { display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.filter-btn { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.4rem 0.8rem; font-size:0.8rem; color:var(--muted); cursor:pointer; transition:all 0.15s; }
+.filter-btn:hover { color:var(--text); border-color:var(--dim); }
+.filter-btn.active { color:var(--accent); border-color:var(--accent); background:rgba(99,102,241,0.08); }
+
+/* BPM chart */
+.bpm-chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:2rem; }
+.bpm-chart-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:1rem; }
+.bpm-canvas { width:100%; height:300px; }
+.bpm-canvas canvas { width:100%; height:100%; }
+
+/* Training info */
+.training-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:2rem; }
+.training-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.training-detail { font-size:0.82rem; line-height:1.8; }
+.training-detail .label { color:var(--muted); display:inline-block; min-width:130px; }
+.training-detail .val { color:var(--text); font-weight:600; }
+.training-detail .highlight { color:var(--accent); }
+.training-detail .warn { color:var(--yellow); }
+
+/* Responsive */
+@media(max-width:768px) {
+  .header, main, .tabs { padding-left:1rem; padding-right:1rem; }
+  .sample-grid { grid-template-columns:1fr; }
+  .sample-metrics { grid-template-columns:repeat(2,1fr); }
+  .summary-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>Quincy</span> P2 Eval Dashboard</h1>
+  <p>Piano AI Engine — Tempo Prefix Conditioning Evaluation</p>
+  <div class="header-meta">
+    <div class="hm"><strong>Model:</strong> Aria-medium + LoRA (P2)</div>
+    <div class="hm"><strong>Vocab:</strong> 17,732 tokens</div>
+    <div class="hm"><strong>Samples:</strong> 72 (24 prompts x 3)</div>
+    <div class="hm"><strong>Date:</strong> 2026-04-01</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="overview">Overview</button>
+  <button class="tab" data-tab="samples">Samples</button>
+  <button class="tab" data-tab="tempo">Tempo Analysis</button>
+  <button class="tab" data-tab="training">Training Info</button>
+</div>
+
+<main>
+  <!-- Overview -->
+  <div class="section active" id="sec-overview">
+    <div class="summary-grid" id="summary-stats"></div>
+    <div class="issue-banner">
+      <strong>Tempo Control Issue:</strong> est_bpm shows 101-200 range regardless of tempo prefix (slow/medium/fast/very_fast).
+      Tempo A approach confirmed failed. P3 will focus on lyrical/emotional data enrichment before revisiting tempo control.
+    </div>
+    <div class="heatmap-wrap">
+      <h3>Avg Note Count by Tempo x Form (Pop)</h3>
+      <div class="heatmap" id="heatmap-notes"></div>
+    </div>
+    <div class="heatmap-wrap">
+      <h3>Avg est_bpm by Tempo x Form (Pop)</h3>
+      <div class="heatmap" id="heatmap-bpm"></div>
+    </div>
+  </div>
+
+  <!-- Samples -->
+  <div class="section" id="sec-samples">
+    <div class="filter-bar" id="filters"></div>
+    <div class="sample-grid" id="sample-grid"></div>
+  </div>
+
+  <!-- Tempo Analysis -->
+  <div class="section" id="sec-tempo">
+    <div class="bpm-chart-wrap">
+      <h3>est_bpm Distribution by Tempo Prefix</h3>
+      <div class="bpm-canvas" id="bpm-chart"><canvas></canvas></div>
+    </div>
+    <div class="heatmap-wrap">
+      <h3>Repetition Rate (8-gram %) by Tempo x Form</h3>
+      <div class="heatmap" id="heatmap-rep"></div>
+    </div>
+  </div>
+
+  <!-- Training Info -->
+  <div class="section" id="sec-training">
+    <div class="training-card">
+      <h3>P2 Training Configuration</h3>
+      <div class="training-detail">
+        <div><span class="label">Base Model:</span> <span class="val">Aria-medium (P2 remapped)</span></div>
+        <div><span class="label">Vocab Size:</span> <span class="val highlight">17,732</span> (tempo prefix tokens added)</div>
+        <div><span class="label">LoRA:</span> <span class="val">r=16, alpha=32, dropout=0.05</span></div>
+        <div><span class="label">Targets:</span> <span class="val">mixed_qkv, att_proj_linear</span></div>
+        <div><span class="label">Modules Saved:</span> <span class="val">tok_embeddings, lm_head</span></div>
+        <div><span class="label">Learning Rate:</span> <span class="val">3e-5</span></div>
+        <div><span class="label">Epochs:</span> <span class="val">3</span></div>
+        <div><span class="label">Batch / Grad Acc:</span> <span class="val">1 / 8</span></div>
+        <div><span class="label">Max Seq Len:</span> <span class="val">8,192</span></div>
+        <div><span class="label">Init:</span> <span class="val">P1 LoRA weights (extended to 17732)</span></div>
+      </div>
+    </div>
+    <div class="training-card">
+      <h3>Eval Prompt Configuration</h3>
+      <div class="training-detail">
+        <div><span class="label">Tempos:</span> <span class="val">slow, medium, fast, very_fast</span></div>
+        <div><span class="label">Forms:</span> <span class="val">ballad, groove, anthem, arpeggio</span></div>
+        <div><span class="label">Genres:</span> <span class="val">pop (full matrix), classical (slow/med/fast/vfast ballad only)</span></div>
+        <div><span class="label">Tempo-only:</span> <span class="val">slow, medium, fast, very_fast (no form/genre)</span></div>
+        <div><span class="label">Samples/prompt:</span> <span class="val">3</span></div>
+      </div>
+    </div>
+    <div class="training-card">
+      <h3>Key Findings</h3>
+      <div class="training-detail">
+        <div><span class="warn">1.</span> <span class="val">Tempo prefix has minimal effect on actual BPM</span></div>
+        <div><span class="warn">2.</span> <span class="val">Jazz harmony patterns dominate output regardless of genre prefix</span></div>
+        <div class="val" style="color:var(--green); margin-top:0.5rem;">Decision: Enrich training data with lyrical piano (Sakamoto, Yiruma, Einaudi, Hisaishi) before P3</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// === P2 EVAL DATA ===
+const P2_DATA = {"slow_ballad_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'slow'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1350, "unique_pitches": 66, "pitch_range": 73, "rep_8gram": 0.4, "vel_range": 110, "vel_std": 21.8, "duration_s": 0.2, "est_bpm": 193.0}, {"notes": 972, "unique_pitches": 69, "pitch_range": 68, "rep_8gram": 0.0, "vel_range": 90, "vel_std": 19.1, "duration_s": 0.1, "est_bpm": 177.0}, {"notes": 966, "unique_pitches": 78, "pitch_range": 81, "rep_8gram": 2.0, "vel_range": 110, "vel_std": 21.4, "duration_s": 0.1, "est_bpm": 103.0}], "gen_time": 45.1}, "slow_groove_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'slow'), ('prefix', 'form', 'groove')]", "samples": [{"notes": 1356, "unique_pitches": 63, "pitch_range": 63, "rep_8gram": 0.0, "vel_range": 110, "vel_std": 19.2, "duration_s": 0.1, "est_bpm": 114.0}, {"notes": 563, "unique_pitches": 60, "pitch_range": 64, "rep_8gram": 0.9, "vel_range": 100, "vel_std": 15.5, "duration_s": 0.0, "est_bpm": 196.0}, {"notes": 1344, "unique_pitches": 69, "pitch_range": 73, "rep_8gram": 0.6, "vel_range": 100, "vel_std": 20.7, "duration_s": 0.1, "est_bpm": 176.0}], "gen_time": 42.1}, "slow_anthem_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'slow'), ('prefix', 'form', 'anthem')]", "samples": [{"notes": 1349, "unique_pitches": 70, "pitch_range": 76, "rep_8gram": 0.7, "vel_range": 100, "vel_std": 22.9, "duration_s": 0.2, "est_bpm": 167.0}, {"notes": 1351, "unique_pitches": 73, "pitch_range": 79, "rep_8gram": 0.1, "vel_range": 100, "vel_std": 20.9, "duration_s": 0.2, "est_bpm": 129.0}, {"notes": 1355, "unique_pitches": 71, "pitch_range": 74, "rep_8gram": 1.7, "vel_range": 110, "vel_std": 23.2, "duration_s": 0.1, "est_bpm": 113.0}], "gen_time": 45.6}, "slow_arpeggio_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'slow'), ('prefix', 'form', 'arpeggio')]", "samples": [{"notes": 1353, "unique_pitches": 65, "pitch_range": 67, "rep_8gram": 4.4, "vel_range": 90, "vel_std": 18.9, "duration_s": 0.2, "est_bpm": 155.0}, {"notes": 1350, "unique_pitches": 76, "pitch_range": 77, "rep_8gram": 0.5, "vel_range": 90, "vel_std": 17.9, "duration_s": 0.2, "est_bpm": 108.0}, {"notes": 1357, "unique_pitches": 81, "pitch_range": 80, "rep_8gram": 0.0, "vel_range": 90, "vel_std": 19.4, "duration_s": 0.1, "est_bpm": 159.0}], "gen_time": 44.0}, "medium_ballad_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'medium'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 480, "unique_pitches": 66, "pitch_range": 71, "rep_8gram": 3.6, "vel_range": 110, "vel_std": 18.5, "duration_s": 0.1, "est_bpm": 193.0}, {"notes": 371, "unique_pitches": 67, "pitch_range": 73, "rep_8gram": 0.8, "vel_range": 80, "vel_std": 19.6, "duration_s": 0.0, "est_bpm": 122.0}, {"notes": 162, "unique_pitches": 41, "pitch_range": 54, "rep_8gram": 0.0, "vel_range": 60, "vel_std": 11.9, "duration_s": 0.0, "est_bpm": 139.0}], "gen_time": 14.9}, "medium_groove_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'medium'), ('prefix', 'form', 'groove')]", "samples": [{"notes": 304, "unique_pitches": 61, "pitch_range": 62, "rep_8gram": 0.0, "vel_range": 70, "vel_std": 18.5, "duration_s": 0.1, "est_bpm": 108.0}, {"notes": 1354, "unique_pitches": 74, "pitch_range": 74, "rep_8gram": 0.7, "vel_range": 110, "vel_std": 18.0, "duration_s": 0.1, "est_bpm": 151.0}, {"notes": 965, "unique_pitches": 79, "pitch_range": 83, "rep_8gram": 2.7, "vel_range": 90, "vel_std": 20.4, "duration_s": 0.1, "est_bpm": 138.0}], "gen_time": 42.4}, "medium_anthem_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'medium'), ('prefix', 'form', 'anthem')]", "samples": [{"notes": 1355, "unique_pitches": 67, "pitch_range": 66, "rep_8gram": 0.5, "vel_range": 110, "vel_std": 20.4, "duration_s": 0.1, "est_bpm": 174.0}, {"notes": 1353, "unique_pitches": 77, "pitch_range": 78, "rep_8gram": 1.6, "vel_range": 100, "vel_std": 18.2, "duration_s": 0.1, "est_bpm": 116.0}, {"notes": 1351, "unique_pitches": 65, "pitch_range": 72, "rep_8gram": 0.1, "vel_range": 80, "vel_std": 17.4, "duration_s": 0.2, "est_bpm": 130.0}], "gen_time": 41.4}, "medium_arpeggio_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'medium'), ('prefix', 'form', 'arpeggio')]", "samples": [{"notes": 1356, "unique_pitches": 83, "pitch_range": 84, "rep_8gram": 0.1, "vel_range": 100, "vel_std": 18.5, "duration_s": 0.1, "est_bpm": 129.0}, {"notes": 1347, "unique_pitches": 70, "pitch_range": 80, "rep_8gram": 0.9, "vel_range": 110, "vel_std": 21.3, "duration_s": 0.2, "est_bpm": 132.0}, {"notes": 1353, "unique_pitches": 66, "pitch_range": 69, "rep_8gram": 12.8, "vel_range": 100, "vel_std": 21.6, "duration_s": 0.2, "est_bpm": 153.0}], "gen_time": 43.5}, "fast_ballad_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'fast'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1354, "unique_pitches": 76, "pitch_range": 80, "rep_8gram": 0.5, "vel_range": 100, "vel_std": 19.7, "duration_s": 0.1, "est_bpm": 120.0}, {"notes": 1356, "unique_pitches": 66, "pitch_range": 74, "rep_8gram": 0.3, "vel_range": 100, "vel_std": 19.0, "duration_s": 0.1, "est_bpm": 101.0}, {"notes": 1303, "unique_pitches": 71, "pitch_range": 74, "rep_8gram": 0.5, "vel_range": 100, "vel_std": 21.6, "duration_s": 0.2, "est_bpm": 150.0}], "gen_time": 45.2}, "fast_groove_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'fast'), ('prefix', 'form', 'groove')]", "samples": [{"notes": 170, "unique_pitches": 48, "pitch_range": 64, "rep_8gram": 3.7, "vel_range": 110, "vel_std": 28.8, "duration_s": 0.0, "est_bpm": 157.0}, {"notes": 1354, "unique_pitches": 73, "pitch_range": 78, "rep_8gram": 0.1, "vel_range": 100, "vel_std": 20.4, "duration_s": 0.1, "est_bpm": 159.0}, {"notes": 937, "unique_pitches": 71, "pitch_range": 76, "rep_8gram": 1.6, "vel_range": 110, "vel_std": 26.4, "duration_s": 0.1, "est_bpm": 129.0}], "gen_time": 43.5}, "fast_anthem_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'fast'), ('prefix', 'form', 'anthem')]", "samples": [{"notes": 630, "unique_pitches": 62, "pitch_range": 64, "rep_8gram": 0.5, "vel_range": 90, "vel_std": 21.6, "duration_s": 0.1, "est_bpm": 161.0}, {"notes": 1354, "unique_pitches": 78, "pitch_range": 81, "rep_8gram": 2.7, "vel_range": 100, "vel_std": 19.0, "duration_s": 0.1, "est_bpm": 157.0}, {"notes": 1229, "unique_pitches": 72, "pitch_range": 73, "rep_8gram": 0.0, "vel_range": 100, "vel_std": 19.0, "duration_s": 0.1, "est_bpm": 166.0}], "gen_time": 43.3}, "fast_arpeggio_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'fast'), ('prefix', 'form', 'arpeggio')]", "samples": [{"notes": 1356, "unique_pitches": 82, "pitch_range": 83, "rep_8gram": 1.0, "vel_range": 100, "vel_std": 18.4, "duration_s": 0.1, "est_bpm": 133.0}, {"notes": 1349, "unique_pitches": 72, "pitch_range": 73, "rep_8gram": 0.5, "vel_range": 100, "vel_std": 21.0, "duration_s": 0.2, "est_bpm": 198.0}, {"notes": 1189, "unique_pitches": 70, "pitch_range": 75, "rep_8gram": 4.2, "vel_range": 110, "vel_std": 21.1, "duration_s": 0.1, "est_bpm": 152.0}], "gen_time": 42.4}, "very_fast_ballad_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'very_fast'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1355, "unique_pitches": 76, "pitch_range": 78, "rep_8gram": 1.9, "vel_range": 110, "vel_std": 17.6, "duration_s": 0.1, "est_bpm": 101.0}, {"notes": 1352, "unique_pitches": 77, "pitch_range": 79, "rep_8gram": 2.5, "vel_range": 90, "vel_std": 19.6, "duration_s": 0.2, "est_bpm": 133.0}, {"notes": 1355, "unique_pitches": 75, "pitch_range": 75, "rep_8gram": 0.5, "vel_range": 110, "vel_std": 19.4, "duration_s": 0.1, "est_bpm": 180.0}], "gen_time": 44.6}, "very_fast_groove_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'very_fast'), ('prefix', 'form', 'groove')]", "samples": [{"notes": 1348, "unique_pitches": 74, "pitch_range": 76, "rep_8gram": 0.2, "vel_range": 100, "vel_std": 20.0, "duration_s": 0.2, "est_bpm": 157.0}, {"notes": 1356, "unique_pitches": 72, "pitch_range": 75, "rep_8gram": 0.1, "vel_range": 100, "vel_std": 21.6, "duration_s": 0.1, "est_bpm": 183.0}, {"notes": 1354, "unique_pitches": 71, "pitch_range": 75, "rep_8gram": 0.0, "vel_range": 80, "vel_std": 18.0, "duration_s": 0.1, "est_bpm": 103.0}], "gen_time": 40.9}, "very_fast_anthem_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'very_fast'), ('prefix', 'form', 'anthem')]", "samples": [{"notes": 1352, "unique_pitches": 74, "pitch_range": 75, "rep_8gram": 1.7, "vel_range": 110, "vel_std": 22.6, "duration_s": 0.2, "est_bpm": 117.0}, {"notes": 1352, "unique_pitches": 63, "pitch_range": 64, "rep_8gram": 0.0, "vel_range": 100, "vel_std": 19.7, "duration_s": 0.1, "est_bpm": 115.0}, {"notes": 319, "unique_pitches": 36, "pitch_range": 53, "rep_8gram": 0.6, "vel_range": 70, "vel_std": 14.7, "duration_s": 0.0, "est_bpm": 106.0}], "gen_time": 42.4}, "very_fast_arpeggio_pop": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'pop'), ('prefix', 'tempo', 'very_fast'), ('prefix', 'form', 'arpeggio')]", "samples": [{"notes": 1358, "unique_pitches": 77, "pitch_range": 79, "rep_8gram": 2.0, "vel_range": 90, "vel_std": 18.6, "duration_s": 0.1, "est_bpm": 140.0}, {"notes": 389, "unique_pitches": 65, "pitch_range": 72, "rep_8gram": 0.0, "vel_range": 90, "vel_std": 18.0, "duration_s": 0.0, "est_bpm": 172.0}, {"notes": 154, "unique_pitches": 47, "pitch_range": 63, "rep_8gram": 1.4, "vel_range": 60, "vel_std": 17.6, "duration_s": 0.1, "est_bpm": 178.0}], "gen_time": 43.9}, "slow_ballad_classical": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'classical'), ('prefix', 'tempo', 'slow'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 448, "unique_pitches": 75, "pitch_range": 80, "rep_8gram": 0.0, "vel_range": 70, "vel_std": 10.6, "duration_s": 0.0, "est_bpm": 131.0}, {"notes": 1354, "unique_pitches": 71, "pitch_range": 72, "rep_8gram": 0.4, "vel_range": 80, "vel_std": 19.0, "duration_s": 0.1, "est_bpm": 194.0}, {"notes": 1357, "unique_pitches": 69, "pitch_range": 70, "rep_8gram": 0.4, "vel_range": 80, "vel_std": 20.1, "duration_s": 0.1, "est_bpm": 114.0}], "gen_time": 44.0}, "medium_ballad_classical": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'classical'), ('prefix', 'tempo', 'medium'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1354, "unique_pitches": 71, "pitch_range": 74, "rep_8gram": 0.0, "vel_range": 110, "vel_std": 21.8, "duration_s": 0.1, "est_bpm": 164.0}, {"notes": 1356, "unique_pitches": 76, "pitch_range": 78, "rep_8gram": 2.0, "vel_range": 90, "vel_std": 20.6, "duration_s": 0.1, "est_bpm": 179.0}, {"notes": 1353, "unique_pitches": 74, "pitch_range": 77, "rep_8gram": 0.1, "vel_range": 110, "vel_std": 24.2, "duration_s": 0.2, "est_bpm": 146.0}], "gen_time": 43.0}, "fast_ballad_classical": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'classical'), ('prefix', 'tempo', 'fast'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1275, "unique_pitches": 75, "pitch_range": 78, "rep_8gram": 0.0, "vel_range": 80, "vel_std": 16.4, "duration_s": 0.1, "est_bpm": 168.0}, {"notes": 1357, "unique_pitches": 72, "pitch_range": 80, "rep_8gram": 1.0, "vel_range": 100, "vel_std": 19.6, "duration_s": 0.1, "est_bpm": 193.0}, {"notes": 462, "unique_pitches": 55, "pitch_range": 59, "rep_8gram": 2.4, "vel_range": 90, "vel_std": 18.2, "duration_s": 0.1, "est_bpm": 171.0}], "gen_time": 42.4}, "very_fast_ballad_classical": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'genre', 'classical'), ('prefix', 'tempo', 'very_fast'), ('prefix', 'form', 'ballad')]", "samples": [{"notes": 1358, "unique_pitches": 74, "pitch_range": 77, "rep_8gram": 0.0, "vel_range": 110, "vel_std": 20.2, "duration_s": 0.1, "est_bpm": 197.0}, {"notes": 1353, "unique_pitches": 77, "pitch_range": 80, "rep_8gram": 0.2, "vel_range": 110, "vel_std": 18.0, "duration_s": 0.1, "est_bpm": 171.0}, {"notes": 1036, "unique_pitches": 73, "pitch_range": 78, "rep_8gram": 0.8, "vel_range": 110, "vel_std": 21.5, "duration_s": 0.1, "est_bpm": 124.0}], "gen_time": 46.0}, "slow_only": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'tempo', 'slow')]", "samples": [{"notes": 1356, "unique_pitches": 76, "pitch_range": 76, "rep_8gram": 1.4, "vel_range": 90, "vel_std": 16.9, "duration_s": 0.1, "est_bpm": 174.0}, {"notes": 788, "unique_pitches": 71, "pitch_range": 73, "rep_8gram": 2.8, "vel_range": 100, "vel_std": 20.1, "duration_s": 0.1, "est_bpm": 178.0}, {"notes": 1349, "unique_pitches": 69, "pitch_range": 72, "rep_8gram": 0.0, "vel_range": 110, "vel_std": 22.9, "duration_s": 0.2, "est_bpm": 200.0}], "gen_time": 43.4}, "medium_only": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'tempo', 'medium')]", "samples": [{"notes": 1349, "unique_pitches": 79, "pitch_range": 79, "rep_8gram": 4.6, "vel_range": 110, "vel_std": 26.6, "duration_s": 0.1, "est_bpm": 196.0}, {"notes": 1350, "unique_pitches": 72, "pitch_range": 76, "rep_8gram": 0.5, "vel_range": 110, "vel_std": 22.0, "duration_s": 0.2, "est_bpm": 137.0}, {"notes": 1005, "unique_pitches": 73, "pitch_range": 76, "rep_8gram": 2.8, "vel_range": 110, "vel_std": 14.3, "duration_s": 0.1, "est_bpm": 140.0}], "gen_time": 44.0}, "fast_only": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'tempo', 'fast')]", "samples": [{"notes": 679, "unique_pitches": 71, "pitch_range": 71, "rep_8gram": 0.0, "vel_range": 100, "vel_std": 22.7, "duration_s": 0.1, "est_bpm": 106.0}, {"notes": 1354, "unique_pitches": 77, "pitch_range": 81, "rep_8gram": 0.0, "vel_range": 90, "vel_std": 16.4, "duration_s": 0.1, "est_bpm": 183.0}, {"notes": 1103, "unique_pitches": 65, "pitch_range": 64, "rep_8gram": 0.0, "vel_range": 110, "vel_std": 19.8, "duration_s": 0.2, "est_bpm": 111.0}], "gen_time": 42.5}, "very_fast_only": {"prompt": "['<S>', ('prefix', 'instrument', 'piano'), ('prefix', 'tempo', 'very_fast')]", "samples": [{"notes": 1355, "unique_pitches": 77, "pitch_range": 79, "rep_8gram": 0.2, "vel_range": 90, "vel_std": 20.6, "duration_s": 0.1, "est_bpm": 119.0}, {"notes": 1355, "unique_pitches": 73, "pitch_range": 74, "rep_8gram": 0.0, "vel_range": 80, "vel_std": 18.7, "duration_s": 0.1, "est_bpm": 123.0}, {"notes": 1356, "unique_pitches": 76, "pitch_range": 79, "rep_8gram": 0.8, "vel_range": 100, "vel_std": 20.7, "duration_s": 0.1, "est_bpm": 151.0}], "gen_time": 44.4}};
+
+// === Parse data ===
+const allSamples = [];
+const tempos = ['slow','medium','fast','very_fast'];
+const forms = ['ballad','groove','anthem','arpeggio'];
+const tempoLabels = {slow:'Slow',medium:'Medium',fast:'Fast',very_fast:'Very Fast'};
+
+for (const [key, val] of Object.entries(P2_DATA)) {
+  const parts = key.split('_');
+  let tempo, form, genre;
+
+  if (key.endsWith('_only')) {
+    tempo = parts.slice(0,-1).join('_');
+    form = null; genre = null;
+  } else {
+    // Parse: tempo_form_genre or tempo_tempo_form_genre
+    genre = parts[parts.length-1];
+    form = parts[parts.length-2];
+    tempo = parts.slice(0, parts.length-2).join('_');
+  }
+
+  val.samples.forEach((s, i) => {
+    allSamples.push({
+      key, tempo, form, genre, idx: i,
+      midiPath: `midi/${key}/sample_${i}.mid`,
+      ...s,
+      gen_time: val.gen_time,
+    });
+  });
+}
+
+// === Summary Stats ===
+function renderSummary() {
+  const container = document.getElementById('summary-stats');
+  const totalNotes = allSamples.reduce((a,s) => a + s.notes, 0);
+  const avgBpm = (allSamples.reduce((a,s) => a + s.est_bpm, 0) / allSamples.length).toFixed(0);
+  const avgRep = (allSamples.reduce((a,s) => a + s.rep_8gram, 0) / allSamples.length).toFixed(1);
+  const avgPitch = (allSamples.reduce((a,s) => a + s.unique_pitches, 0) / allSamples.length).toFixed(0);
+  const avgVelStd = (allSamples.reduce((a,s) => a + s.vel_std, 0) / allSamples.length).toFixed(1);
+  const totalGenTime = Object.values(P2_DATA).reduce((a,v) => a + v.gen_time, 0).toFixed(0);
+
+  const stats = [
+    {num: allSamples.length, lbl: 'Total Samples'},
+    {num: Object.keys(P2_DATA).length, lbl: 'Prompt Configs'},
+    {num: (totalNotes/1000).toFixed(1)+'k', lbl: 'Total Notes'},
+    {num: avgBpm, lbl: 'Avg BPM'},
+    {num: avgRep+'%', lbl: 'Avg Rep 8-gram'},
+    {num: avgPitch, lbl: 'Avg Unique Pitches'},
+    {num: avgVelStd, lbl: 'Avg Vel Std'},
+    {num: totalGenTime+'s', lbl: 'Total Gen Time'},
+  ];
+
+  container.innerHTML = stats.map(s => `
+    <div class="stat-box">
+      <div class="num">${s.num}</div>
+      <div class="lbl">${s.lbl}</div>
+    </div>
+  `).join('');
+}
+
+// === Heatmap ===
+function renderHeatmap(containerId, metric, colorFn) {
+  const container = document.getElementById(containerId);
+  const cols = forms.length + 1;
+  container.style.gridTemplateColumns = `80px repeat(${forms.length}, 1fr)`;
+
+  let html = '<div class="hm-header"></div>';
+  forms.forEach(f => html += `<div class="hm-header">${f}</div>`);
+
+  tempos.forEach(t => {
+    html += `<div class="hm-row-label">${tempoLabels[t]}</div>`;
+    forms.forEach(f => {
+      const key = `${t}_${f}_pop`;
+      const data = P2_DATA[key];
+      if (data) {
+        const avg = (data.samples.reduce((a,s) => a + s[metric], 0) / data.samples.length).toFixed(metric === 'rep_8gram' ? 1 : 0);
+        const {bg, fg} = colorFn(parseFloat(avg));
+        html += `<div class="hm-cell" style="background:${bg};color:${fg}" title="${t} ${f}: ${avg}">${avg}</div>`;
+      } else {
+        html += `<div class="hm-cell" style="background:var(--card)">-</div>`;
+      }
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function noteCountColor(v) {
+  if (v > 1200) return {bg:'rgba(34,197,94,0.25)', fg:'var(--green)'};
+  if (v > 800) return {bg:'rgba(234,179,8,0.2)', fg:'var(--yellow)'};
+  if (v > 400) return {bg:'rgba(59,130,246,0.2)', fg:'var(--blue)'};
+  return {bg:'rgba(239,68,68,0.2)', fg:'var(--red)'};
+}
+
+function bpmColor(v) {
+  // Ideally slow < 100, medium 100-130, fast 130-160, very_fast > 160
+  // Since all are broken, just show variance
+  if (v > 170) return {bg:'rgba(239,68,68,0.25)', fg:'var(--red)'};
+  if (v > 140) return {bg:'rgba(234,179,8,0.2)', fg:'var(--yellow)'};
+  if (v > 110) return {bg:'rgba(59,130,246,0.2)', fg:'var(--blue)'};
+  return {bg:'rgba(34,197,94,0.25)', fg:'var(--green)'};
+}
+
+function repColor(v) {
+  if (v > 5) return {bg:'rgba(239,68,68,0.25)', fg:'var(--red)'};
+  if (v > 2) return {bg:'rgba(234,179,8,0.2)', fg:'var(--yellow)'};
+  return {bg:'rgba(34,197,94,0.2)', fg:'var(--green)'};
+}
+
+// === Sample Cards ===
+let currentSynth = null;
+let currentPart = null;
+let currentCard = null;
+
+function renderSamples(filter) {
+  const container = document.getElementById('sample-grid');
+  let filtered = allSamples;
+
+  if (filter && filter !== 'all') {
+    if (tempos.includes(filter)) filtered = filtered.filter(s => s.tempo === filter);
+    else if (forms.includes(filter)) filtered = filtered.filter(s => s.form === filter);
+    else if (['pop','classical'].includes(filter)) filtered = filtered.filter(s => s.genre === filter);
+    else if (filter === 'tempo_only') filtered = filtered.filter(s => !s.form);
+  }
+
+  container.innerHTML = filtered.map((s, i) => {
+    const repClass = s.rep_8gram > 5 ? 'bad' : s.rep_8gram > 2 ? 'warn' : 'good';
+    const tags = [];
+    if (s.tempo) tags.push(`<span class="tag tempo">${s.tempo}</span>`);
+    if (s.form) tags.push(`<span class="tag form">${s.form}</span>`);
+    if (s.genre) tags.push(`<span class="tag genre">${s.genre}</span>`);
+
+    return `
+    <div class="sample-card" id="card-${s.key}-${s.idx}">
+      <div class="sample-top">
+        <h4>${s.key} #${s.idx}</h4>
+        <div class="sample-tags">${tags.join('')}</div>
+      </div>
+      <div class="sample-metrics">
+        <div class="sm"><div class="sl">Notes</div><div class="sv">${s.notes}</div></div>
+        <div class="sm"><div class="sl">Pitches</div><div class="sv">${s.unique_pitches}</div></div>
+        <div class="sm"><div class="sl">Est BPM</div><div class="sv warn">${s.est_bpm}</div></div>
+        <div class="sm"><div class="sl">Rep 8g</div><div class="sv ${repClass}">${s.rep_8gram}%</div></div>
+        <div class="sm"><div class="sl">Vel Range</div><div class="sv">${s.vel_range}</div></div>
+        <div class="sm"><div class="sl">Vel Std</div><div class="sv">${s.vel_std}</div></div>
+        <div class="sm"><div class="sl">Pitch Range</div><div class="sv">${s.pitch_range}</div></div>
+        <div class="sm"><div class="sl">Gen Time</div><div class="sv">${s.gen_time}s</div></div>
+      </div>
+      <div class="piano-roll" id="pr-${s.key}-${s.idx}"><canvas></canvas></div>
+      <div class="player-bar">
+        <button class="pbtn" onclick="togglePlay('${s.key}',${s.idx},'${s.midiPath}')">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+        <div class="pbar" id="bar-${s.key}-${s.idx}"><div class="pfill" id="fill-${s.key}-${s.idx}"></div></div>
+        <div class="ptime" id="time-${s.key}-${s.idx}">0:00</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Draw piano rolls
+  filtered.forEach(s => loadPianoRoll(s));
+}
+
+function renderFilters() {
+  const container = document.getElementById('filters');
+  const filters = [
+    {key:'all', label:'All'},
+    ...tempos.map(t => ({key:t, label:tempoLabels[t]})),
+    ...forms.map(f => ({key:f, label:f.charAt(0).toUpperCase()+f.slice(1)})),
+    {key:'pop', label:'Pop'},
+    {key:'classical', label:'Classical'},
+    {key:'tempo_only', label:'Tempo Only'},
+  ];
+
+  container.innerHTML = filters.map(f =>
+    `<button class="filter-btn${f.key==='all'?' active':''}" data-filter="${f.key}">${f.label}</button>`
+  ).join('');
+
+  container.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSamples(btn.dataset.filter);
+    });
+  });
+}
+
+// === MIDI Playback ===
+async function togglePlay(key, idx, midiPath) {
+  const cardId = `card-${key}-${idx}`;
+  const card = document.getElementById(cardId);
+
+  // Stop current
+  if (currentPart) {
+    currentPart.stop();
+    currentPart.dispose();
+    currentPart = null;
+  }
+  if (currentSynth) {
+    currentSynth.dispose();
+    currentSynth = null;
+  }
+  if (currentCard) {
+    currentCard.classList.remove('playing');
+    if (currentCard === card) { currentCard = null; Tone.Transport.stop(); return; }
+  }
+
+  await Tone.start();
+  Tone.Transport.stop();
+  Tone.Transport.position = 0;
+
+  try {
+    const resp = await fetch(`/quincy/midi/${key}/sample_${idx}.mid`);
+    const buf = await resp.arrayBuffer();
+    const midi = new Midi(buf);
+
+    currentSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: {type: 'triangle'},
+      envelope: {attack: 0.02, decay: 0.3, sustain: 0.3, release: 0.8},
+      volume: -8,
+    }).toDestination();
+
+    const notes = midi.tracks.flatMap(t => t.notes);
+    const duration = Math.max(...notes.map(n => n.time + n.duration));
+
+    currentPart = new Tone.Part((time, note) => {
+      currentSynth.triggerAttackRelease(
+        Tone.Frequency(note.midi, 'midi'),
+        note.duration,
+        time,
+        note.velocity
+      );
+    }, notes.map(n => [n.time, n])).start(0);
+
+    card.classList.add('playing');
+    currentCard = card;
+    Tone.Transport.start();
+
+    // Progress bar
+    const fill = document.getElementById(`fill-${key}-${idx}`);
+    const timeEl = document.getElementById(`time-${key}-${idx}`);
+    const updateProgress = () => {
+      if (!currentCard || currentCard !== card) return;
+      const pos = Tone.Transport.seconds;
+      const pct = Math.min(100, (pos / duration) * 100);
+      fill.style.width = pct + '%';
+      const m = Math.floor(pos / 60);
+      const s = Math.floor(pos % 60);
+      timeEl.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      if (pos < duration) requestAnimationFrame(updateProgress);
+      else { card.classList.remove('playing'); currentCard = null; }
+    };
+    requestAnimationFrame(updateProgress);
+
+  } catch(e) {
+    console.error('Playback error:', e);
+  }
+}
+
+// === Piano Roll ===
+async function loadPianoRoll(sample) {
+  const container = document.getElementById(`pr-${sample.key}-${sample.idx}`);
+  if (!container) return;
+  const canvas = container.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+
+  try {
+    const resp = await fetch(`/quincy/midi/${sample.key}/sample_${sample.idx}.mid`);
+    const buf = await resp.arrayBuffer();
+    const midi = new Midi(buf);
+    const notes = midi.tracks.flatMap(t => t.notes);
+    if (!notes.length) return;
+
+    canvas.width = container.clientWidth * 2;
+    canvas.height = 128;
+
+    const minPitch = Math.min(...notes.map(n => n.midi));
+    const maxPitch = Math.max(...notes.map(n => n.midi));
+    const duration = Math.max(...notes.map(n => n.time + n.duration));
+    const pitchRange = maxPitch - minPitch + 1;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    notes.forEach(n => {
+      const x = (n.time / duration) * canvas.width;
+      const w = Math.max(1, (n.duration / duration) * canvas.width);
+      const y = canvas.height - ((n.midi - minPitch + 1) / pitchRange) * canvas.height;
+      const h = Math.max(1, canvas.height / pitchRange);
+      const alpha = 0.3 + n.velocity * 0.7;
+      ctx.fillStyle = `rgba(99,102,241,${alpha})`;
+      ctx.fillRect(x, y, w, h);
+    });
+  } catch(e) { /* MIDI not available */ }
+}
+
+// === BPM Chart ===
+function renderBpmChart() {
+  const wrap = document.getElementById('bpm-chart');
+  const canvas = wrap.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = wrap.clientWidth * 2;
+  canvas.height = 600;
+  const W = canvas.width, H = canvas.height;
+  const pad = {top:40, right:40, bottom:60, left:60};
+
+  ctx.fillStyle = '#07070a';
+  ctx.fillRect(0,0,W,H);
+
+  const colors = {slow:'#3b82f6', medium:'#22c55e', fast:'#eab308', very_fast:'#ef4444'};
+  const tempoData = {};
+  tempos.forEach(t => tempoData[t] = []);
+  allSamples.forEach(s => { if (s.tempo && tempoData[s.tempo]) tempoData[s.tempo].push(s.est_bpm); });
+
+  // Y axis: BPM
+  const allBpms = allSamples.map(s => s.est_bpm);
+  const minBpm = 80, maxBpm = 220;
+  const chartW = W - pad.left - pad.right;
+  const chartH = H - pad.top - pad.bottom;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let bpm = 100; bpm <= 200; bpm += 20) {
+    const y = pad.top + chartH - ((bpm - minBpm) / (maxBpm - minBpm)) * chartH;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    ctx.fillStyle = '#71717a'; ctx.font = '20px Inter, sans-serif'; ctx.textAlign = 'right';
+    ctx.fillText(bpm+'', pad.left - 10, y + 6);
+  }
+
+  // Box plots per tempo
+  const boxW = chartW / 5;
+  tempos.forEach((t, i) => {
+    const bpms = tempoData[t].sort((a,b) => a-b);
+    if (!bpms.length) return;
+    const x = pad.left + (i + 0.5) * (chartW / 4);
+    const median = bpms[Math.floor(bpms.length/2)];
+    const q1 = bpms[Math.floor(bpms.length*0.25)];
+    const q3 = bpms[Math.floor(bpms.length*0.75)];
+    const min = bpms[0], max = bpms[bpms.length-1];
+
+    const yMed = pad.top + chartH - ((median - minBpm) / (maxBpm - minBpm)) * chartH;
+    const yQ1 = pad.top + chartH - ((q1 - minBpm) / (maxBpm - minBpm)) * chartH;
+    const yQ3 = pad.top + chartH - ((q3 - minBpm) / (maxBpm - minBpm)) * chartH;
+    const yMin = pad.top + chartH - ((min - minBpm) / (maxBpm - minBpm)) * chartH;
+    const yMax = pad.top + chartH - ((max - minBpm) / (maxBpm - minBpm)) * chartH;
+
+    const bw = boxW * 0.5;
+    // Whiskers
+    ctx.strokeStyle = colors[t]; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, yMin); ctx.lineTo(x, yMax); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-bw*0.3, yMin); ctx.lineTo(x+bw*0.3, yMin); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-bw*0.3, yMax); ctx.lineTo(x+bw*0.3, yMax); ctx.stroke();
+
+    // Box
+    ctx.fillStyle = colors[t] + '30';
+    ctx.fillRect(x - bw/2, yQ3, bw, yQ1 - yQ3);
+    ctx.strokeRect(x - bw/2, yQ3, bw, yQ1 - yQ3);
+
+    // Median
+    ctx.strokeStyle = colors[t]; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x - bw/2, yMed); ctx.lineTo(x + bw/2, yMed); ctx.stroke();
+
+    // Dots
+    bpms.forEach(b => {
+      const y = pad.top + chartH - ((b - minBpm) / (maxBpm - minBpm)) * chartH;
+      ctx.fillStyle = colors[t]; ctx.globalAlpha = 0.6;
+      ctx.beginPath(); ctx.arc(x + (Math.random()-0.5)*bw*0.6, y, 5, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+
+    // Label
+    ctx.fillStyle = colors[t]; ctx.font = 'bold 22px Inter, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(tempoLabels[t], x, H - 15);
+  });
+
+  // Title line showing ideal ranges
+  ctx.fillStyle = '#71717a'; ctx.font = '18px Inter, sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('Ideal: Slow <100 | Medium 100-130 | Fast 130-160 | Very Fast >160', W/2, 25);
+}
+
+// === Tabs ===
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('sec-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'tempo') renderBpmChart();
+  });
+});
+
+// === Init ===
+renderSummary();
+renderHeatmap('heatmap-notes', 'notes', noteCountColor);
+renderHeatmap('heatmap-bpm', 'est_bpm', bpmColor);
+renderFilters();
+renderSamples('all');
+renderHeatmap('heatmap-rep', 'rep_8gram', repColor);
+</script>
+</body>
+</html>

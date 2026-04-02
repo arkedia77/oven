@@ -224,3 +224,25 @@ def liszt_redirect():
 @app.get("/liszt/")
 def liszt_dashboard():
     return FileResponse(f"{BASE_DIR}/dashboard/static/index.html")
+
+
+# Quincy P2 dashboard
+@app.get("/quincy")
+def quincy_redirect():
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse("/quincy/")
+
+
+@app.get("/quincy/")
+def quincy_dashboard():
+    return FileResponse(f"{BASE_DIR}/dashboard/quincy.html")
+
+
+@app.get("/quincy/midi/{path:path}")
+def quincy_midi(path: str):
+    fpath = os.path.join(BASE_DIR, "eval", "quincy_p2_eval", "midi", path)
+    if not os.path.exists(fpath):
+        return PlainTextResponse("Not found", status_code=404)
+    from fastapi.responses import Response
+    with open(fpath, "rb") as f:
+        return Response(content=f.read(), media_type="audio/midi")
