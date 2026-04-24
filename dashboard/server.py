@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse, PlainTextResponse
 
 app = FastAPI(title="MusicScore Dashboard")
 
-BASE_DIR = os.path.expanduser("~/musicscore")
+BASE_DIR = os.path.expanduser("~/oven")
 DATA_DIR = "/Volumes/data/score"
 DB_PATH = f"{BASE_DIR}/data/musicscore.db"
 
@@ -226,7 +226,7 @@ def liszt_dashboard():
     return FileResponse(f"{BASE_DIR}/dashboard/static/index.html")
 
 
-# Quincy P2 dashboard
+# Quincy dashboard
 @app.get("/quincy")
 def quincy_redirect():
     from fastapi.responses import RedirectResponse
@@ -238,11 +238,38 @@ def quincy_dashboard():
     return FileResponse(f"{BASE_DIR}/dashboard/quincy.html")
 
 
-@app.get("/quincy/midi/{path:path}")
-def quincy_midi(path: str):
+@app.get("/quincy/p1/midi/{path:path}")
+def quincy_p1_midi(path: str):
+    fpath = os.path.join(BASE_DIR, "eval", "quincy_p1_eval", path)
+    if not os.path.exists(fpath):
+        return PlainTextResponse("Not found", status_code=404)
+    from fastapi.responses import Response
+    with open(fpath, "rb") as f:
+        return Response(content=f.read(), media_type="audio/midi")
+
+
+@app.get("/quincy/p1x/midi/{path:path}")
+def quincy_p1x_midi(path: str):
+    fpath = os.path.join(BASE_DIR, "eval", "quincy_p1_crossover", path)
+    if not os.path.exists(fpath):
+        return PlainTextResponse("Not found", status_code=404)
+    from fastapi.responses import Response
+    with open(fpath, "rb") as f:
+        return Response(content=f.read(), media_type="audio/midi")
+
+
+@app.get("/quincy/p2/midi/{path:path}")
+def quincy_p2_midi(path: str):
     fpath = os.path.join(BASE_DIR, "eval", "quincy_p2_eval", "midi", path)
     if not os.path.exists(fpath):
         return PlainTextResponse("Not found", status_code=404)
     from fastapi.responses import Response
     with open(fpath, "rb") as f:
         return Response(content=f.read(), media_type="audio/midi")
+
+
+# Backwards-compatible fallback: /quincy/midi/* -> P2
+@app.get("/quincy/midi/{path:path}")
+def quincy_midi_legacy(path: str):
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(f"/quincy/p2/midi/{path}")

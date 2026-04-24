@@ -3,555 +3,1351 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liszt — AI Piano Engine Dashboard</title>
+<title>Liszt Engine Lab</title>
+<script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-synthesizer@1.8.5/externals/libfluidsynth-2.3.0-with-libsndfile.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-synthesizer@1.8.5/dist/js-synthesizer.min.js"></script>
 <style>
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --text-dim: #8b949e;
-    --accent: #58a6ff;
-    --green: #3fb950;
-    --yellow: #d29922;
-    --red: #f85149;
-    --purple: #bc8cff;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    padding: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  h1 {
-    font-size: 28px;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  h1 span { font-size: 14px; color: var(--text-dim); font-weight: normal; }
-  .subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+:root {
+  --bg: #09090b; --card: #111114; --card2: #18181b;
+  --border: #27272a; --accent: #6366f1; --accent2: #8b5cf6;
+  --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #3b82f6;
+  --text: #fafafa; --muted: #71717a; --dim: #3f3f46;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,system-ui,sans-serif; }
 
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 16px; margin-bottom: 16px; }
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px;
-  }
-  .card h2 {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .card-full { grid-column: 1 / -1; }
+/* Header */
+.header { padding:2rem 2.5rem; border-bottom:1px solid var(--border); }
+.header h1 { font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; }
+.header h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header p { color:var(--muted); font-size:0.85rem; margin-top:0.3rem; }
 
-  /* Stats */
-  .stat-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .stat-row:last-child { border: none; }
-  .stat-name { font-weight: 500; min-width: 120px; }
-  .stat-count { color: var(--accent); font-weight: 600; min-width: 80px; text-align: right; }
-  .stat-bar-wrap {
-    flex: 1;
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
-    margin: 0 12px;
-    overflow: hidden;
-  }
-  .stat-bar {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.5s ease;
-  }
-  .stat-pct { font-size: 12px; color: var(--text-dim); min-width: 50px; text-align: right; }
+/* SF2 Status */
+.sf2-status { padding:0.5rem 2.5rem; background:var(--card); border-bottom:1px solid var(--border); font-size:0.8rem; display:flex; align-items:center; gap:0.5rem; }
+.sf2-dot { width:8px; height:8px; border-radius:50%; }
+.sf2-dot.loading { background:var(--yellow); animation:pulse 1s infinite; }
+.sf2-dot.ready { background:var(--green); }
+.sf2-dot.error { background:var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* Quality */
-  .quality-grid { display: flex; gap: 12px; }
-  .quality-box {
-    flex: 1;
-    text-align: center;
-    padding: 16px 8px;
-    border-radius: 8px;
-    background: var(--bg);
-  }
-  .quality-box .num { font-size: 24px; font-weight: 700; }
-  .quality-box .label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+/* Version Tabs */
+.tabs { display:flex; padding:0 2.5rem; border-bottom:1px solid var(--border); overflow-x:auto; }
+.tab { background:none; border:none; color:var(--muted); padding:0.9rem 1.5rem; font-size:0.9rem; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
 
-  /* Kanban */
-  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .kanban-col { background: var(--bg); border-radius: 8px; padding: 12px; }
-  .kanban-col h3 {
-    font-size: 13px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid;
-  }
-  .kanban-col.done h3 { border-color: var(--green); color: var(--green); }
-  .kanban-col.progress h3 { border-color: var(--yellow); color: var(--yellow); }
-  .kanban-col.todo h3 { border-color: var(--accent); color: var(--accent); }
-  .kanban-item {
-    font-size: 13px;
-    padding: 8px;
-    margin-bottom: 6px;
-    background: var(--surface);
-    border-radius: 6px;
-    border-left: 3px solid;
-    line-height: 1.4;
-  }
-  .kanban-col.done .kanban-item { border-color: var(--green); opacity: 0.6; }
-  .kanban-col.progress .kanban-item { border-color: var(--yellow); }
-  .kanban-col.todo .kanban-item { border-color: var(--accent); }
+/* Main */
+main { padding:2rem 2.5rem; max-width:1400px; margin:0 auto; }
 
-  /* Files */
-  .file-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.15s;
-  }
-  .file-row:hover { background: var(--bg); }
-  .file-name { font-weight: 500; font-size: 14px; }
-  .file-desc { font-size: 12px; color: var(--text-dim); }
-  .file-size { font-size: 12px; color: var(--text-dim); }
+/* Version Section */
+.version-section { margin-bottom:3rem; }
+.version-header { display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.version-info { flex:1; min-width:300px; }
+.version-info h2 { font-size:1.3rem; font-weight:700; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.75rem; }
+.version-badge { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:999px; font-weight:600; }
+.version-badge.success { background:rgba(34,197,94,0.15); color:var(--green); }
+.version-badge.partial { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.version-badge.fail { background:rgba(239,68,68,0.15); color:var(--red); }
 
-  /* Download status */
-  .dl-status {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: var(--bg);
-    border-radius: 8px;
-    margin-bottom: 8px;
-  }
-  .dl-name { font-weight: 600; min-width: 100px; }
-  .dl-bar-wrap {
-    flex: 1;
-    height: 12px;
-    background: var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .dl-bar {
-    height: 100%;
-    border-radius: 6px;
-    background: linear-gradient(90deg, var(--accent), var(--purple));
-    transition: width 0.5s ease;
-  }
-  .dl-text { font-size: 13px; color: var(--text-dim); min-width: 120px; text-align: right; }
+.training-details { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem 1.25rem; font-size:0.82rem; line-height:1.7; }
+.training-details .label { color:var(--muted); display:inline-block; min-width:100px; }
+.training-details .highlight { color:var(--accent); font-weight:600; }
+.training-details .warn { color:var(--yellow); }
+.training-details .good { color:var(--green); }
 
-  /* Modal */
-  .modal-overlay {
-    display: none;
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 100;
-    justify-content: center;
-    align-items: center;
-  }
-  .modal-overlay.active { display: flex; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    width: 80%;
-    max-width: 900px;
-    max-height: 80vh;
-    overflow: auto;
-    padding: 24px;
-  }
-  .modal h3 { margin-bottom: 12px; color: var(--accent); }
-  .modal pre {
-    background: var(--bg);
-    padding: 16px;
-    border-radius: 8px;
-    overflow-x: auto;
-    font-size: 13px;
-    line-height: 1.5;
-    white-space: pre-wrap;
-  }
-  .modal-close {
-    float: right;
-    background: none;
-    border: none;
-    color: var(--text-dim);
-    font-size: 20px;
-    cursor: pointer;
-  }
+.version-stats { display:flex; gap:1rem; flex-wrap:wrap; }
+.stat-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.75rem 1rem; min-width:120px; text-align:center; }
+.stat-box .num { font-size:1.5rem; font-weight:800; }
+.stat-box .lbl { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.1rem; }
 
-  .refresh-btn {
-    background: var(--accent);
-    color: #000;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .refresh-btn:hover { opacity: 0.8; }
+/* Sample Grid */
+.sample-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1rem; }
 
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 24px;
-  }
-  .last-update { font-size: 12px; color: var(--text-dim); margin-top: 8px; }
+.sample-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; transition:all 0.2s; }
+.sample-card:hover { border-color:var(--dim); }
+.sample-card.playing { border-color:var(--green); box-shadow:0 0 24px rgba(34,197,94,0.1); }
 
-  /* Milestone */
-  .milestone-track {
-    display: flex;
-    align-items: flex-start;
-    position: relative;
-    margin: 0 0 32px;
-    padding: 0 8px;
-  }
-  .milestone-track::before {
-    content: '';
-    position: absolute;
-    top: 18px;
-    left: 24px;
-    right: 24px;
-    height: 3px;
-    background: var(--border);
-    z-index: 0;
-  }
-  .milestone-track .ms-progress {
-    position: absolute;
-    top: 18px;
-    left: 24px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--green), var(--accent));
-    z-index: 1;
-    border-radius: 2px;
-    transition: width 0.6s ease;
-  }
-  .ms-step {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-  }
-  .ms-dot {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 3px solid var(--border);
-    background: var(--bg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    transition: all 0.3s;
-  }
-  .ms-step.done .ms-dot { border-color: var(--green); background: var(--green); color: #000; }
-  .ms-step.active .ms-dot { border-color: var(--accent); background: var(--accent); color: #000; box-shadow: 0 0 12px var(--accent); }
-  .ms-step.future .ms-dot { border-color: var(--border); color: var(--text-dim); }
-  .ms-label { font-size: 11px; text-align: center; max-width: 100px; line-height: 1.3; }
-  .ms-step.done .ms-label { color: var(--green); }
-  .ms-step.active .ms-label { color: var(--accent); font-weight: 600; }
-  .ms-step.future .ms-label { color: var(--text-dim); }
-  .ms-sub {
-    font-size: 10px;
-    color: var(--text-dim);
-    text-align: center;
-    margin-top: 2px;
-  }
-  .ms-step.active .ms-sub { color: var(--yellow); }
+.sample-top { padding:0.75rem 1rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+.sample-top h4 { font-size:0.85rem; font-weight:600; }
+.sample-tags { display:flex; gap:0.3rem; }
+.tag { font-size:0.6rem; padding:0.1rem 0.4rem; border-radius:3px; background:rgba(99,102,241,0.12); color:var(--accent); }
 
-  @media (max-width: 900px) {
-    .kanban { grid-template-columns: 1fr; }
-    .grid { grid-template-columns: 1fr; }
-    .milestone-track { flex-wrap: wrap; gap: 8px; }
-    .ms-step { min-width: 80px; }
-  }
+.sample-metrics { display:grid; grid-template-columns:repeat(4,1fr); }
+.sm { padding:0.5rem 0.6rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+.sm:nth-child(4n) { border-right:none; }
+.sm .sl { font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+.sm .sv { font-size:0.95rem; font-weight:700; margin-top:0.1rem; }
+.sv.good { color:var(--green); } .sv.warn { color:var(--yellow); } .sv.bad { color:var(--red); }
+
+.piano-roll { height:64px; background:#07070a; position:relative; }
+.piano-roll canvas { width:100%; height:100%; }
+
+.player-bar { padding:0.6rem 1rem; display:flex; align-items:center; gap:0.6rem; }
+.pbtn { width:32px; height:32px; border-radius:50%; border:2px solid var(--accent); background:none; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+.pbtn:hover { background:var(--accent); color:white; }
+.pbtn.on { background:var(--green); border-color:var(--green); color:white; }
+.pbtn svg { width:12px; height:12px; }
+.pbar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; cursor:pointer; position:relative; }
+.pfill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; width:0; }
+.ptime { font-size:0.7rem; color:var(--muted); min-width:60px; text-align:right; }
+
+/* Test suite sub-section */
+.sub-section { margin-top:1.5rem; }
+.sub-title { font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:0.75rem; padding-left:0.25rem; border-left:3px solid var(--accent); padding-left:0.75rem; }
+
+/* Architecture section */
+.arch-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; margin-bottom:2rem; }
+.arch-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; }
+.arch-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+.arch-card h3 .icon { font-size:1.2rem; }
+.token-list { list-style:none; padding:0; }
+.token-list li { padding:0.35rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; display:flex; justify-content:space-between; }
+.token-list li:last-child { border:none; }
+.token-list .tok-name { color:var(--accent); font-family:monospace; font-weight:600; }
+.token-list .tok-count { color:var(--muted); font-size:0.75rem; }
+.arch-flow { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin:0.5rem 0; }
+.arch-block { background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.8rem; font-size:0.8rem; text-align:center; }
+.arch-block.fixed { border-color:var(--blue); color:var(--blue); }
+.arch-block.trainable { border-color:var(--green); color:var(--green); }
+.arch-block.search { border-color:var(--yellow); color:var(--yellow); }
+.arch-block.cond { border-color:var(--accent); color:var(--accent); }
+.arch-arrow { color:var(--dim); font-size:1.2rem; }
+.arch-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; margin-top:0.75rem; }
+.arch-desc strong { color:var(--text); font-weight:600; }
+.arch-stat { display:inline-block; background:rgba(99,102,241,0.1); color:var(--accent); padding:0.15rem 0.5rem; border-radius:4px; font-size:0.75rem; margin:0.15rem 0.2rem; font-family:monospace; }
+.phase-tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:4px; font-size:0.7rem; font-weight:600; margin-left:0.5rem; }
+.phase-tag.current { background:rgba(34,197,94,0.15); color:var(--green); }
+.phase-tag.next { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.phase-tag.planned { background:rgba(99,102,241,0.1); color:var(--accent); }
+
+/* Embedding section */
+.emb-summary { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.emb-stat { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.75rem 1rem; text-align:center; }
+.emb-stat .ev { font-size:1.6rem; font-weight:800; }
+.emb-stat .el { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.15rem; }
+
+.tsne-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; position:relative; }
+.tsne-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.tsne-canvas { width:100%; height:500px; background:#07070a; border-radius:8px; cursor:crosshair; position:relative; }
+.tsne-canvas canvas { width:100%; height:100%; }
+.tsne-tooltip { position:absolute; background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.7rem; font-size:0.75rem; pointer-events:none; display:none; z-index:10; max-width:250px; line-height:1.5; }
+.tsne-legend { display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.75rem; }
+.tsne-legend-item { display:flex; align-items:center; gap:0.3rem; font-size:0.75rem; color:var(--muted); }
+.tsne-legend-dot { width:10px; height:10px; border-radius:50%; }
+
+.sim-section { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.sim-section h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.sim-pair { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+.sim-pair:last-child { border:none; }
+.sim-score { background:rgba(34,197,94,0.15); color:var(--green); padding:0.2rem 0.5rem; border-radius:4px; font-weight:700; font-family:monospace; font-size:0.8rem; min-width:60px; text-align:center; }
+.sim-files { color:var(--muted); }
+.sim-files strong { color:var(--text); }
+
+.file-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+.file-table th { text-align:left; padding:0.5rem 0.6rem; border-bottom:2px solid var(--border); color:var(--muted); text-transform:uppercase; font-size:0.65rem; letter-spacing:0.05em; }
+.file-table td { padding:0.45rem 0.6rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+.file-table tr:hover { background:rgba(99,102,241,0.05); }
+.file-table .fname { color:var(--accent); font-family:monospace; font-weight:600; }
+
+.dist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.dist-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.dist-card h4 { font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:var(--muted); }
+.dist-bar-wrap { display:flex; align-items:center; gap:0.4rem; margin:0.2rem 0; }
+.dist-label { font-size:0.7rem; color:var(--muted); min-width:50px; text-align:right; }
+.dist-bar { height:14px; border-radius:3px; min-width:2px; }
+.dist-val { font-size:0.7rem; color:var(--muted); min-width:30px; }
+
+.analysis-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.analysis-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.analysis-text { font-size:0.82rem; color:var(--muted); line-height:1.7; }
+.analysis-text strong { color:var(--text); }
+.analysis-text .insight { color:var(--accent); font-weight:600; }
+
+/* Clustering section */
+.cluster-section-title { font-size:1.1rem; font-weight:700; margin:2rem 0 1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.5rem; }
+.cluster-section-title .csub { font-size:0.75rem; color:var(--muted); font-weight:400; }
+
+.k-chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.k-chart-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.k-chart-canvas { width:100%; height:220px; background:#07070a; border-radius:8px; }
+.k-chart-canvas canvas { width:100%; height:100%; }
+
+.cluster-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.cluster-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; transition:border-color 0.2s; }
+.cluster-card:hover { border-color:var(--dim); }
+.cluster-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; }
+.cluster-card-head h4 { font-size:0.85rem; font-weight:700; }
+.cluster-card-head .cl-size { font-size:0.75rem; color:var(--muted); }
+.cluster-tags { display:flex; gap:0.3rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+.cl-tag { font-size:0.6rem; padding:0.15rem 0.45rem; border-radius:3px; font-weight:600; }
+.cl-tag.reg-alto { background:rgba(99,102,241,0.15); color:var(--accent); }
+.cl-tag.reg-tenor { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.cl-tag.dyn-p { background:rgba(59,130,246,0.15); color:var(--blue); }
+.cl-tag.dyn-mp { background:rgba(34,197,94,0.15); color:var(--green); }
+.cl-tag.dyn-mf { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.cl-tag.dyn-f { background:rgba(239,68,68,0.15); color:var(--red); }
+.cl-tag.tex { background:rgba(139,92,246,0.12); color:var(--accent2); }
+.cl-tag.span-tag { background:rgba(255,255,255,0.06); color:var(--muted); }
+.cluster-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.3rem; margin-bottom:0.5rem; }
+.cl-st { text-align:center; }
+.cl-st .cl-sv { font-size:0.9rem; font-weight:700; }
+.cl-st .cl-sl { font-size:0.55rem; color:var(--muted); text-transform:uppercase; }
+.cluster-sources { font-size:0.7rem; color:var(--muted); line-height:1.5; }
+.cluster-sources strong { color:var(--text); font-weight:500; }
+
+.style-dist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.style-dist-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.style-dist-card h4 { font-size:0.85rem; font-weight:600; margin-bottom:0.6rem; color:var(--muted); }
+.hbar-wrap { display:flex; align-items:center; gap:0.5rem; margin:0.3rem 0; }
+.hbar-label { font-size:0.75rem; min-width:80px; text-align:right; color:var(--text); }
+.hbar { height:16px; border-radius:3px; min-width:2px; transition:width 0.3s; }
+.hbar-val { font-size:0.7rem; color:var(--muted); min-width:30px; }
+
+/* Evaluation section */
+.eval-section { margin-top:1rem; padding:1rem; background:var(--card2); border-radius:8px; border:1px solid var(--border); }
+.eval-summary { font-size:0.9rem; color:var(--text); margin-bottom:0.75rem; line-height:1.5; font-weight:500; }
+.eval-cols { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.75rem; }
+.eval-col ul { margin:0; padding-left:1.2rem; font-size:0.8rem; color:var(--muted); line-height:1.6; }
+.eval-col li { margin-bottom:0.2rem; }
+.eval-col-title { font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.05em; }
+.good-text { color:var(--green); }
+.warn-text { color:var(--yellow); }
+.eval-verdict { font-size:0.85rem; color:var(--text); line-height:1.5; padding-top:0.5rem; border-top:1px solid var(--border); }
+.eval-lesson { font-size:0.8rem; color:var(--accent); margin-top:0.4rem; line-height:1.4; font-style:italic; }
+
+@media(max-width:768px) {
+  .eval-cols { grid-template-columns:1fr; }
+  .header,main,.tabs,.sf2-status { padding-left:1rem; padding-right:1rem; }
+  .sample-grid { grid-template-columns:1fr; }
+  .sample-metrics { grid-template-columns:repeat(2,1fr); }
+}
 </style>
 </head>
 <body>
 
-<div class="header-row">
-  <div>
-    <h1>Liszt <span>AI Piano Engine</span></h1>
-    <div class="subtitle">"사람처럼 연주하는 AI 피아노" — 데이터 수집 → 파인튜닝 → 렌더링</div>
-  </div>
-  <div style="text-align: right">
-    <button class="refresh-btn" onclick="loadAll()">Refresh</button>
-    <div class="last-update" id="lastUpdate"></div>
-  </div>
+<div class="header">
+  <h1><span>Liszt</span> Engine Lab</h1>
+  <p>Piano AI Engine Training History & Generated Samples</p>
 </div>
-
-<!-- 마일스톤 -->
-<div class="card" style="margin-bottom: 16px">
-  <h2>Project Milestones</h2>
-  <div class="milestone-track" id="milestoneTrack"></div>
+<div class="sf2-status">
+  <div class="sf2-dot loading" id="sf2dot"></div>
+  <span id="sf2text">Loading Grand Piano SoundFont...</span>
 </div>
-
-<!-- 데이터셋 현황 -->
-<div class="grid">
-  <div class="card card-full">
-    <h2>Dataset Collection</h2>
-    <div id="statsContainer"></div>
-  </div>
-</div>
-
-<!-- 품질 + 다운로드 -->
-<div class="grid">
-  <div class="card">
-    <h2>Quality Distribution</h2>
-    <div class="quality-grid" id="qualityContainer"></div>
-  </div>
-  <div class="card">
-    <h2>Active Downloads</h2>
-    <div id="downloadsContainer"></div>
-  </div>
-</div>
-
-<!-- 칸반 -->
-<div class="grid">
-  <div class="card card-full">
-    <h2>Kanban Board</h2>
-    <div class="kanban" id="kanbanContainer"></div>
-  </div>
-</div>
-
-<!-- 파일 -->
-<div class="grid">
-  <div class="card card-full">
-    <h2>Project Files</h2>
-    <div id="filesContainer"></div>
-  </div>
-</div>
-
-<!-- 모달 -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('active')">&times;</button>
-    <h3 id="modalTitle"></h3>
-    <pre id="modalContent"></pre>
-  </div>
-</div>
+<div class="tabs" id="tabs"></div>
+<main id="main"></main>
 
 <script>
-const API = window.location.origin;
+// === DATA ===
+const VERSIONS = {
+  baseline: {
+    title: 'Baseline (Aria)',
+    badge: 'reference', badgeClass: '',
+    training: {
+      model: 'aria-medium-base (원본)',
+      data: '사전학습 ~118만곡 (Aria-MIDI)',
+      epochs: '-',
+      val_loss: '-',
+      strategy: 'EleutherAI 공개 체크포인트 (파인튜닝 전)',
+      result: '기준선. 다양한 temp/토큰 수에서 생성 테스트',
+    },
+    evaluation: {
+      summary: '기본 화성학과 피아노 패턴은 학습되어 있으나, 음악적 구조와 다이나믹이 부족.',
+      strengths: ['MIDI 토큰 문법 이해', '기본적인 음 배치 가능', 'temp에 따른 다양성 변화 확인'],
+      weaknesses: ['낮은 temp(0.5~0.7)에서 극심한 반복 (rep 95~99%)', '음역이 좁음 (2~16 unique pitches)', '구조/전개 없이 패턴 반복', '다이나믹 표현 단조로움'],
+      verdict: '파인튜닝 없이는 음악적 결과물 생성 불가. 학습의 필요성을 명확히 보여주는 기준선.'
+    }
+  },
+  v1: {
+    title: 'Liszt v1',
+    badge: 'foundation', badgeClass: 'success',
+    training: {
+      model: 'aria-medium → fine-tune',
+      data: '1,433,433곡 전체 큐레이션 셋 (17.4GB)',
+      epochs: '3 epochs, bs=1, grad_acc=8, bf16, seq_len=8192',
+      val_loss: '3.33 → 1.94',
+      strategy: '전체 데이터로 기초 체력 확보',
+      result: '다이나믹/음역 개선. 반복 문제 + 구조 부재 + 에튀드 과다학습',
+      duration: '6시간',
+    },
+    evaluation: {
+      summary: '143만곡 학습으로 음악적 기초 체력 대폭 향상. 그러나 에튀드 데이터 과다로 기계적 반복 패턴 발생.',
+      strengths: ['음역 확대 (45 unique pitches)', '다이나믹 범위 개선 (vel_range 60~90)', 'val_loss 3.33→1.94 대폭 하락', '긴 시퀀스(2048+tok) 생성 안정적'],
+      weaknesses: ['반복률 35~71% — 에튀드 스케일 패턴 과다 학습', '구조적 전개 부재 (A-B-A 같은 형식 없음)', '일부 샘플에서 음역이 좁아지는 현상'],
+      verdict: '기초 모델로서 성공. 전체 데이터의 양이 화성학/연주 테크닉 기반을 만들어줌. 하지만 데이터 품질 필터링의 중요성을 보여줌.',
+      lesson: '대량 학습은 기초 체력에 좋지만, 데이터 내 에튀드/스케일 비중이 높으면 반복 패턴을 학습하게 됨.'
+    }
+  },
+  v2: {
+    title: 'Liszt v2',
+    badge: 'overfitting', badgeClass: 'fail',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습',
+      data: 'tier1 3,218곡 (ATEPP+MAESTRO+ASAP, train 3,057/val 161)',
+      epochs: '5 epochs, spc=500, LR=3e-4',
+      val_loss: '1.7419',
+      strategy: 'v1 위에 프로 연주 데이터로 2차 파인튜닝',
+      result: '과적합 — v1보다 다이나믹/다양성 퇴보. 3,218곡 5epochs는 과다',
+    },
+    evaluation: {
+      summary: '적은 데이터(3,218곡)에 5 epochs + 높은 LR(3e-4)은 과적합의 교과서적 사례.',
+      strengths: ['val_loss 1.7419로 수치상 최저', 'rep_8gram이 일부 샘플에서 낮음 (0~4.5%)'],
+      weaknesses: ['다이나믹 범위 v1 대비 퇴보 (vel_range 0~70 불안정)', 'unique pitches 감소 (16~40)', '일부 샘플 매우 짧게 끊김 (v2_sample_3: 12.9초)', '학습 데이터를 암기한 것에 가까움'],
+      verdict: '실패. val_loss가 낮아도 생성 품질은 하락할 수 있다는 교훈. 과적합 시 다양성이 사라짐.',
+      lesson: '소규모 고품질 데이터로 파인튜닝 시: epochs를 줄이고(1~2), LR을 낮춰야(1/5 이하) 과적합 방지.'
+    }
+  },
+  v3: {
+    title: 'Liszt v3',
+    badge: 'previous best', badgeClass: 'partial',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습',
+      data: 'tier1 3,218곡 (v2와 동일)',
+      epochs: '1 epoch, LR=6e-5 (v2의 1/5)',
+      val_loss: '1.7779',
+      strategy: '같은 tier1이지만 1 epoch + 낮은 LR → 과적합 방지',
+      result: 'unique pitches/다이나믹 v1 수준 복원. rep_penalty=1.2로 반복 해결',
+    },
+    evaluation: {
+      summary: 'v2의 교훈을 반영해 1 epoch + 낮은 LR로 과적합 방지 성공. rep_penalty=1.2 추가로 반복 문제까지 해결.',
+      strengths: ['unique pitches 54~60으로 v1 수준 복원', '다이나믹 범위 안정 (vel_range 50~60)', 'rep_penalty=1.2 적용 시 반복률 0~2%로 극적 개선', '좋은 샘플(0,1)은 음악적 완성도 높음'],
+      weaknesses: ['샘플 간 편차 큼 (sample_3: rep 87%, sample_4: rep 84% — penalty 미적용 시)', '구조적 전개는 여전히 부족', '프레이즈 단위 흐름보다 노트 단위 생성에 가까움'],
+      verdict: '현재 최선. 기초 체력(v1) + 프로 연주 감각(tier1 1epoch) + 반복 제어(rep_penalty)의 조합이 유효함.',
+      lesson: '생성 시 rep_penalty=1.2가 필수. 다음 단계는 프레이즈 단위 구조 학습 (RAG/LoRA 모듈화).'
+    }
+  },
+  v4: {
+    title: 'Liszt v4',
+    badge: 'style conditioning', badgeClass: 'success',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습 (augmented)',
+      data: 'tier1 3,218곡 × 5 augmentation ≈ 16K songs',
+      epochs: '10,500/15,491 steps (67.8%), LR=2e-5',
+      val_loss: '2.52 → 1.84 (trailing 1.73)',
+      strategy: '5x data augmentation + style prefix conditioning (baseline/chopin/liszt/beethoven/jazz)',
+      result: 'unique pitches 54~74, rep 0~4.8%, 스타일별 생성 차이 확인. 다양성+반복제어 동시 달성',
+      duration: '진행중 (67.8%)',
+    },
+    evaluation: {
+      summary: '5배 데이터 증강 + 스타일 프리픽스 컨디셔닝으로 다양성과 반복 제어를 동시 달성. 5개 스타일 각 3샘플 생성.',
+      strengths: ['unique pitches 54~74 — v3 대비 상한 크게 향상', 'rep_pct 0~4.8% — 대부분 0~2% 수준으로 안정', '5개 스타일별 뚜렷한 NPS 차이 (liszt 5.6 vs baseline 9.9)', 'loss 2.52→1.84, trailing 1.73으로 안정적 수렴 중', 'vel_mean 분포 다양 (54.7~90.0) — 다이나믹 표현력 확보', '67.8% 진행 시점에서도 충분히 음악적'],
+      weaknesses: ['chopin_nocturne sample_2에서 rep 4.8% — 스타일 내 편차 존재', '일부 baseline 샘플의 NPS가 높음 (10.5~10.8) — 빠르게 달리는 경향', 'liszt_etude의 unique pitches 편차 (53~74) — 안정화 필요', '아직 67.8% 학습 — 완료 후 재평가 필요'],
+      verdict: 'v3 대비 확실한 진보. 데이터 증강과 스타일 프리픽스가 유효함을 실증. 학습 완료 후 v4가 새로운 current best가 될 가능성 높음.',
+      lesson: '5x augmentation이 과적합 방지에 효과적. 스타일 프리픽스로 NPS/다이나믹 분포가 실제로 달라지는 것을 확인.'
+    }
+  },
+  v3_test: {
+    title: 'v3 Test Suite',
+    badge: '23 experiments', badgeClass: 'partial',
+    training: {
+      model: 'Liszt v3 체크포인트',
+      data: '프롬프트/파라미터/이어쓰기/길이 4개 카테고리',
+      epochs: '-',
+      val_loss: '-',
+      strategy: '종합 테스트: prefix 효과, 최적 파라미터, MIDI 이어쓰기, 8192토큰 대곡',
+      result: 'prefix 작동 확인, rep_penalty=1.2 최적, 8192tok(3.5분) 생성 가능',
+    },
+    evaluation: {
+      summary: '23개 실험으로 v3의 능력과 한계를 체계적으로 검증. 프롬프트/파라미터/이어쓰기/길이 4개 축 탐색 완료.',
+      strengths: ['composer prefix (bach, chopin, liszt 등) 실제 작동 확인', 'genre prefix (jazz, classical) 스타일 차이 생성', 'temp=0.95 + rep_penalty=1.2가 최적 조합으로 확정', '8192 토큰(약 3.5분 대곡) 안정적 생성 가능', 'MIDI 이어쓰기(continuation) 기능 정상 동작'],
+      weaknesses: ['prefix 효과가 미묘함 — 극적인 스타일 차이까진 아님', 'heavy_rep(1.5)는 오히려 음악성 저하', 'faithful continuation은 원곡 복제에 가까움', 'short(512tok)은 너무 짧아 음악적 전개 불가'],
+      verdict: '엔진의 현재 능력치를 정량화한 중요한 실험. prefix는 방향을 잡아주지만, 깊은 스타일 전이에는 LoRA/클러스터링이 필요함을 확인.',
+      lesson: '다음 단계: aria-medium-embedding으로 프레이즈 벡터화 → 클러스터링 → 새 conditioning 토큰 설계.'
+    }
+  }
+};
 
-function fmt(n) {
-  return n ? n.toLocaleString() : '0';
+let allSamples = {};
+let testSuiteReport = {};
+let embeddingData = null;
+let currentPlayer = null;
+let audioCtx = null;
+let sfSynth = null;
+let sfReady = false;
+
+// === SF2 LOADING ===
+async function loadSF2() {
+  const dot = document.getElementById('sf2dot');
+  const txt = document.getElementById('sf2text');
+  try {
+    audioCtx = new AudioContext({ sampleRate: 44100 });
+    sfSynth = new JSSynth.AudioWorkletNodeSynthesizer();
+    await sfSynth.createAudioNode(audioCtx);
+    sfSynth.connect(audioCtx.destination);
+
+    const sf2Resp = await fetch('piano.sf2');
+    const sf2Buf = await sf2Resp.arrayBuffer();
+    await sfSynth.loadSFont(sf2Buf);
+    sfSynth.midiProgramSelect(0, 0, 0, 0); // Grand Piano
+
+    sfReady = true;
+    dot.className = 'sf2-dot ready';
+    txt.textContent = 'Grand Piano SoundFont loaded';
+  } catch(e) {
+    console.error('SF2 load error:', e);
+    // Fallback: Web Audio API oscillator synth
+    if (!audioCtx) audioCtx = new AudioContext({ sampleRate: 44100 });
+    sfReady = false;
+    useFallback = true;
+    dot.className = 'sf2-dot ready';
+    txt.textContent = 'Web Audio Synth (piano SF2 unavailable)';
+  }
 }
 
-function barColor(pct) {
-  if (pct >= 90) return 'var(--green)';
-  if (pct >= 50) return 'var(--yellow)';
-  if (pct > 0) return 'var(--accent)';
-  return 'var(--red)';
+let useFallback = false;
+function fallbackNoteOn(note, velocity, time) {
+  if (!audioCtx) return;
+  const freq = 440 * Math.pow(2, (note - 69) / 12);
+  const gain = audioCtx.createGain();
+  const osc = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+  osc.type = 'sine';
+  osc2.type = 'triangle';
+  osc.frequency.value = freq;
+  osc2.frequency.value = freq * 2;
+  const vol = (velocity / 127) * 0.15;
+  gain.gain.setValueAtTime(vol, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 2);
+  osc.connect(gain);
+  osc2.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(time);
+  osc2.start(time);
+  osc.stop(time + 2.5);
+  osc2.stop(time + 2.5);
 }
 
-async function loadStats() {
-  const res = await fetch(`${API}/api/stats`);
-  const data = await res.json();
-  const el = document.getElementById('statsContainer');
+// === MIDI PLAYBACK ===
+let playbackTimer = null;
+let playbackStart = 0;
+let playbackDuration = 0;
+let scheduledNotes = [];
 
-  el.innerHTML = data.sources.map(s => `
-    <div class="stat-row">
-      <span class="stat-name">${s.source}</span>
-      <span class="stat-count">${fmt(s.count)}</span>
-      <div class="stat-bar-wrap">
-        <div class="stat-bar" style="width: ${Math.min(s.progress_pct, 100)}%; background: ${barColor(s.progress_pct)}"></div>
+async function togglePlay(cardId, midiPath) {
+  const card = document.getElementById(cardId);
+  if (currentPlayer === cardId) { stopPlay(); return; }
+  if (currentPlayer) stopPlay();
+
+  if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+
+  try {
+    const midiData = await Midi.fromUrl(midiPath);
+    const notes = midiData.tracks.flatMap(t => t.notes);
+    if (!notes.length) return;
+
+    playbackDuration = Math.max(...notes.map(n => n.time + n.duration));
+    currentPlayer = cardId;
+    card.classList.add('playing');
+    const btn = card.querySelector('.pbtn');
+    btn.classList.add('on');
+    btn.innerHTML = pauseIcon;
+
+    playbackStart = audioCtx.currentTime;
+    if (sfReady) {
+      for (const note of notes) {
+        const vel = Math.round(note.velocity * 127);
+        scheduledNotes.push(
+          setTimeout(() => sfSynth.midiNoteOn(0, note.midi, vel), note.time * 1000),
+          setTimeout(() => sfSynth.midiNoteOff(0, note.midi), (note.time + note.duration) * 1000)
+        );
+      }
+    } else if (useFallback) {
+      for (const note of notes) {
+        const vel = Math.round(note.velocity * 127);
+        scheduledNotes.push(
+          setTimeout(() => fallbackNoteOn(note.midi, vel, audioCtx.currentTime), note.time * 1000)
+        );
+      }
+    }
+
+    const progEl = document.getElementById('prog-' + cardId);
+    const timeEl = document.getElementById('time-' + cardId);
+    const update = () => {
+      if (currentPlayer !== cardId) return;
+      const elapsed = audioCtx.currentTime - playbackStart;
+      const pct = Math.min(100, (elapsed / playbackDuration) * 100);
+      progEl.style.width = pct + '%';
+      timeEl.textContent = fmtTime(elapsed) + ' / ' + fmtTime(playbackDuration);
+      if (elapsed < playbackDuration + 1) playbackTimer = requestAnimationFrame(update);
+      else stopPlay();
+    };
+    playbackTimer = requestAnimationFrame(update);
+  } catch(e) { console.error(e); }
+}
+
+function stopPlay() {
+  if (playbackTimer) cancelAnimationFrame(playbackTimer);
+  scheduledNotes.forEach(t => clearTimeout(t));
+  scheduledNotes = [];
+  if (sfReady) sfSynth.midiAllSoundsOff(0);
+  if (currentPlayer) {
+    const card = document.getElementById(currentPlayer);
+    if (card) {
+      card.classList.remove('playing');
+      const btn = card.querySelector('.pbtn');
+      btn.classList.remove('on');
+      btn.innerHTML = playIcon;
+    }
+  }
+  currentPlayer = null;
+}
+
+const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>';
+const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+function fmtTime(s) { return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+function repClass(r) { return r <= 1 ? 'good' : r <= 5 ? 'warn' : 'bad'; }
+
+// === RENDERING ===
+function renderTrainingInfo(ver) {
+  const t = ver.training;
+  const e = ver.evaluation;
+  let html = `<div class="training-details">
+    <div><span class="label">Model:</span> ${t.model}</div>
+    <div><span class="label">Data:</span> ${t.data}</div>
+    <div><span class="label">Training:</span> ${t.epochs}</div>
+    <div><span class="label">Val Loss:</span> <span class="${t.val_loss.includes&&t.val_loss.includes('→') ? 'good' : 'highlight'}">${t.val_loss}</span></div>
+    <div><span class="label">Strategy:</span> ${t.strategy}</div>
+    <div><span class="label">Result:</span> <span class="${ver.badgeClass === 'fail' ? 'warn' : 'good'}">${t.result}</span></div>
+    ${t.duration ? `<div><span class="label">Duration:</span> ${t.duration}</div>` : ''}
+  </div>`;
+  if (e) {
+    html += `<div class="eval-section">
+      <div class="eval-summary">${e.summary}</div>
+      <div class="eval-cols">
+        <div class="eval-col">
+          <div class="eval-col-title good-text">Strengths</div>
+          <ul>${e.strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>
+        </div>
+        <div class="eval-col">
+          <div class="eval-col-title warn-text">Weaknesses</div>
+          <ul>${e.weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>
+        </div>
       </div>
-      <span class="stat-pct">${s.progress_pct}%</span>
-    </div>
-  `).join('');
-
-  // Quality
-  const q = data.quality;
-  const qEl = document.getElementById('qualityContainer');
-  const total = q.total || 1;
-  qEl.innerHTML = `
-    <div class="quality-box" style="border: 1px solid var(--green)">
-      <div class="num" style="color: var(--green)">${fmt(q.high)}</div>
-      <div class="label">High Quality (≥0.7)</div>
-      <div class="label">${(q.high / total * 100).toFixed(1)}%</div>
-    </div>
-    <div class="quality-box" style="border: 1px solid var(--yellow)">
-      <div class="num" style="color: var(--yellow)">${fmt(q.medium)}</div>
-      <div class="label">Medium (0~0.7)</div>
-      <div class="label">${(q.medium / total * 100).toFixed(1)}%</div>
-    </div>
-    <div class="quality-box" style="border: 1px solid var(--red)">
-      <div class="num" style="color: var(--red)">${fmt(q.low)}</div>
-      <div class="label">Low (≤0)</div>
-      <div class="label">${(q.low / total * 100).toFixed(1)}%</div>
-    </div>
-    <div class="quality-box" style="border: 1px solid var(--text-dim)">
-      <div class="num">${fmt(total)}</div>
-      <div class="label">Total Files</div>
-      <div class="label">DB: ${data.db_size_mb}MB</div>
-    </div>
-  `;
-
-  document.getElementById('lastUpdate').textContent = `Updated: ${new Date(data.updated_at).toLocaleTimeString('ko-KR')}`;
-}
-
-async function loadDownloads() {
-  const res = await fetch(`${API}/api/downloads`);
-  const data = await res.json();
-  const el = document.getElementById('downloadsContainer');
-
-  let html = '';
-  if (data.bitmidi) {
-    html += `
-      <div class="dl-status">
-        <span class="dl-name">BitMIDI</span>
-        <div class="dl-bar-wrap">
-          <div class="dl-bar" style="width: ${data.bitmidi.pct}%"></div>
-        </div>
-        <span class="dl-text">${fmt(data.bitmidi.done)} / ${fmt(data.bitmidi.target)} (${data.bitmidi.pct}%)</span>
-      </div>`;
-  }
-  if (data.musescore) {
-    html += `
-      <div class="dl-status">
-        <span class="dl-name">MuseScore</span>
-        <div class="dl-bar-wrap">
-          <div class="dl-bar" style="width: 100%"></div>
-        </div>
-        <span class="dl-text">${fmt(data.musescore.done)} files (auto)</span>
-      </div>`;
-  }
-  if (data.bitmidi_log) {
-    html += `<div style="font-size:12px; color:var(--text-dim); margin-top:8px; font-family:monospace">
-      ${data.bitmidi_log.map(l => l.trim()).join('<br>')}
+      <div class="eval-verdict"><span class="label">Verdict:</span> ${e.verdict}</div>
+      ${e.lesson ? `<div class="eval-lesson"><span class="label">Lesson:</span> ${e.lesson}</div>` : ''}
     </div>`;
   }
-  el.innerHTML = html || '<div style="color:var(--text-dim)">No active downloads</div>';
+  return html;
 }
 
-async function loadKanban() {
-  const res = await fetch(`${API}/api/kanban`);
-  const data = await res.json();
-  const el = document.getElementById('kanbanContainer');
-
-  function renderItems(items, max) {
-    const show = items.slice(0, max || items.length);
-    let html = show.map(i => `<div class="kanban-item">${i.text}</div>`).join('');
-    if (items.length > (max || items.length)) {
-      html += `<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:4px">+${items.length - max} more</div>`;
-    }
-    return html;
-  }
-
-  el.innerHTML = `
-    <div class="kanban-col done">
-      <h3>Done (${data.done?.length || 0})</h3>
-      ${renderItems(data.done || [], 8)}
-    </div>
-    <div class="kanban-col progress">
-      <h3>In Progress (${data.in_progress?.length || 0})</h3>
-      ${renderItems(data.in_progress || [])}
-    </div>
-    <div class="kanban-col todo">
-      <h3>TODO (${(data.todo_data?.length || 0) + (data.todo_engine?.length || 0)})</h3>
-      ${renderItems([...(data.todo_data || []), ...(data.todo_engine || [])])}
-    </div>
-  `;
-}
-
-async function loadFiles() {
-  const res = await fetch(`${API}/api/files`);
-  const data = await res.json();
-  const el = document.getElementById('filesContainer');
-
-  el.innerHTML = data.map(f => `
-    <div class="file-row" onclick="openFile('${f.name}')">
-      <div>
-        <div class="file-name">${f.exists ? '📄' : '❌'} ${f.name}</div>
-        <div class="file-desc">${f.description}</div>
+function renderSampleCard(sample, midiPath, cardId) {
+  if (sample.error) return '';
+  return `
+    <div class="sample-card" id="${cardId}">
+      <div class="sample-top">
+        <h4>${sample.file}</h4>
       </div>
-      <div class="file-size">${f.size_kb} KB</div>
+      <div class="sample-metrics">
+        <div class="sm"><div class="sl">Notes</div><div class="sv">${sample.notes}</div></div>
+        <div class="sm"><div class="sl">Unique</div><div class="sv">${sample.unique_pitches||'-'}</div></div>
+        <div class="sm"><div class="sl">Rep%</div><div class="sv ${repClass(sample.rep_8gram||0)}">${sample.rep_8gram||0}%</div></div>
+        <div class="sm"><div class="sl">Duration</div><div class="sv">${fmtTime(sample.duration_sec||0)}</div></div>
+        <div class="sm"><div class="sl">Pitch Rng</div><div class="sv">${sample.pitch_range||'-'}</div></div>
+        <div class="sm"><div class="sl">Vel Rng</div><div class="sv">${sample.vel_range||'-'}</div></div>
+        <div class="sm"><div class="sl">Vel Mean</div><div class="sv">${sample.vel_mean||'-'}</div></div>
+        <div class="sm"><div class="sl">Size</div><div class="sv">${sample.file_size ? (sample.file_size/1024).toFixed(1)+'K' : '-'}</div></div>
+      </div>
+      <div class="piano-roll"><canvas id="cvs-${cardId}"></canvas></div>
+      <div class="player-bar">
+        <button class="pbtn" onclick="togglePlay('${cardId}','${midiPath}')">${playIcon}</button>
+        <div class="pbar"><div class="pfill" id="prog-${cardId}"></div></div>
+        <div class="ptime" id="time-${cardId}">0:00 / ${fmtTime(sample.duration_sec||0)}</div>
+      </div>
+    </div>`;
+}
+
+async function drawPianoRoll(canvasId, midiPath) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2,2);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  try {
+    const mid = await Midi.fromUrl(midiPath);
+    const notes = mid.tracks.flatMap(t => t.notes);
+    if (!notes.length) return;
+    const minP = Math.min(...notes.map(n=>n.midi));
+    const maxP = Math.max(...notes.map(n=>n.midi));
+    const maxT = Math.max(...notes.map(n=>n.time+n.duration));
+    const pr = maxP - minP + 1;
+    for (const n of notes) {
+      const x = (n.time/maxT)*w;
+      const nw = Math.max(1,(n.duration/maxT)*w);
+      const y = h - ((n.midi-minP+1)/pr)*h;
+      const nh = Math.max(1, h/pr);
+      const hue = 240 + n.velocity*60;
+      ctx.fillStyle = `hsla(${hue},80%,60%,${0.4+n.velocity*0.6})`;
+      ctx.fillRect(x,y,nw,nh);
+    }
+  } catch(e) {}
+}
+
+function renderVersion(vKey) {
+  const ver = VERSIONS[vKey];
+  const badgeCls = ver.badgeClass || '';
+  let html = `
+    <div class="version-section" id="sec-${vKey}">
+      <div class="version-header">
+        <div class="version-info">
+          <h2>${ver.title} <span class="version-badge ${badgeCls}">${ver.badge}</span></h2>
+          ${renderTrainingInfo(ver)}
+        </div>
+      </div>`;
+
+  if (vKey === 'v4') {
+    // V4: group samples by style prefix
+    const styles = {
+      'baseline': { label: 'Baseline (no style prefix)', avg: { notes: 677, unique_pitches: 58, nps: 9.9, rep_pct: 0.0 }},
+      'chopin': { label: 'Chopin Nocturne', avg: { notes: 677, unique_pitches: 68, nps: 9.2, rep_pct: 2.1 }},
+      'liszt': { label: 'Liszt Etude', avg: { notes: 674, unique_pitches: 60, nps: 5.6, rep_pct: 1.2 }},
+      'beethoven': { label: 'Beethoven Sonata', avg: { notes: 677, unique_pitches: 60, nps: 9.4, rep_pct: 0.5 }},
+      'jazz': { label: 'Jazz', avg: { notes: 675, unique_pitches: 61, nps: 7.1, rep_pct: 0.7 }},
+    };
+    // Summary stats row
+    html += `<div class="sub-section"><div class="sub-title">Style Comparison (Averages)</div>
+      <table class="file-table">
+        <tr><th>Style</th><th>Avg Notes</th><th>Avg Unique Pitches</th><th>Avg NPS</th><th>Avg Rep%</th></tr>
+        ${Object.entries(styles).map(([k,v]) => `<tr>
+          <td class="fname">${v.label}</td>
+          <td>${v.avg.notes}</td>
+          <td>${v.avg.unique_pitches}</td>
+          <td>${v.avg.nps}</td>
+          <td class="${repClass(v.avg.rep_pct)}">${v.avg.rep_pct}%</td>
+        </tr>`).join('')}
+      </table></div>`;
+    const samples = allSamples[vKey] || [];
+    for (const [styleKey, styleInfo] of Object.entries(styles)) {
+      const styleSamples = samples.filter(s => s.file.includes('_'+styleKey+'_'));
+      if (!styleSamples.length) continue;
+      html += `<div class="sub-section"><div class="sub-title">${styleInfo.label} (${styleSamples.length} samples)</div><div class="sample-grid">`;
+      for (const s of styleSamples) {
+        const cardId = ('v4-'+s.file).replace(/[\/\.]/g,'-');
+        const mpath = 'midi/v4/'+s.file;
+        html += renderSampleCard(s, mpath, cardId);
+      }
+      html += '</div></div>';
+    }
+  } else if (vKey === 'v3_test') {
+    // Test suite organized by category
+    const cats = {
+      '1_prompt': 'Prompt Variations',
+      '2_params': 'Parameter Tuning',
+      '3_continuation': 'MIDI Continuation',
+      '4_length': 'Generation Length',
+    };
+    for (const [catKey, catTitle] of Object.entries(cats)) {
+      const exps = Object.entries(testSuiteReport.experiments||{}).filter(([k])=>k.startsWith(catKey));
+      if (!exps.length) continue;
+      html += `<div class="sub-section"><div class="sub-title">${catTitle} (${exps.length} experiments)</div><div class="sample-grid">`;
+      for (const [expKey, expData] of exps) {
+        for (let i = 0; i < expData.samples.length; i++) {
+          const s = expData.samples[i];
+          const name = expKey.split('/')[1];
+          const cardId = ('ts-'+expKey+'-'+i).replace(/[\/\.]/g,'-');
+          const mpath = 'midi/'+expKey.replace(/\//g,'_') + '_' + s.file;
+          html += `
+            <div class="sample-card" id="${cardId}">
+              <div class="sample-top">
+                <h4>${name} / ${s.file}</h4>
+                <div class="sample-tags">
+                  ${expData.gen_params ? `<span class="tag">t=${expData.gen_params.temp}</span><span class="tag">rep=${expData.gen_params.rep_penalty}</span>` : ''}
+                </div>
+              </div>
+              <div class="sample-metrics">
+                <div class="sm"><div class="sl">Notes</div><div class="sv">${s.notes}</div></div>
+                <div class="sm"><div class="sl">Unique</div><div class="sv">${s.unique_pitches||'-'}</div></div>
+                <div class="sm"><div class="sl">Rep%</div><div class="sv ${repClass(s.rep_8gram||0)}">${s.rep_8gram||0}%</div></div>
+                <div class="sm"><div class="sl">Duration</div><div class="sv">${fmtTime(s.duration_sec||0)}</div></div>
+                <div class="sm"><div class="sl">Pitch Rng</div><div class="sv">${s.pitch_range||'-'}</div></div>
+                <div class="sm"><div class="sl">Vel Rng</div><div class="sv">${s.vel_range||'-'}</div></div>
+                <div class="sm"><div class="sl">Vel Mean</div><div class="sv">${s.vel_mean||'-'}</div></div>
+                <div class="sm"><div class="sl">Size</div><div class="sv">${s.file_size?(s.file_size/1024).toFixed(1)+'K':'-'}</div></div>
+              </div>
+              <div class="piano-roll"><canvas id="cvs-${cardId}"></canvas></div>
+              <div class="player-bar">
+                <button class="pbtn" onclick="togglePlay('${cardId}','${mpath}')">${playIcon}</button>
+                <div class="pbar"><div class="pfill" id="prog-${cardId}"></div></div>
+                <div class="ptime" id="time-${cardId}">0:00 / ${fmtTime(s.duration_sec||0)}</div>
+              </div>
+            </div>`;
+        }
+      }
+      html += '</div></div>';
+    }
+  } else {
+    // Regular version samples
+    const samples = allSamples[vKey] || [];
+    if (samples.length) {
+      html += '<div class="sample-grid">';
+      for (const s of samples) {
+        const cardId = (vKey+'-'+s.file).replace(/[\/\.]/g,'-');
+        const mpath = 'midi/'+vKey+'/'+s.file;
+        html += renderSampleCard(s, mpath, cardId);
+      }
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderArchitecture() {
+  return `
+  <div class="version-section">
+    <div class="version-info">
+      <h2>Modular Architecture <span class="phase-tag current">Phase 2 Active</span></h2>
     </div>
-  `).join('');
+
+    <div class="arch-grid">
+      <!-- Model Spec -->
+      <div class="arch-card">
+        <h3><span class="icon">🧠</span> Base Model — aria-medium</h3>
+        <div class="arch-desc">
+          <strong>Parameters:</strong> <span class="arch-stat">650M</span><br>
+          <strong>Hidden:</strong> <span class="arch-stat">1536-dim</span>
+          <strong>Layers:</strong> <span class="arch-stat">16</span>
+          <strong>Heads:</strong> <span class="arch-stat">24</span><br>
+          <strong>Max Seq:</strong> <span class="arch-stat">8192 tokens</span>
+          <strong>Vocab:</strong> <span class="arch-stat">17,727</span><br>
+          <strong>Embedding:</strong> <span class="arch-stat">512-dim (emb_head)</span><br><br>
+          Pre-trained on <strong>~118만곡</strong> (Aria-MIDI dataset).<br>
+          Fine-tuned: v1(143만곡 전체) → v3(tier1 3,218곡 1epoch).
+        </div>
+      </div>
+
+      <!-- Prefix Tokens: Composer -->
+      <div class="arch-card">
+        <h3><span class="icon">🎼</span> Prefix — Composer (12)</h3>
+        <ul class="token-list">
+          <li><span class="tok-name">composer_bach</span><span class="tok-count">J.S. Bach</span></li>
+          <li><span class="tok-name">composer_beethoven</span><span class="tok-count">Beethoven</span></li>
+          <li><span class="tok-name">composer_chopin</span><span class="tok-count">Chopin</span></li>
+          <li><span class="tok-name">composer_debussy</span><span class="tok-count">Debussy</span></li>
+          <li><span class="tok-name">composer_liszt</span><span class="tok-count">Liszt</span></li>
+          <li><span class="tok-name">composer_mozart</span><span class="tok-count">Mozart</span></li>
+          <li><span class="tok-name">composer_rachmaninoff</span><span class="tok-count">Rachmaninoff</span></li>
+          <li><span class="tok-name">composer_ravel</span><span class="tok-count">Ravel</span></li>
+          <li><span class="tok-name">composer_scarlatti</span><span class="tok-count">Scarlatti</span></li>
+          <li><span class="tok-name">composer_schubert</span><span class="tok-count">Schubert</span></li>
+          <li><span class="tok-name">composer_schumann</span><span class="tok-count">Schumann</span></li>
+          <li><span class="tok-name">composer_scriabin</span><span class="tok-count">Scriabin</span></li>
+        </ul>
+      </div>
+
+      <!-- Prefix Tokens: Form -->
+      <div class="arch-card">
+        <h3><span class="icon">📐</span> Prefix — Form (8)</h3>
+        <ul class="token-list">
+          <li><span class="tok-name">form_etude</span><span class="tok-count">연습곡</span></li>
+          <li><span class="tok-name">form_fugue</span><span class="tok-count">푸가</span></li>
+          <li><span class="tok-name">form_nocturne</span><span class="tok-count">녹턴</span></li>
+          <li><span class="tok-name">form_prelude</span><span class="tok-count">전주곡</span></li>
+          <li><span class="tok-name">form_rondo</span><span class="tok-count">론도</span></li>
+          <li><span class="tok-name">form_scherzo</span><span class="tok-count">스케르초</span></li>
+          <li><span class="tok-name">form_sonata</span><span class="tok-count">소나타</span></li>
+          <li><span class="tok-name">form_waltz</span><span class="tok-count">왈츠</span></li>
+        </ul>
+      </div>
+
+      <!-- Prefix Tokens: Genre + Instrument -->
+      <div class="arch-card">
+        <h3><span class="icon">🎹</span> Prefix — Genre & Instrument</h3>
+        <div class="arch-desc" style="margin-top:0"><strong>Genre (2)</strong></div>
+        <ul class="token-list">
+          <li><span class="tok-name">genre_classical</span><span class="tok-count">클래식</span></li>
+          <li><span class="tok-name">genre_jazz</span><span class="tok-count">재즈</span></li>
+        </ul>
+        <div class="arch-desc" style="margin-top:0.5rem"><strong>Instrument (11)</strong></div>
+        <ul class="token-list">
+          <li><span class="tok-name">instrument_piano</span><span class="tok-count">피아노</span></li>
+          <li><span class="tok-name">instrument_guitar</span><span class="tok-count">기타</span></li>
+          <li><span class="tok-name">instrument_violin</span><span class="tok-count">바이올린</span></li>
+          <li><span class="tok-name">instrument_cello</span><span class="tok-count">첼로</span></li>
+          <li><span class="tok-name">instrument_flute</span><span class="tok-count">플룻</span></li>
+          <li><span class="tok-name">instrument_organ</span><span class="tok-count">오르간</span></li>
+          <li><span class="tok-name">instrument_harp</span><span class="tok-count">하프</span></li>
+          <li><span class="tok-name">instrument_drums</span><span class="tok-count">드럼</span></li>
+          <li><span class="tok-name">instrument_bass</span><span class="tok-count">베이스</span></li>
+          <li><span class="tok-name">instrument_strings</span><span class="tok-count">현악 앙상블</span></li>
+          <li><span class="tok-name">instrument_brass</span><span class="tok-count">금관</span></li>
+        </ul>
+      </div>
+
+      <!-- Limitation & Solution -->
+      <div class="arch-card" style="grid-column:1/-1; border-color:var(--yellow);">
+        <h3><span class="icon">⚠️</span> 내장 프리픽스 한계 — 클래식 편향</h3>
+        <div class="arch-desc">
+          <strong>문제:</strong> Aria 모델의 내장 프리픽스는 <strong>클래식 위주</strong>. 작곡가 12명 전원 클래식, 장르는 classical/jazz 2개뿐.
+          Pop, R&B, Electronic, Hip-hop, Lo-fi, Neo-soul 등 현대 장르 <strong>전무</strong>.
+          Form도 소나타/푸가/왈츠 등 클래식 형식만 존재.<br><br>
+
+          <strong>해결 — 우리의 클러스터 프리픽스:</strong><br>
+          내장 토큰에 의존하지 않고, <strong>데이터에서 스타일을 자동 발견</strong>하는 방식으로 전환.
+          aria-medium-embedding(512차원)으로 프레이즈를 벡터화 → K-Means 클러스터링 →
+          음역(register) x 셈여림(dynamic) x 밀도(texture) x 음역폭(span) 조합으로 자동 프로파일링.<br><br>
+
+          <strong>확장 가능성:</strong><br>
+          &#8226; <strong>Splice 피아노 루프</strong> → MIDI 변환 → RAG에 추가하면 현대 장르 프레이즈 포함<br>
+          &#8226; <strong>MuseScore 수집 데이터</strong>(143만곡)에는 팝/재즈/OST/게임 등 다양한 장르 포함<br>
+          &#8226; 클러스터가 자동으로 "jazz voicing", "pop ballad pattern", "rhythmic groove" 등을 구분<br>
+          &#8226; 내장 프리픽스 33개 → 클러스터 프리픽스 <strong>50~100개</strong>로 스타일 해상도 대폭 향상
+        </div>
+      </div>
+
+      <!-- Modular Pipeline -->
+      <div class="arch-card" style="grid-column:1/-1">
+        <h3><span class="icon">🔧</span> Modular Pipeline — Base + LoRA + RAG + Cluster Prefix</h3>
+        <div class="arch-flow">
+          <div class="arch-block fixed">Base Model<br><small>650M (frozen)</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block trainable">LoRA Adapter<br><small>~50MB/style</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block search">RAG Search<br><small>FAISS 512-dim</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block cond">Cluster Prefix<br><small>K-Means tokens</small></div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-block" style="border-color:var(--green);color:var(--green)">Generation<br><small>Style-conditioned</small></div>
+        </div>
+        <div class="arch-desc" style="margin-top:1rem">
+          <strong>LoRA (Low-Rank Adaptation):</strong> 베이스 모델의 가중치를 동결하고, 작은 어댑터(~50MB)만 학습.
+          작곡가별/장르별 스타일을 독립적으로 학습 가능. "From Generality to Mastery" 논문에서
+          <strong>161~307곡</strong>이면 작곡가 스타일 LoRA 학습 충분함을 검증.
+          <span class="phase-tag next">Phase 2.5</span><br><br>
+
+          <strong>RAG (Retrieval-Augmented Generation):</strong> aria-medium-embedding으로 프레이즈를 512차원 벡터로 변환 →
+          FAISS 인덱스로 유사 프레이즈 검색. 생성 시 참고 프레이즈를 컨텍스트에 추가.
+          <span class="phase-tag current">Phase 2 진행중</span><br><br>
+
+          <strong>Cluster Prefix:</strong> K-Means로 프레이즈를 50~100개 스타일 클러스터로 분류.
+          각 클러스터를 새로운 conditioning 토큰으로 사용. register(음역) × dynamic(셈여림) × texture(밀도) 조합.
+          <span class="phase-tag current">Phase 2 진행중</span><br><br>
+
+          <strong>3가지 스타일 전이 비교 실험 (예정):</strong><br>
+          ① <strong>Prefix-only:</strong> 클러스터 토큰만으로 스타일 제어<br>
+          ② <strong>Prepend:</strong> RAG 검색된 프레이즈를 프롬프트 앞에 붙이기<br>
+          ③ <strong>Cluster-LoRA:</strong> 클러스터별 LoRA 학습 + 프리픽스 조합
+          <span class="phase-tag planned">Phase 3</span>
+        </div>
+      </div>
+
+      <!-- Phase 2.5: Keyscape + Splice -->
+      <div class="arch-card" style="grid-column:1/-1">
+        <h3><span class="icon">🎵</span> Phase 2.5 — Keyscape VST + Splice Integration</h3>
+        <div class="arch-desc">
+          <strong>Keyscape VST 렌더링:</strong> 현재 Web Audio/SF2 음질 한계 → Spectrasonics Keyscape VST3로 상용 수준 피아노 음질 확보.
+          Pedalboard(Python) 라이브러리로 MIDI → WAV 오프라인 렌더링 파이프라인 구축.
+          Keyscape에 내장된 아티큘레이션(해머, 릴리즈 노이즈 등)을 활용.
+          <span class="phase-tag next">설계 확정</span><br><br>
+
+          <strong>Splice 피아노 루프:</strong> Splice 회원 보유. 프로 연주자의 피아노 루프(청크 단위)를 MIDI 변환 후
+          RAG 데이터베이스에 추가. 실제 연주 아티큘레이션/그루브가 담긴 데이터로 RAG 품질 향상.
+          <span class="phase-tag next">설계 확정</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
-async function openFile(name) {
-  const res = await fetch(`${API}/api/file/${name}`);
-  const text = await res.text();
-  document.getElementById('modalTitle').textContent = name;
-  document.getElementById('modalContent').textContent = text;
-  document.getElementById('modalOverlay').classList.add('active');
+function renderEmbedding() {
+  if (!embeddingData) return '<div class="version-section"><p style="color:var(--muted)">Embedding data not loaded.</p></div>';
+  const d = embeddingData;
+  const s = d.stats;
+
+  // Version colors
+  const vColors = { 'v0 (base)':'#3b82f6', 'v1':'#22c55e', 'v2':'#ef4444', 'v3':'#eab308', 'unknown':'#71717a' };
+
+  // Histogram helper
+  function makeHistogram(values, bins=8, color='var(--accent)') {
+    const mn = Math.min(...values), mx = Math.max(...values);
+    const step = (mx - mn) / bins || 1;
+    const counts = Array(bins).fill(0);
+    values.forEach(v => { const b = Math.min(bins-1, Math.floor((v-mn)/step)); counts[b]++; });
+    const maxC = Math.max(...counts);
+    return counts.map((c,i) => {
+      const label = (mn + i*step).toFixed(1);
+      const pct = maxC ? (c/maxC*100) : 0;
+      return `<div class="dist-bar-wrap">
+        <span class="dist-label">${label}</span>
+        <div class="dist-bar" style="width:${pct}%;background:${color}"></div>
+        <span class="dist-val">${c}</span>
+      </div>`;
+    }).join('');
+  }
+
+  let html = `<div class="version-section">
+    <div class="version-info">
+      <h2>Phrase Embedding Analysis <span class="phase-tag current">Test Run</span></h2>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="emb-summary">
+      <div class="emb-stat"><div class="ev" style="color:var(--accent)">${d.total_phrases}</div><div class="el">Total Phrases</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--blue)">${d.total_files}</div><div class="el">MIDI Files</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--green)">${d.embedding_dim}</div><div class="el">Dimensions</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--yellow)">${s.duration.avg}s</div><div class="el">Avg Duration</div></div>
+      <div class="emb-stat"><div class="ev">${s.notes_per_phrase.avg}</div><div class="el">Avg Notes</div></div>
+      <div class="emb-stat"><div class="ev">${s.avg_pitch.avg}</div><div class="el">Avg Pitch</div></div>
+      <div class="emb-stat"><div class="ev">${s.avg_velocity.avg}</div><div class="el">Avg Velocity</div></div>
+      <div class="emb-stat"><div class="ev" style="color:${d.cosine_sim.avg > 0.3 ? 'var(--yellow)' : 'var(--green)'}">${d.cosine_sim.avg}</div><div class="el">Avg Similarity</div></div>
+    </div>
+
+    <!-- Distribution Charts -->
+    <div class="dist-grid">
+      <div class="dist-card">
+        <h4>Duration Distribution (sec)</h4>
+        ${makeHistogram(d.tsne.map(p=>p.duration), 8, 'var(--accent)')}
+      </div>
+      <div class="dist-card">
+        <h4>Notes per Phrase</h4>
+        ${makeHistogram(d.tsne.map(p=>p.num_notes), 8, 'var(--blue)')}
+      </div>
+      <div class="dist-card">
+        <h4>Average Pitch (MIDI)</h4>
+        ${makeHistogram(d.tsne.map(p=>p.avg_pitch), 8, 'var(--green)')}
+      </div>
+      <div class="dist-card">
+        <h4>Average Velocity</h4>
+        ${makeHistogram(d.tsne.map(p=>p.avg_velocity), 8, 'var(--yellow)')}
+      </div>
+    </div>
+
+    <!-- t-SNE Visualization -->
+    <div class="tsne-wrap">
+      <h3>t-SNE 2D Projection — 250 Phrases, Colored by Model Version</h3>
+      <div class="tsne-canvas" id="tsne-container">
+        <canvas id="tsne-cvs"></canvas>
+        <div class="tsne-tooltip" id="tsne-tip"></div>
+      </div>
+      <div class="tsne-legend">
+        ${Object.entries(vColors).map(([k,c]) => `<div class="tsne-legend-item"><div class="tsne-legend-dot" style="background:${c}"></div>${k}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Top Similar Pairs -->
+    <div class="sim-section">
+      <h3>Top 5 Most Similar Phrase Pairs (Cosine Similarity)</h3>
+      ${d.top_similar_pairs.map(p => `
+        <div class="sim-pair">
+          <span class="sim-score">${p.sim.toFixed(4)}</span>
+          <span class="sim-files"><strong>${p.file_i}</strong> phrase #${p.phrase_i} ↔ <strong>${p.file_j}</strong> phrase #${p.phrase_j}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Per-File Table -->
+    <div class="sim-section">
+      <h3>Per-File Breakdown</h3>
+      <table class="file-table">
+        <tr><th>File</th><th>Version</th><th>Phrases</th><th>Avg Duration</th><th>Avg Notes</th></tr>
+        ${d.per_file.map(f => `
+          <tr>
+            <td class="fname">${f.file}</td>
+            <td><span style="color:${vColors[f.version]||'#71717a'}">${f.version}</span></td>
+            <td>${f.phrases}</td>
+            <td>${f.avg_duration}s</td>
+            <td>${f.avg_notes}</td>
+          </tr>
+        `).join('')}
+      </table>
+    </div>
+
+    <!-- Analysis -->
+    <div class="analysis-card">
+      <h3>Analysis & Insights</h3>
+      <div class="analysis-text">
+        <strong>데이터 개요:</strong> Liszt 엔진의 생성 MIDI ${d.total_files}개에서 추출한 ${d.total_phrases}개 프레이즈를
+        aria-medium-embedding(${d.embedding_dim}차원)으로 임베딩한 결과입니다.<br><br>
+
+        <strong>임베딩 품질:</strong> 모든 벡터가 L2-normalized (norm=1.0).
+        코사인 유사도 범위 <span class="insight">${d.cosine_sim.min} ~ ${d.cosine_sim.max}</span>,
+        평균 <span class="insight">${d.cosine_sim.avg}</span>.
+        유사도가 1.0인 쌍이 존재 — 이는 같은 파일의 동일 프레이즈가 중복 등장한 것 (glob 패턴 중복, 추후 dedup 필요).<br><br>
+
+        <strong>프레이즈 분포:</strong> 평균 ${s.notes_per_phrase.avg}개 노트, 평균 ${s.duration.avg}초 길이.
+        7000토큰 대곡(gen_7000tok)에서 96개 프레이즈가 추출되어 가장 많은 비중을 차지.
+        평균 피치 ${s.avg_pitch.avg} (MIDI, ≈ D4~E4 근처), 평균 벨로시티 ${s.avg_velocity.avg}.<br><br>
+
+        <strong>버전별 특성 (t-SNE):</strong> t-SNE 시각화에서 같은 버전의 프레이즈들이 어떤 클러스터를 형성하는지 관찰 가능.
+        v0(base)와 v3(현재 최선)의 프레이즈가 얼마나 다른 영역을 차지하는지가 핵심 포인트.<br><br>
+
+        <strong>다음 단계:</strong><br>
+        &#8226; tier1 프로 연주 데이터 <span class="insight">13,444개 파일</span> → 본격 임베딩 (현재 전송 중)<br>
+        &#8226; K-Means 클러스터링 (k=50~100) → 스타일 자동 프로파일링<br>
+        &#8226; 클러스터별 대표 프레이즈 → 새 conditioning 토큰 후보<br>
+        &#8226; 3가지 스타일 전이 비교 실험: prefix-only vs prepend vs cluster-LoRA
+      </div>
+    </div>`;
+
+  // === Clustering Section ===
+  const cl = testSuiteReport.clustering;
+  if (cl && cl.profiles && cl.profiles.length > 0) {
+    const dynColors = { p:'var(--blue)', mp:'var(--green)', mf:'var(--yellow)', f:'var(--red)' };
+    const regColors = { alto:'var(--accent)', tenor:'var(--yellow)' };
+    const texColors = { dense:'#8b5cf6', moderate:'#3b82f6', virtuosic:'#ef4444', 'sparse/slow':'#71717a' };
+
+    // Sort by size descending, take top 20
+    const sorted = [...cl.profiles].sort((a,b) => b.size - a.size);
+    const top20 = sorted.slice(0, 20);
+
+    // Style distribution counts
+    const regCounts = {}, dynCounts = {}, texCounts = {}, spanCounts = {};
+    cl.profiles.forEach(p => {
+      regCounts[p.register] = (regCounts[p.register]||0) + 1;
+      dynCounts[p.dynamic] = (dynCounts[p.dynamic]||0) + 1;
+      texCounts[p.texture] = (texCounts[p.texture]||0) + 1;
+      spanCounts[p.span] = (spanCounts[p.span]||0) + 1;
+    });
+
+    function hbarChart(data, colorMap, defaultColor) {
+      const entries = Object.entries(data).sort((a,b) => b[1] - a[1]);
+      const maxVal = Math.max(...entries.map(e => e[1]));
+      return entries.map(([k,v]) => {
+        const pct = maxVal ? (v / maxVal * 100) : 0;
+        const col = (colorMap && colorMap[k]) || defaultColor || 'var(--accent)';
+        return '<div class="hbar-wrap">' +
+          '<span class="hbar-label">' + k + '</span>' +
+          '<div class="hbar" style="width:' + pct + '%;background:' + col + '"></div>' +
+          '<span class="hbar-val">' + v + '</span>' +
+        '</div>';
+      }).join('');
+    }
+
+    html += `
+    <!-- Clustering Results -->
+    <div class="cluster-section-title">
+      K-Means Clustering 결과 <span class="csub">— ${cl.total_phrases.toLocaleString()}개 프레이즈, K=${cl.k_optimal}</span>
+    </div>
+
+    <!-- K-value Search Chart -->
+    <div class="k-chart-wrap">
+      <h3>K-value 탐색 — Silhouette Score</h3>
+      <div class="k-chart-canvas">
+        <canvas id="k-chart-cvs"></canvas>
+      </div>
+    </div>
+
+    <!-- Style Distribution Summary -->
+    <div class="style-dist-grid">
+      <div class="style-dist-card">
+        <h4>Register 분포</h4>
+        ${hbarChart(regCounts, regColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Dynamic 분포</h4>
+        ${hbarChart(dynCounts, dynColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Texture 분포</h4>
+        ${hbarChart(texCounts, texColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Span 분포</h4>
+        ${hbarChart(spanCounts, null, 'var(--accent2)')}
+      </div>
+    </div>
+
+    <!-- Top 20 Clusters -->
+    <div class="analysis-card">
+      <h3>Top 20 Clusters (by size)</h3>
+    </div>
+    <div class="cluster-grid">
+      ${top20.map(p => {
+        const dynClass = 'dyn-' + p.dynamic;
+        const regClass = 'reg-' + p.register;
+        return '<div class="cluster-card" style="border-left:3px solid ' + (dynColors[p.dynamic]||'var(--accent)') + '">' +
+          '<div class="cluster-card-head">' +
+            '<h4>Cluster #' + p.cluster_id + '</h4>' +
+            '<span class="cl-size">' + p.size.toLocaleString() + '개 (' + p.pct + '%)</span>' +
+          '</div>' +
+          '<div class="cluster-tags">' +
+            '<span class="cl-tag ' + regClass + '">' + p.register + '</span>' +
+            '<span class="cl-tag ' + dynClass + '">' + p.dynamic + '</span>' +
+            '<span class="cl-tag tex">' + p.texture + '</span>' +
+            '<span class="cl-tag span-tag">' + p.span + '</span>' +
+          '</div>' +
+          '<div class="cluster-stats">' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_pitch.toFixed(1) + '</div><div class="cl-sl">Avg Pitch</div></div>' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_velocity.toFixed(1) + '</div><div class="cl-sl">Avg Vel</div></div>' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_density_nps.toFixed(1) + '</div><div class="cl-sl">NPS</div></div>' +
+          '</div>' +
+          '<div class="cluster-sources">' +
+            '<strong>Top sources:</strong> ' + p.top_sources.slice(0,3).map(s => s.source.replace(/_/g,' ') + ' (' + s.count + ')').join(', ') +
+          '</div>' +
+        '</div>';
+      }).join('')}
+    </div>
+
+    <!-- Clustering Insights -->
+    <div class="analysis-card">
+      <h3>클러스터링 분석 요약</h3>
+      <div class="analysis-text">
+        <strong>규모:</strong> tier1 프로 연주 데이터 <span class="insight">${cl.total_files.toLocaleString()}개 파일</span>에서 추출한
+        <span class="insight">${cl.total_phrases.toLocaleString()}개 프레이즈</span>를 K=${cl.k_optimal}로 클러스터링했습니다.<br><br>
+
+        <strong>K-value 탐색:</strong> K=20~150 범위에서 Silhouette Score 비교 결과,
+        <span class="insight">K=20 (Score: ${cl.k_search[0].silhouette})</span>이 최고점이나
+        표현력 확보를 위해 K=${cl.k_optimal}를 선택했습니다. Score ${cl.k_search.find(r=>r.k===cl.k_optimal)?.silhouette || 'N/A'}.<br><br>
+
+        <strong>스타일 분포:</strong>
+        Register는 <span class="insight">alto(${regCounts['alto']||0})</span>가 압도적이며 tenor(${regCounts['tenor']||0})는 소수입니다.
+        Dynamic은 <span class="insight">mp(${dynCounts['mp']||0})</span>가 가장 많고, p(${dynCounts['p']||0}), mf(${dynCounts['mf']||0}), f(${dynCounts['f']||0}) 순입니다.
+        Texture는 <span class="insight">dense(${texCounts['dense']||0})</span>가 주류이며, moderate(${texCounts['moderate']||0}), virtuosic(${texCounts['virtuosic']||0})가 뒤따릅니다.<br><br>
+
+        <strong>활용 방향:</strong><br>
+        &#8226; 각 클러스터의 style_label을 conditioning token으로 활용 가능<br>
+        &#8226; 대표 프레이즈 선별 → few-shot prompting / prefix 생성<br>
+        &#8226; f/virtuosic 클러스터는 희소 → data augmentation 또는 특화 학습 필요<br>
+        &#8226; alto 편향 해소를 위한 register-balanced sampling 검토
+      </div>
+    </div>
+  </div>`;
+  } else {
+    html += '</div>';
+  }
+
+  return html;
 }
 
-function closeModal(e) {
-  if (e.target === document.getElementById('modalOverlay')) {
-    document.getElementById('modalOverlay').classList.remove('active');
+function drawTSNE() {
+  if (!embeddingData) return;
+  const canvas = document.getElementById('tsne-cvs');
+  if (!canvas) return;
+  const container = document.getElementById('tsne-container');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = container.offsetWidth;
+  const h = 500;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const vColors = { 'v0 (base)':'#3b82f6', 'v1':'#22c55e', 'v2':'#ef4444', 'v3':'#eab308', 'unknown':'#71717a' };
+  const points = embeddingData.tsne;
+  const xs = points.map(p=>p.x), ys = points.map(p=>p.y);
+  const mnx = Math.min(...xs), mxx = Math.max(...xs);
+  const mny = Math.min(...ys), mxy = Math.max(...ys);
+  const pad = 30;
+
+  function tx(x) { return pad + (x-mnx)/(mxx-mnx) * (w-2*pad); }
+  function ty(y) { return pad + (y-mny)/(mxy-mny) * (h-2*pad); }
+
+  // Draw points
+  for (const p of points) {
+    const px = tx(p.x), py = ty(p.y);
+    const col = vColors[p.version] || '#71717a';
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI*2);
+    ctx.fillStyle = col + 'cc';
+    ctx.fill();
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Tooltip on hover
+  const tip = document.getElementById('tsne-tip');
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    let closest = null, minDist = 20;
+    for (let i = 0; i < points.length; i++) {
+      const px = tx(points[i].x), py = ty(points[i].y);
+      const dist = Math.sqrt((mx-px)**2 + (my-py)**2);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    }
+    if (closest !== null) {
+      const p = points[closest];
+      tip.style.display = 'block';
+      tip.style.left = (tx(p.x) + 12) + 'px';
+      tip.style.top = (ty(p.y) - 10) + 'px';
+      tip.innerHTML = `<strong>${p.file}</strong><br>
+        Version: ${p.version} | Phrase #${p.phrase_idx}<br>
+        Duration: ${p.duration}s | Notes: ${p.num_notes}<br>
+        Pitch: ${p.avg_pitch} (${p.pitch_range[0]}~${p.pitch_range[1]})<br>
+        Velocity: ${p.avg_velocity}`;
+    } else {
+      tip.style.display = 'none';
+    }
+  };
+  canvas.onmouseleave = () => { tip.style.display = 'none'; };
+}
+
+function drawKChart() {
+  const cl = testSuiteReport.clustering;
+  if (!cl || !cl.k_search) return;
+  const canvas = document.getElementById('k-chart-cvs');
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = parent.offsetWidth;
+  const h = 220;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const data = cl.k_search;
+  const pad = { top:20, right:40, bottom:40, left:60 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const ks = data.map(d => d.k);
+  const sils = data.map(d => d.silhouette);
+  const minK = Math.min(...ks), maxK = Math.max(...ks);
+  const minS = Math.min(...sils) * 0.9, maxS = Math.max(...sils) * 1.1;
+
+  function tx(k) { return pad.left + (k - minK) / (maxK - minK) * cw; }
+  function ty(s) { return pad.top + (1 - (s - minS) / (maxS - minS)) * ch; }
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+  }
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#6366f1';
+  ctx.lineWidth = 2;
+  data.forEach((d, i) => {
+    const x = tx(d.k), y = ty(d.silhouette);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Points
+  data.forEach(d => {
+    const x = tx(d.k), y = ty(d.silhouette);
+    const isOpt = d.k === cl.k_optimal;
+    ctx.beginPath();
+    ctx.arc(x, y, isOpt ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = isOpt ? '#22c55e' : '#6366f1';
+    ctx.fill();
+    ctx.strokeStyle = isOpt ? '#22c55e' : '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#fafafa';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.silhouette.toFixed(4), x, y - 12);
+  });
+
+  // X-axis labels
+  ctx.fillStyle = '#71717a';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  data.forEach(d => {
+    ctx.fillText('K=' + d.k, tx(d.k), h - pad.bottom + 20);
+  });
+
+  // Y-axis label
+  ctx.save();
+  ctx.translate(15, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Silhouette Score', 0, 0);
+  ctx.restore();
+
+  // Mark optimal
+  const optData = data.find(d => d.k === cl.k_optimal);
+  if (optData) {
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('← 선택', tx(optData.k) + 30, ty(optData.silhouette) + 4);
   }
 }
 
-function renderMilestones() {
-  const milestones = [
-    { phase: 1, label: "인프라 & 데이터 수집", sub: "400만곡+ 수집", status: "active",
-      detail: "DB 875K 구축 완료\nARIA-MIDI/MAESTRO 대기" },
-    { phase: 2, label: "피아노 솔로 엔진", sub: "Aria → Liszt", status: "future",
-      detail: "RTX 5090 연결 대기\n파인튜닝 준비 완료" },
-    { phase: 3, label: "밴드 악기 확장", sub: "기타/베이스/드럼", status: "future",
-      detail: "" },
-    { phase: 4, label: "뮤지션 협업 툴", sub: "Leo 3,000곡 커버", status: "future",
-      detail: "" },
-    { phase: 5, label: "트로트 전문 모델", sub: "프로 협업", status: "future",
-      detail: "" },
-    { phase: 6, label: "악기 연습 서비스", sub: "OSMD 렌더링", status: "future",
-      detail: "" },
-    { phase: 7, label: "보컬 엔진", sub: "Demucs + Basic Pitch", status: "future",
-      detail: "" },
+function render() {
+  const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'all';
+  let html = '';
+  if (activeTab === 'arch') {
+    html = renderArchitecture();
+  } else if (activeTab === 'embedding') {
+    html = renderEmbedding();
+  } else {
+    for (const vKey of Object.keys(VERSIONS)) {
+      if (activeTab !== 'all' && activeTab !== vKey) continue;
+      html += renderVersion(vKey);
+    }
+  }
+  document.getElementById('main').innerHTML = html;
+
+  // Draw piano rolls
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.piano-roll canvas').forEach(canvas => {
+      const cardId = canvas.id.replace('cvs-','');
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      const btn = card.querySelector('.pbtn');
+      if (!btn) return;
+      const mpath = btn.getAttribute('onclick').match(/'([^']+midi[^']+)'/)?.[1];
+      if (mpath) drawPianoRoll(canvas.id, mpath);
+    });
+    // Draw t-SNE if embedding tab
+    if (activeTab === 'embedding') { drawTSNE(); drawKChart(); }
+  });
+}
+
+// === INIT ===
+async function init() {
+  // Load data
+  const [samplesResp, reportResp] = await Promise.all([
+    fetch('all_samples.json'),
+    fetch('test_suite_report.json'),
+  ]);
+  allSamples = await samplesResp.json();
+  testSuiteReport = await reportResp.json();
+  // Load embedding data from test_suite_report (merged) or standalone file
+  if (testSuiteReport.embedding) {
+    embeddingData = testSuiteReport.embedding;
+  } else {
+    try {
+      const embResp = await fetch('embedding_data.json');
+      if (embResp.ok) embeddingData = await embResp.json();
+    } catch(e) {}
+  }
+
+  // Build tabs
+  const tabsEl = document.getElementById('tabs');
+  const tabDefs = [
+    ['all','All Versions'],
+    ['baseline','Baseline'],
+    ['v1','v1 (Foundation)'],
+    ['v2','v2 (Overfitting)'],
+    ['v3','v3'],
+    ['v4','v4 (Style Cond.)'],
+    ['v3_test','v3 Test Suite'],
+    ['arch','Architecture'],
+    ['embedding','Embedding'],
   ];
+  tabsEl.innerHTML = tabDefs.map(([k,l],i)=>
+    `<button class="tab ${i===0?'active':''}" data-tab="${k}">${l}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    stopPlay();
+    tabsEl.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    t.classList.add('active');
+    render();
+  }));
 
-  const el = document.getElementById('milestoneTrack');
-  const activeIdx = milestones.findIndex(m => m.status === 'active');
-  const progressPct = ((activeIdx + 0.5) / milestones.length) * 100;
-
-  el.innerHTML = `<div class="ms-progress" style="width: ${progressPct}%"></div>` +
-    milestones.map((m, i) => {
-      const st = i < activeIdx ? 'done' : m.status;
-      const icon = st === 'done' ? '✓' : m.phase;
-      return `
-        <div class="ms-step ${st}" title="${m.detail}">
-          <div class="ms-dot">${icon}</div>
-          <div class="ms-label">${m.label}</div>
-          <div class="ms-sub">${m.sub}</div>
-        </div>`;
-    }).join('');
+  render();
+  loadSF2();
 }
 
-async function loadAll() {
-  renderMilestones();
-  await Promise.all([loadStats(), loadDownloads(), loadKanban(), loadFiles()]);
-}
-
-// 초기 로드 + 30초마다 자동 갱신
-loadAll();
-setInterval(loadAll, 30000);
+init();
 </script>
+
 </body>
 </html>
