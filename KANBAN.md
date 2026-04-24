@@ -1,29 +1,31 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-04-05 (세션 27 종료)
+업데이트: 2026-04-24 (세션 36)
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **Quincy P3 Phase 2 스트리밍** — oven/5090 — prepare_p3_phase2_stream.py (Scheduled Task QuincyP3Phase2), temp 파일(17GB)에서 chunk 빌드 중
-  - 시작: 2026-04-05 00:24, lyrical 23,403 chunks 완료, standard 처리 중
-- [ ] **MuseScore 수동 다운로드** — Leo — 매일 20개
+- [ ] **ACE-Step 피아노 LoRA v6 음질 개선 — AudioSR 후처리** — oven — 2026-04-21
+  - AudioSR 그리드 테스트 완료, **대기**: Leo 최적 설정 선택 → 디노이즈 추가 검토
+  - **노션 업로드 미완료** (Leo 요청)
+- [ ] **ACE Studio GUI 자동화** — oven/reklcli — 2026-04-24
+  - ✅ AppleScript + cliclick으로 MIDI→AI악기→WAV 전 과정 자동화 확인
+  - ✅ 워크플로우 문서 hitmaking/3070 전달 완료
+  - TODO: 배치 렌더링 스크립트화, 보컬 생성 자동화 테스트
+- [ ] **Wan2.1 뮤직비디오 생성** — oven/5090 — 3개 에피소드
+  - ✅ 모델 다운로드 완료
 - [ ] **키보디스트 인터뷰 v4 준비** — Leo
 
 ---
 
 ## TODO
 
-- [ ] **Quincy P3 학습 실행** — oven/5090 — Phase 2 완료 후 train_lora_p3.py
-- [ ] **서정적 MIDI 24,810곡 P3 추가 처리** — oven/5090 — D:\liszt\training_data\lyrical_piano\ (전송 완료)
+- [ ] **Quincy P3 학습 실행** — oven/5090 — Phase 2 완료, train_lora_p3.py 대기
 - [ ] **Quincy P3 eval** — oven/5090 — 학습 완료 후 gen_p3_eval.py
-- [ ] **모델 외장하드 물리 이동** — Leo — project backup → 5090 외장하드 (Leo 5090 방문 대기, 어제 못 감)
-- [ ] **E:→D: 모델 정리** — oven/5090 — 외장하드 모델을 D:로 복사 (FLUX, F5-TTS, Whisper, Qwen 등)
 - [ ] **Quincy 대시보드 배포** — oven — oven.arkedia.work/quincy/
-- [ ] **tempo 추정 재검토** — oven — Phase 1 결과 fast 144k/slow 1.2k 이상함, BPM 로직 버그 가능성
+- [ ] **tempo 추정 재검토** — oven — Phase 1 결과 fast 144k/slow 1.2k 이상함
 - [ ] **수집 데이터 QA + DB 등록** — oven — mukl 복구 후
-- [ ] **ACE-Step 찬송가 LoRA** — ogo — 942곡, 요청 발송 완료
-- [ ] **FLUX fp8 양자화** — oven — (GPU 비어있을 때)
+- [ ] **ACE-Step 찬송가 LoRA** — ogo — 942곡
 - [ ] **NAS 백업 (V5~P2 체크포인트)** — oven
 - [ ] **RunPod HunyuanVideo 테스트** — oven
 
@@ -33,23 +35,45 @@
 
 - [ ] **diffsinger / stable-audio-open** — Leo — HF gated repo 접근 권한 필요
 - [ ] **FLUX.2-dev** — Leo — HF gated repo 접근 승인 필요
+- [ ] **Wan2.1 영상 생성** — ACE-Step 완료 대기 중
 
 ---
 
 ## DONE (최근)
 
-- [x] **모델 풀 다운로드 (project backup)** — oven — 2026-04-04/05
-  - Wan2.2-I2V-A14B, FLUX.1-dev, F5-TTS, Whisper-v3-turbo, Qwen3-VL-32B 모두 완료
-  - Qwen2.5-VL-72B leo드라이브→backup 복사 완료
-  - FLUX.2-dev는 gated repo로 실패
+- [x] **ACE-Step 베이스 모델 EP/밴드 아티팩트 비교** — oven/5090 — 2026-04-24
+  - EP 3종(rhodes, wurlitzer, epiano) + 밴드 3종(rock, jazz, postrock) 생성 및 청취
+  - 결론: 치치치 아티팩트 없으나 음질 자체가 다름, ACE-Step 아키텍처 한계 재확인
+- [x] **ACE-Step v6 LoRA 학습 + 샘플 평가** — oven/5090 — 2026-04-18
+  - 파이프라인: aria-midi → VirtuosoNet(velocity+pedal) → tempo fix → Piano V3 render → 486 segments
+  - 학습: 300ep, rank 64, lr 1.5e-4, cosine, loss 0.2737
+  - 평가: v6 LoRA / base model / HQ prompt / 다른 악기 비교 청취 완료
+  - 결론: 음악적 품질 양호, 오디오 품질(축음기 느낌)은 ACE-Step 한계
+- [x] **ACE-Step 피아노 LoRA v2 파이프라인 (데이터→학습→추론→HTML)** — oven/5090 — 2026-04-13 23:00
+  - yt-dlp 6곡 (4.75GB) → segment_piano.py 120개 30s clips → ACE-Step preprocess → 29분 학습 → Base+5ckpt×6프롬프트 추론 → scp → 6열 HTML
+  - 총 파이프라인 시간 ~1시간 (다운로드 제외)
+- [x] **hitmaking 팝 샘플 전달** — oven — 2026-04-13 21:50
+  - mxl 19개 + meta 19개 + urls_pop.jsonl 4,228개 + DOWNLOAD_GUIDE.md
+  - `~/projects/agent-comm/projects/hitmaking/input/musescore_pop/`
+- [x] **5090 FFmpeg 7.1 + torchcodec 설치** — oven — 2026-04-10
+  - 원인: ACE-Step 전처리가 `load_with_torchcodec` 사용 → torchcodec 0.11은 FFmpeg 4~7 shared DLL 필요
+  - 해결: BtbN n7.1 shared build (`C:\Users\leo\ffmpeg\bin`) + User PATH + 배치 내 명시 set PATH
+  - 주의: BtbN `latest` 태그는 FFmpeg 8(avcodec-62)라 torchcodec 비호환 → n7.1 태그 지정 필수
+- [x] **ACE-Step 배치 버그 수정** — oven — 2026-04-10
+  - `train.py fixed --yes` → `train.py --yes fixed` (글로벌 옵션 위치 오류)
+  - SSH `Start-Process`는 세션 종료 시 자식 프로세스 동반 사망 → schtasks S4U로 독립 실행
+- [x] **Freesound 피아노 수집 완료** — oven/5090 — 2026-04-09
+  - 최종 1,296개 (CC0/CC-BY), 배치 스크립트 준비 완료
+- [x] **ACE-Step 학습 스케줄 등록→취소** — oven — 2026-04-09
+  - schtasks S4U 모드로 등록 성공 (Interactive 모드는 콘솔 로그인 필요 → S4U 필요)
+  - Leo 요청으로 취소, 내일 재실행
+- [x] **5090 재부팅 + Freesound 수집 시작** — oven — 2026-04-09
+  - Freesound API key 발급
+  - Wan2.1 transformer/VAE 다운로드 완료
+- [x] **NAS musicscore_data 전송** — oven — 2026-04-08
+  - 4,972,264 파일 전송 검증 완료 (aria-midi, bitmidi, PDMX, aria-amt, asap, atepp, gigamidi)
+  - NAS 경로: `/volume1/music/musicscore_data/`
+- [x] **Wan2.2-T2V-A14B 모델 다운로드** — oven/5090 — 2026-04-06
+- [x] **Quincy P3 Phase 1+2 전처리 완료** — oven/5090 — 2026-04-05
+- [x] **Quincy 대시보드 멀티페이즈 확장** — oven — 2026-04-06
 - [x] **서정적 피아노 MIDI mukl→5090 전송** — oven — 2026-04-03
-  - 24,810곡 (177MB) → D:\liszt\training_data\lyrical_piano\
-- [x] **P3 Phase 1 전처리 완료** — oven/5090 — 2026-04-03 17:38
-  - tier1_premium 152,691 MIDI → lyrical 2,719 + standard 149,941
-  - temp_lyrical.jsonl (396MB), temp_standard.jsonl (17GB)
-- [x] **admin ogo 모델 현황 응답** — oven — 2026-04-03
-- [x] **COMM_RULES v3.0 (v5.0 반영)** — oven — 2026-04-03
-- [x] **git remote URL 변경 (musicscore→oven)** — oven — 2026-04-03
-- [x] **musicscore → oven 리네이밍** — admin — 2026-04-02
-- [x] **서정적 피아노 MIDI 수집** — rag — 2026-04-02 (24,810곡)
-- [x] **Quincy P2 대시보드 구축** — oven — 2026-04-02
