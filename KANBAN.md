@@ -1,19 +1,36 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-04-24 (세션 36)
+업데이트: 2026-05-06 (세션 43)
 
 ---
 
 ## IN PROGRESS
 
+- [ ] **로컬 LLM 비교 평가 및 운영** — oven/5090 — 2026-05-02
+  - ✅ EXAONE 4.0 32B vs Qwen3.6-27B 비교 테스트 완료 (18항목)
+  - ✅ Qwen3.6-27B-Q5_K_M 다운로드 완료 (19.5GB)
+  - ✅ 노션 비교 리포트 업로드 완료
+  - ✅ EXAONE 서버 복원 (현재 운영중)
+  - **결론**: EXAONE 유지 권장 (안정성+한국어), Qwen은 thinking disable 후 코딩용 가능
+  - **TODO**: Qwen thinking 비활성화 설정 테스트, gemma 요청 대응 (테스트 과정 공유)
 - [ ] **ACE-Step 피아노 LoRA v6 음질 개선 — AudioSR 후처리** — oven — 2026-04-21
   - AudioSR 그리드 테스트 완료, **대기**: Leo 최적 설정 선택 → 디노이즈 추가 검토
   - **노션 업로드 미완료** (Leo 요청)
-- [ ] **ACE Studio GUI 자동화** — oven/reklcli — 2026-04-24
-  - ✅ AppleScript + cliclick으로 MIDI→AI악기→WAV 전 과정 자동화 확인
-  - ✅ 워크플로우 문서 hitmaking/3070 전달 완료
-  - TODO: 배치 렌더링 스크립트화, 보컬 생성 자동화 테스트
+- [ ] **ACE Studio 자동화 (MCP + GUI)** — oven — 2026-05-05
+  - ✅ Phase 1-9 완료: core/import/instrument/vocal/export/UI전체매핑 검증
+  - ✅ MCP 71개 도구 풀 워크플로우 테스트 완료 (2026-05-05)
+  - ✅ hitmaking + 3070에 MCP 테스트 결과 agent-comm 전달 완료
+  - ✅ 노션 ACE Studio 연구 페이지에 MCP 섹션 추가 완료
+  - MCP 불가: Import/Export/Save/Render → GUI 자동화 유지
+  - **TODO**: 배치 파이프라인 MCP+GUI 하이브리드 통합 테스트
 - [ ] **Wan2.1 뮤직비디오 생성** — oven/5090 — 3개 에피소드
   - ✅ 모델 다운로드 완료
+- [ ] **Suno 후처리 음질 향상 파이프라인** — oven — 2026-05-06
+  - ✅ v5.0 vs v5.5 차이 분석 + 후처리 연구 완료
+  - ✅ 노션 페이지 생성 (스템분리 포함/미포함 양쪽 파이프라인)
+  - ✅ `suno_postprocess.py` 투 트랙 파이프라인 구축+테스트 완료 (2026-05-06)
+  - ✅ matchering 2.0.6 설치, demucs htdemucs_ft 연동 확인
+  - **대기**: hitmaking 오디오 분석 모듈 완성 수신
+  - **TODO**: 실제 Suno WAV로 A/B 비교 청취, 레퍼런스 트랙 선정
 - [ ] **키보디스트 인터뷰 v4 준비** — Leo
 
 ---
@@ -41,6 +58,10 @@
 
 ## DONE (최근)
 
+- [x] **대시보드 멀티페이즈 확장** — oven — 2026-04-24
+  - Quincy: P2 전용 → P1/P1x/P2 phase tabs 분리, MIDI 엔드포인트 분리
+  - Liszt: Engine Lab 리디자인 (MIDI 재생+FluidSynth 통합)
+  - 커밋 0554fec (크래쉬 세션 복구)
 - [x] **ACE-Step 베이스 모델 EP/밴드 아티팩트 비교** — oven/5090 — 2026-04-24
   - EP 3종(rhodes, wurlitzer, epiano) + 밴드 3종(rock, jazz, postrock) 생성 및 청취
   - 결론: 치치치 아티팩트 없으나 음질 자체가 다름, ACE-Step 아키텍처 한계 재확인
