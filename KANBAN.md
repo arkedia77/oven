@@ -1,17 +1,32 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-05-06 (세션 43)
+업데이트: 2026-05-12 (세션 48)
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **로컬 LLM 비교 평가 및 운영** — oven/5090 — 2026-05-02
-  - ✅ EXAONE 4.0 32B vs Qwen3.6-27B 비교 테스트 완료 (18항목)
-  - ✅ Qwen3.6-27B-Q5_K_M 다운로드 완료 (19.5GB)
-  - ✅ 노션 비교 리포트 업로드 완료
-  - ✅ EXAONE 서버 복원 (현재 운영중)
-  - **결론**: EXAONE 유지 권장 (안정성+한국어), Qwen은 thinking disable 후 코딩용 가능
-  - **TODO**: Qwen thinking 비활성화 설정 테스트, gemma 요청 대응 (테스트 과정 공유)
+- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 2026-05-12
+  - ✅ 프로토타입 v1 (4인, 23라운드) 완료 — 반복 문제 확인
+  - ✅ v2 설계+구현 완료 (10인, 7장소, 욕구/신념/목표 시스템)
+  - ✅ v3 수정 완료 (욕구 고갈 버그, affection 추가, tension 감쇠)
+  - ✅ 세션 47 결과 노션 보고서 업로드 완료
+  - ✅ 백그라운드 실행 중 (PID 65240, Day 33+ Tick 769+)
+  - **TODO**: security/autonomy 균형 확인, affection 분포 검증, 장기 서사 분석
+- [x] **Gemma 4 MTP 속도 향상** — oven/5090 — 2026-05-09 **BLOCKED→보류**
+  - ✅ atomic-llama-cpp-turboquant 포크 CUDA 13.x + 12.8 양쪽 빌드 완료
+  - ✅ drafter 모델 다운로드 완료 (gemma-4-26B-A4B-it-assistant Q4_K_M, 310MB)
+  - ✅ 공식 최신 llama.cpp 빌드 완료 (MTP 미지원 확인)
+  - ❌ CUDA 13.x: MTP+FA on 크래시 / MTP+FA off 속도향상 없음 (181.9 tok/s)
+  - ❌ CUDA 12.8: MTP+FA on/off 모두 추론 크래시 (더 불안정)
+  - **결론**: atomic fork MTP 구현이 Blackwell SM120 비호환. 공식 llama.cpp MTP PR 머지 대기
+- [ ] **Gemma 4 리서치 오케스트레이터 개선** — oven — 2026-05-09
+  - ✅ 검색 보강 v3 실행 → leomusic-base 평가 4.5/10 (v1 대비 +1.5)
+  - ✅ Wikipedia User-Agent 버그 수정
+  - ✅ Semantic Scholar 재시도 로직 추가
+  - TODO: instruction following 강화, RAG 소스 고급화, 자기비평 루프
+- [ ] **Gemma 4 루틴 업무 테스트** — oven — 2026-05-09 완료
+  - ✅ 8가지 테스트 (데이터처리/웹추출/판단) → 7/8 (87%) 통과
+  - 약점: 다중 제약 최적화 (HA + 자원 할당 동시 처리)
 - [ ] **ACE-Step 피아노 LoRA v6 음질 개선 — AudioSR 후처리** — oven — 2026-04-21
   - AudioSR 그리드 테스트 완료, **대기**: Leo 최적 설정 선택 → 디노이즈 추가 검토
   - **노션 업로드 미완료** (Leo 요청)
@@ -22,8 +37,6 @@
   - ✅ 노션 ACE Studio 연구 페이지에 MCP 섹션 추가 완료
   - MCP 불가: Import/Export/Save/Render → GUI 자동화 유지
   - **TODO**: 배치 파이프라인 MCP+GUI 하이브리드 통합 테스트
-- [ ] **Wan2.1 뮤직비디오 생성** — oven/5090 — 3개 에피소드
-  - ✅ 모델 다운로드 완료
 - [ ] **Suno 후처리 음질 향상 파이프라인** — oven — 2026-05-06
   - ✅ v5.0 vs v5.5 차이 분석 + 후처리 연구 완료
   - ✅ 노션 페이지 생성 (스템분리 포함/미포함 양쪽 파이프라인)
@@ -31,7 +44,7 @@
   - ✅ matchering 2.0.6 설치, demucs htdemucs_ft 연동 확인
   - **대기**: hitmaking 오디오 분석 모듈 완성 수신
   - **TODO**: 실제 Suno WAV로 A/B 비교 청취, 레퍼런스 트랙 선정
-- [ ] **키보디스트 인터뷰 v4 준비** — Leo
+
 
 ---
 
@@ -44,7 +57,7 @@
 - [ ] **수집 데이터 QA + DB 등록** — oven — mukl 복구 후
 - [ ] **ACE-Step 찬송가 LoRA** — ogo — 942곡
 - [ ] **NAS 백업 (V5~P2 체크포인트)** — oven
-- [ ] **RunPod HunyuanVideo 테스트** — oven
+- [x] ~~**RunPod HunyuanVideo 테스트** — 폐기 (2026-05-08)~~
 
 ---
 
@@ -52,12 +65,21 @@
 
 - [ ] **diffsinger / stable-audio-open** — Leo — HF gated repo 접근 권한 필요
 - [ ] **FLUX.2-dev** — Leo — HF gated repo 접근 승인 필요
-- [ ] **Wan2.1 영상 생성** — ACE-Step 완료 대기 중
+- [x] ~~**Wan2.1 영상 생성** — 폐기 (2026-05-08)~~
 
 ---
 
 ## DONE (최근)
 
+- [x] **Gemma 4 26B 레오패밀리 통합 서빙** — oven/5090 — 2026-05-08
+  - EXAONE → Gemma 4 26B-A4B Q8_0 교체 (174 tok/s, 3배 향상)
+  - 11개 역할별 테스트 전항목 PASS, Open WebUI 기동, agent-comm 공지
+- [x] **Gemma 4 26B + Open WebUI 통합 서빙** — oven/5090 — 2026-05-08
+  - Open WebUI v0.9.2 기동 (http://100.107.229.5:3000, 인증 없음)
+  - cp949 인코딩 에러 해결, 포트 3000, WMI 독립 프로세스
+  - 한국어 채팅 테스트 정상, agent-comm 전체 공지 완료
+- [x] **ACE-Step LoRA v6 연구 보고서** — oven — 2026-05-08
+  - `research/ACE-Step_Piano_LoRA_v6_Report.md` — v1~v6 진화, AudioSR, 후처리, 결론
 - [x] **대시보드 멀티페이즈 확장** — oven — 2026-04-24
   - Quincy: P2 전용 → P1/P1x/P2 phase tabs 분리, MIDI 엔드포인트 분리
   - Liszt: Engine Lab 리디자인 (MIDI 재생+FluidSynth 통합)
