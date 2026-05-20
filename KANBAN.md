@@ -1,17 +1,25 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-05-12 (세션 48)
+업데이트: 2026-05-20 (세션 52)
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 2026-05-12
-  - ✅ 프로토타입 v1 (4인, 23라운드) 완료 — 반복 문제 확인
-  - ✅ v2 설계+구현 완료 (10인, 7장소, 욕구/신념/목표 시스템)
-  - ✅ v3 수정 완료 (욕구 고갈 버그, affection 추가, tension 감쇠)
-  - ✅ 세션 47 결과 노션 보고서 업로드 완료
-  - ✅ 백그라운드 실행 중 (PID 65240, Day 33+ Tick 769+)
-  - **TODO**: security/autonomy 균형 확인, affection 분포 검증, 장기 서사 분석
+- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 2026-05-15
+  - ✅ 프로토타입 v1~v3 완료
+  - ✅ Day 1~32 유효 데이터 확보 (4/14 Gemma 다운 후 43일 빈 틱)
+  - **TODO**: Day 1-32 분석/보고서, Gemma 4 재시작 후 재실행 여부 결정
+- [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
+  - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
+- [ ] **ACE-Step 1.5 LoKR 벅스 TOP 100 (7 아티스트)** — oven/ogo — 2026-05-19
+  - ✅ 7개 아티스트 LoKR 500ep 전체 학습+추론 완료
+  - Leo 청취 중: 악뮤 = 듀엣 구성 학습됨, 남자 보컬 음색 유사 ✅
+  - **대기**: 나머지 6개 아티스트 청취 평가
+- [ ] **ACE-Step 1.5 LoKR 이하이** — oven/ogo — 2026-05-20
+  - ✅ 20곡 WAV + dataset.json 가사 병합 (ultra-air 회신)
+  - ✅ ogo 전송 → 전처리 20/20 → 학습 500ep 1h51m (loss 2.01→0.91, best 0.78)
+  - ✅ 추론 2샘플 (baseline+lokr_best) → `lokr_samples/이하이/`
+  - **대기**: Leo 청취 평가
 - [x] **Gemma 4 MTP 속도 향상** — oven/5090 — 2026-05-09 **BLOCKED→보류**
   - ✅ atomic-llama-cpp-turboquant 포크 CUDA 13.x + 12.8 양쪽 빌드 완료
   - ✅ drafter 모델 다운로드 완료 (gemma-4-26B-A4B-it-assistant Q4_K_M, 310MB)
@@ -55,6 +63,7 @@
 - [ ] **Quincy 대시보드 배포** — oven — oven.arkedia.work/quincy/
 - [ ] **tempo 추정 재검토** — oven — Phase 1 결과 fast 144k/slow 1.2k 이상함
 - [ ] **수집 데이터 QA + DB 등록** — oven — mukl 복구 후
+- [x] ~~**ACE-Step 크러쉬 LoKR 재학습** — ogo — 완료 (크러쉬 v2로 이동)~~
 - [ ] **ACE-Step 찬송가 LoRA** — ogo — 942곡
 - [ ] **NAS 백업 (V5~P2 체크포인트)** — oven
 - [x] ~~**RunPod HunyuanVideo 테스트** — 폐기 (2026-05-08)~~
