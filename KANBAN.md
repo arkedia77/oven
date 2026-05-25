@@ -14,6 +14,7 @@
   - ✅ 프로토타입 v1~v3 완료
   - ✅ Day 1~32 유효, Day 33-76 빈 틱(API 다운), Day 77+ 정상 재개 (5/24)
   - ✅ llama-server `--reasoning off` + run_village.py PID 24484 실행 중
+  - ✅ 라이브 대시보드 구축 (localhost:8765) — 대화피드+변화추적+관계+목표
   - **TODO**: Day 77+ 대화 품질 확인, 43일 빈 틱 후 캐릭터 상태 분석
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
