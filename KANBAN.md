@@ -1,21 +1,27 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-05-23 (세션 53)
+업데이트: 2026-05-25 (세션 54)
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/ogo — 2026-05-22
+- [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 2026-05-22
   - ✅ 차오름 10곡 LoKR 학습 완료 (500ep, best 0.9721), 6곡 생성
   - ✅ 권PD 믹스 8명 10곡 LoKR 학습 완료 (500ep, best 0.9599), 5곡 생성
   - ✅ Leo 청취: 믹스가 더 좋음 — 다수 가수가 프로덕션 스타일 일반화에 유리
-  - **TODO**: 나머지 ~27곡 추가하여 전체 47곡 대형 권PD LoKR 학습
-- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 2026-05-15
+  - **TODO**: leowin2 Tailscale 접속 → ogo 데이터 이전 → 나머지 ~27곡 전체 47곡 대형 LoKR
+- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven/ogo — 2026-05-24 재기동
   - ✅ 프로토타입 v1~v3 완료
-  - ✅ Day 1~32 유효 데이터 확보 (4/14 Gemma 다운 후 43일 빈 틱)
-  - **TODO**: Day 1-32 분석/보고서, Gemma 4 재시작 후 재실행 여부 결정
+  - ✅ Day 1~32 유효, Day 33-76 빈 틱(API 다운), Day 77+ 정상 재개 (5/24)
+  - ✅ llama-server `--reasoning off` + run_village.py PID 24484 실행 중
+  - **TODO**: Day 77+ 대화 품질 확인, 43일 빈 틱 후 캐릭터 상태 분석
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
+- [ ] **디스크 오프로드 완료** — oven — 2026-05-24 ✅
+  - 9개 폴더 외장 LEO symlink (44GB 회수), SF2 역의존 수정, oven 54GB→10GB
+- [ ] **ogo→leowin2 학습 인프라 이전** — oven — 2026-05-24 대기
+  - leowin2 RTX 3070 8GB LoKR 전담, ogo는 하모니시티 전용
+  - **블로커**: leowin2 Tailscale 미접속
 - [ ] **ACE-Step 1.5 LoKR 벅스 TOP 100 (7 아티스트)** — oven/ogo — 2026-05-19
   - ✅ 7개 아티스트 LoKR 500ep 전체 학습+추론 완료
   - Leo 청취 중: 악뮤 = 듀엣 구성 학습됨, 남자 보컬 음색 유사 ✅
