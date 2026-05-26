@@ -1,5 +1,5 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-05-25 (세션 54)
+업데이트: 2026-05-26 (세션 55)
 
 ---
 
@@ -10,18 +10,21 @@
   - ✅ 권PD 믹스 8명 10곡 LoKR 학습 완료 (500ep, best 0.9599), 5곡 생성
   - ✅ Leo 청취: 믹스가 더 좋음 — 다수 가수가 프로덕션 스타일 일반화에 유리
   - **TODO**: leowin2 Tailscale 접속 → ogo 데이터 이전 → 나머지 ~27곡 전체 47곡 대형 LoKR
-- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven/ogo — 2026-05-24 재기동
-  - ✅ 프로토타입 v1~v3 완료
-  - ✅ Day 1~32 유효, Day 33-76 빈 틱(API 다운), Day 77+ 정상 재개 (5/24)
-  - ✅ llama-server `--reasoning off` + run_village.py PID 24484 실행 중
-  - ✅ 라이브 대시보드 구축 (localhost:8765) — 대화피드+변화추적+관계+목표
-  - **TODO**: Day 77+ 대화 품질 확인, 43일 빈 틱 후 캐릭터 상태 분석
+- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 재설계 예정
+  - ✅ 프로토타입 v1~v3 완료, Day 109 / Tick 2607 도달
+  - ✅ 라이브 대시보드 구축 (localhost:8765)
+  - ⚠️ **문제 발견**: 37쌍 중 13쌍 tension 1.0, 적대적 언어 499회 — 사회 분위기 극도 살벌
+  - **다음**: 사회 발전 결정 인자(컨트롤) 분석, 적정 규모 결정, 시뮬레이션 재설계
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
-- [ ] **디스크 오프로드 완료** — oven — 2026-05-24 ✅
+- [x] **디스크 오프로드 완료** — oven — 2026-05-24 ✅
   - 9개 폴더 외장 LEO symlink (44GB 회수), SF2 역의존 수정, oven 54GB→10GB
+- [ ] **5090 gemma 멀티채널 배포 완료** — oven — 2026-05-26 ✅
+  - ✅ 6개 FastAPI (arena/brainstorm/strategy/versus/research/dealflow) 전체 200 OK
+  - ✅ Task Scheduler 자동화 3종 (AutoStart/HealthCheck/DailyBackup)
+  - **미완료**: .env NOTION 변수 admin 대기, Cloudflare ingress 라우팅 admin 대기
 - [ ] **ogo→leowin2 학습 인프라 이전** — oven — 2026-05-24 대기
-  - leowin2 RTX 3070 8GB LoKR 전담, ogo는 하모니시티 전용
+  - leowin2 RTX 3070 8GB LoKR 전담, ogo는 하모니시티+gemma 공유
   - **블로커**: leowin2 Tailscale 미접속
 - [ ] **ACE-Step 1.5 LoKR 벅스 TOP 100 (7 아티스트)** — oven/ogo — 2026-05-19
   - ✅ 7개 아티스트 LoKR 500ep 전체 학습+추론 완료
