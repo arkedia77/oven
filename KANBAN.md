@@ -1,5 +1,5 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-05-26 (세션 55)
+업데이트: 2026-06-01 (세션 63)
 
 ---
 
@@ -10,11 +10,52 @@
   - ✅ 권PD 믹스 8명 10곡 LoKR 학습 완료 (500ep, best 0.9599), 5곡 생성
   - ✅ Leo 청취: 믹스가 더 좋음 — 다수 가수가 프로덕션 스타일 일반화에 유리
   - **TODO**: leowin2 Tailscale 접속 → ogo 데이터 이전 → 나머지 ~27곡 전체 47곡 대형 LoKR
-- [ ] **하모니 시티 가상 마을 시뮬레이션** — oven — 재설계 예정
-  - ✅ 프로토타입 v1~v3 완료, Day 109 / Tick 2607 도달
-  - ✅ 라이브 대시보드 구축 (localhost:8765)
-  - ⚠️ **문제 발견**: 37쌍 중 13쌍 tension 1.0, 적대적 언어 499회 — 사회 분위기 극도 살벌
-  - **다음**: 사회 발전 결정 인자(컨트롤) 분석, 적정 규모 결정, 시뮬레이션 재설계
+- [ ] **하모니시티 #02 Ecosystem 실행** — oven/ogo — 2026-05-27
+  - ✅ #01 Genesis 분석 완료: 5가지 구조적 결함 도출, 노션 보고서 작성
+  - ✅ #02 Ecosystem 전체 구현 완료 (`~/oven/virtual_world_v02/`)
+  - ✅ 5090 배포+실행: `C:\projects\harmonicity\`, https://harmonicity.arkedia.work/
+  - ✅ 대시보드 3모드 완성 (2026-05-29 세션 58):
+    - 라이브 (실시간 대화+상태), 변화 추이 (일별 차트+주석+인사이트), 아바타 (1인칭 시점)
+  - ✅ VIRTUAL_WORLD_GUIDE.md 확장: 9카테고리 파라미터 레퍼런스 + 규모별 리소스 산정 + 도메인 응용
+  - ✅ Day 35 도달, 시뮬레이션 안정 가동 중
+  - ✅ **사업화 도메인 벤치마크 완료** (2026-05-29 세션 59):
+    - 3개 도메인 설정 생성: 기업 HR/OD, 교육 EdTech, 소비자 MarTech
+    - 벤치마크 프레임워크 (run_benchmark.py) + 도메인별 5파일 세트
+    - 5090 실제 Gemma 4 추론 테스트 완료 (각 24틱/1일)
+    - 엔진 코드 변경 0줄로 도메인 전환 확인, 대화 품질 전 도메인 우수
+    - 결과 보고: BENCHMARK_REPORT.md + venture-studio 전달
+  - ✅ **04호 사업계획서 v0** venture-studio 발행 (2026-05-29 세션 59):
+    - A트랙 확정 (Leo 지시): B2B 학술 SaaS + 교육 시민 시뮬레이션
+    - 게임 B트랙 제외 (Leo 지시)
+    - Q1~Q4 기술 데이터 회신 완료 (5결함해소/운영/비용/스케일링)
+    - Q5 IP귀속 = venture-studio + Leo 결재 (oven 영역 아님)
+  - ✅ **P0 엔진 개선: 키워드→Appraisal 교체** (2026-05-30 세션 60):
+    - 삼각검증 보고서 (rag: 웹25출처 + Gemini + Codex) → 노션 업로드
+    - Updater Dominance Test: 키워드 지배도 100%, 취약률 80%
+    - LLM Appraisal 엔진 구현 + 5개 가설 전체 PASS (H1~H5)
+    - 관계 포화 58% 발견 — appraisal이 포화 delta 7배 축소로 해결 기대
+    - 5090 배포 완료
+  - ✅ **시뮬레이션 재시작 + 안정화** (2026-05-31 세션 61):
+    - time.sleep(200) → 10초 폴링 루프 패치 (detached 프로세스 생존 문제 해결)
+    - run_village.py self-redirect 방식 (stdout→sim.log)
+    - PID=23680 안정 가동 확인, appraisal 로그 출력 정상
+    - 포화 베이스라인: 27/45=60%, 천장 25/45=55%, 무긴장 43/45=95%
+    - **Day 66 결과**: 천장 55%→48% 감소(효과 있음), tension 0.001→0.024 (갈등 생성 작동)
+  - ✅ **P1 평판/정보 비대칭 시스템 구현+배포** (2026-06-01 세션 62):
+    - `reputation.py` — 10×9 평판 매트릭스 (competence/integrity/warmth/influence)
+    - `information.py` — 10개 비밀 시딩, 소문 전파 메커니즘 (전화기 효과)
+    - `appraisal.py` — gossip + reputation_update 필드 확장
+    - `prompts.py` — 대화 프롬프트에 평판/정보 컨텍스트 주입
+    - `encounter.py` — integrity 기반 회피/호기심 우선순위
+  - ✅ **P1.1 패치 배포** (2026-06-01 세션 63):
+    - 진단: P1 비밀 10개 고갈, appraisal gossip 미연결, tension decay 과속
+    - `homeostasis.py` — tension decay 0.005→0.002, warmth-tension 캡 완화
+    - `information.py` — `create_dynamic_rumor()`: 대화 속 동적 소문 생성
+    - `conversation.py` — gossip 반환, `main.py` — 동적소문→평판 연결
+    - 첫 7틱: 동적소문 4건 발생, 평판 양극화 시작 (integrity 0.37 등장)
+    - **Day 82 현재**: 포화 68%(관성), tension 0.002 — P1.1 효과 분석 Day 85+
+    - **가동 중**: schtasks `HarmonicityP11`
+  - **미구현**: Phase 12 (네트워크 건강 모니터), Phase 13 (추가 대시보드 확장)
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
 - [x] **디스크 오프로드 완료** — oven — 2026-05-24 ✅
