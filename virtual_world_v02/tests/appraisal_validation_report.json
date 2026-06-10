@@ -1,0 +1,135 @@
+{
+  "H1": {
+    "accuracy": 0.9,
+    "pass": true,
+    "cases": [
+      {
+        "label": "순수 긍정",
+        "expected": "긍정",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "긍정",
+        "appraisal_warmth_delta": 0.05,
+        "match": true,
+        "elapsed": 1.8604788780212402
+      },
+      {
+        "label": "부정문 - 도움 안됨",
+        "expected": "부정",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "부정",
+        "appraisal_warmth_delta": -0.1,
+        "match": true,
+        "elapsed": 1.697545051574707
+      },
+      {
+        "label": "반어 - 고맙기도 하지",
+        "expected": "부정",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "부정",
+        "appraisal_warmth_delta": -0.15,
+        "match": true,
+        "elapsed": 1.7987070083618164
+      },
+      {
+        "label": "부정문 - 사랑 아님",
+        "expected": "중립",
+        "keyword_valence": "중립",
+        "appraisal_valence": "냉담",
+        "appraisal_warmth_delta": -0.05,
+        "match": false,
+        "elapsed": 1.6366870403289795
+      },
+      {
+        "label": "비유 - 따뜻한 커피",
+        "expected": "중립",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "평온",
+        "appraisal_warmth_delta": 0.02,
+        "match": true,
+        "elapsed": 1.50028395652771
+      },
+      {
+        "label": "부정문 - 분노 참음",
+        "expected": "긍정",
+        "keyword_valence": "부정",
+        "appraisal_valence": "만족",
+        "appraisal_warmth_delta": 0.05,
+        "match": true,
+        "elapsed": 1.7144970893859863
+      },
+      {
+        "label": "부정문 - 성공 못함",
+        "expected": "부정",
+        "keyword_valence": "중립",
+        "appraisal_valence": "부정",
+        "appraisal_warmth_delta": -0.02,
+        "match": true,
+        "elapsed": 1.5730171203613281
+      },
+      {
+        "label": "키워드 혼합 - 신뢰 저버림",
+        "expected": "부정",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "부정",
+        "appraisal_warmth_delta": -0.15,
+        "match": true,
+        "elapsed": 1.6920456886291504
+      },
+      {
+        "label": "혼합 감정",
+        "expected": "혼합",
+        "keyword_valence": "부정",
+        "appraisal_valence": "긍정",
+        "appraisal_warmth_delta": 0.08,
+        "match": true,
+        "elapsed": 1.4923131465911865
+      },
+      {
+        "label": "부정문 - 이해 실패",
+        "expected": "부정",
+        "keyword_valence": "긍정",
+        "appraisal_valence": "무력감",
+        "appraisal_warmth_delta": -0.05,
+        "match": true,
+        "elapsed": 1.7399721145629883
+      }
+    ]
+  },
+  "H2": {
+    "pass": true,
+    "deltas": [
+      0.05,
+      0.05,
+      0.01
+    ],
+    "variance": 0.0005333333333333334
+  },
+  "H3": {
+    "parse_rate": 1.0,
+    "pass": true,
+    "success": 10,
+    "total": 10
+  },
+  "H4": {
+    "pass": true,
+    "saturated_avg": 0.006666666666666667,
+    "neutral_avg": 0.05
+  },
+  "H5": {
+    "avg_time": 1.9430718421936035,
+    "max_time": 2.0233850479125977,
+    "pass": true,
+    "times": [
+      1.774911880493164,
+      1.9977571964263916,
+      2.0074641704559326,
+      1.9939610958099365,
+      2.015230894088745,
+      1.9928340911865234,
+      1.811662197113037,
+      1.9117419719696045,
+      1.9017698764801025,
+      2.0233850479125977
+    ]
+  }
+}

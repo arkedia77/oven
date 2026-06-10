@@ -1,0 +1,27 @@
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent
+DATA_DIR = BASE_DIR / "data"
+VILLAGE_DIR = Path(__file__).parent
+
+API_URL = "http://100.107.229.5:8080/v1/chat/completions"
+MODEL_NAME = "google_gemma-4-26B-A4B-it-Q8_0.gguf"
+
+TICK_SECONDS = 200  # 3.3 real minutes per tick (reduced from 150, ~25% compute saving)
+TICKS_PER_DAY = 24  # 24 ticks = 1 village day (matches 24-hour cycle)
+VILLAGE_HOURS_PER_TICK = 1
+
+EXCHANGES_PER_CONVERSATION = 3
+MAX_TOKENS_CONVERSATION = 2048
+MAX_TOKENS_REFLECTION = 2048
+MAX_TOKENS_MONOLOGUE = 1024
+MAX_TOKENS_RETROSPECTIVE = 1024
+TEMPERATURE = 0.85
+
+MAX_EPISODES = 50
+CONSOLIDATION_INTERVAL = 1
+
+MAX_CONVERSATIONS_PER_TICK = 2
+SOLO_MONOLOGUES_PER_TICK = 1
+
+RETROSPECTIVE_INTERVAL_DAYS = 10

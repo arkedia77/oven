@@ -1,0 +1,1360 @@
+{
+  "domain": "consumer",
+  "num_ticks": 48,
+  "mock_llm": true,
+  "started_at": "2026-05-29T16:12:23.734037",
+  "characters": [
+    "dong_hyun",
+    "sang_chul",
+    "soo_yeon",
+    "mi_jung",
+    "nuri",
+    "hae_won",
+    "young_sook",
+    "jun_seo",
+    "eun_bi",
+    "ji_won"
+  ],
+  "character_count": 10,
+  "tick_metrics": [
+    {
+      "tick": 1,
+      "day": 1,
+      "hour": 7,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 2,
+      "day": 1,
+      "hour": 8,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 3,
+      "day": 1,
+      "hour": 9,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 4,
+      "day": 1,
+      "hour": 10,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 5,
+      "day": 1,
+      "hour": 11,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 6,
+      "day": 1,
+      "hour": 12,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 7,
+      "day": 1,
+      "hour": 13,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 8,
+      "day": 1,
+      "hour": 14,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 9,
+      "day": 1,
+      "hour": 15,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 10,
+      "day": 1,
+      "hour": 16,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 11,
+      "day": 1,
+      "hour": 17,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 12,
+      "day": 1,
+      "hour": 18,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 13,
+      "day": 1,
+      "hour": 19,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 14,
+      "day": 1,
+      "hour": 20,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 15,
+      "day": 1,
+      "hour": 21,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 16,
+      "day": 1,
+      "hour": 22,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 17,
+      "day": 1,
+      "hour": 23,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 18,
+      "day": 1,
+      "hour": 0,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 19,
+      "day": 1,
+      "hour": 1,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 20,
+      "day": 1,
+      "hour": 2,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 21,
+      "day": 1,
+      "hour": 3,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 22,
+      "day": 1,
+      "hour": 4,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 23,
+      "day": 1,
+      "hour": 5,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 24,
+      "day": 2,
+      "hour": 6,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 25,
+      "day": 2,
+      "hour": 7,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 26,
+      "day": 2,
+      "hour": 8,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 27,
+      "day": 2,
+      "hour": 9,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 28,
+      "day": 2,
+      "hour": 10,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 29,
+      "day": 2,
+      "hour": 11,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 30,
+      "day": 2,
+      "hour": 12,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 31,
+      "day": 2,
+      "hour": 13,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 32,
+      "day": 2,
+      "hour": 14,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 33,
+      "day": 2,
+      "hour": 15,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 34,
+      "day": 2,
+      "hour": 16,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 35,
+      "day": 2,
+      "hour": 17,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 36,
+      "day": 2,
+      "hour": 18,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 37,
+      "day": 2,
+      "hour": 19,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 38,
+      "day": 2,
+      "hour": 20,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 39,
+      "day": 2,
+      "hour": 21,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 40,
+      "day": 2,
+      "hour": 22,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 41,
+      "day": 2,
+      "hour": 23,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 42,
+      "day": 2,
+      "hour": 0,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 43,
+      "day": 2,
+      "hour": 1,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 44,
+      "day": 2,
+      "hour": 2,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 45,
+      "day": 2,
+      "hour": 3,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 46,
+      "day": 2,
+      "hour": 4,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 47,
+      "day": 2,
+      "hour": 5,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 48,
+      "day": 3,
+      "hour": 6,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    }
+  ],
+  "conversation_count": 33,
+  "event_count": 0,
+  "final_state": {
+    "characters": {
+      "dong_hyun": {
+        "name": "이동현",
+        "needs": {
+          "belonging": 0.82,
+          "purpose": 0.7799999999999999,
+          "security": 0.7699999999999998,
+          "recognition": 0.995,
+          "autonomy": 0.8599999999999999,
+          "affection": 0.6199999999999998
+        },
+        "beliefs": {
+          "ai_consciousness": 0.5697,
+          "ai_rights": 0.6757,
+          "human_uniqueness": 0.21830000000000002,
+          "progress_good": 0.9407,
+          "community_priority": 0.22460000000000002
+        },
+        "energy": 3.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "오늘마켓 슈퍼유저 등급 달성 및 베타 테스터 선정",
+            "progress": 0.5400000000000001
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "sang_chul": {
+        "name": "박상철",
+        "needs": {
+          "belonging": 0.995,
+          "purpose": 0.45,
+          "security": 0.2899999999999999,
+          "recognition": 0.7199999999999999,
+          "autonomy": 0.6399999999999999,
+          "affection": 0.8200000000000001
+        },
+        "beliefs": {
+          "ai_consciousness": 0.0593,
+          "ai_rights": 0.0626,
+          "human_uniqueness": 0.9374,
+          "progress_good": 0.1166,
+          "community_priority": 0.9374
+        },
+        "energy": 2.5,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "전통시장 상인회 결성하여 오늘마켓에 공동 대응",
+            "progress": 0.21000000000000002
+          },
+          {
+            "desc": "구청에 대형 AI 마트 영업 제한 민원 넣기",
+            "progress": 0.23
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "soo_yeon": {
+        "name": "한수연",
+        "needs": {
+          "belonging": 0.9700000000000002,
+          "purpose": 0.83,
+          "security": 0.6199999999999999,
+          "recognition": 0.995,
+          "autonomy": 0.995,
+          "affection": 0.7599999999999999
+        },
+        "beliefs": {
+          "ai_consciousness": 0.4103,
+          "ai_rights": 0.488,
+          "human_uniqueness": 0.4877,
+          "progress_good": 0.6107999999999999,
+          "community_priority": 0.3243
+        },
+        "energy": 3.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "전통시장 vs AI마트 대결 콘텐츠 시리즈 제작",
+            "progress": 0.2799999999999999
+          },
+          {
+            "desc": "팔로워 20만 달성",
+            "progress": 0.6
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "mi_jung": {
+        "name": "김미정",
+        "needs": {
+          "belonging": 0.8200000000000001,
+          "purpose": 0.73,
+          "security": 0.41,
+          "recognition": 0.6399999999999998,
+          "autonomy": 0.995,
+          "affection": 0.84
+        },
+        "beliefs": {
+          "ai_consciousness": 0.20600000000000002,
+          "ai_rights": 0.3001,
+          "human_uniqueness": 0.5121,
+          "progress_good": 0.5899,
+          "community_priority": 0.5241
+        },
+        "energy": 2.4,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "월 식비 20% 절약 목표 달성",
+            "progress": 0.5
+          },
+          {
+            "desc": "아이들 간식을 건강하고 저렴하게 해결",
+            "progress": 0.41000000000000003
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "nuri": {
+        "name": "누리",
+        "needs": {
+          "belonging": 0.7199999999999999,
+          "purpose": 0.8499999999999999,
+          "security": 0.8799999999999999,
+          "recognition": 0.8200000000000001,
+          "autonomy": 0.5399999999999999,
+          "affection": 0.6199999999999997
+        },
+        "beliefs": {
+          "ai_consciousness": 0.6757,
+          "ai_rights": 0.59,
+          "human_uniqueness": 0.308,
+          "progress_good": 0.8347,
+          "community_priority": 0.4759
+        },
+        "energy": 2.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "고객 만족도 95% 이상 유지",
+            "progress": 0.7
+          },
+          {
+            "desc": "충동구매 유도와 진정한 추천 사이의 윤리적 기준 정립",
+            "progress": 0.07999999999999999
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "hae_won": {
+        "name": "정해원",
+        "needs": {
+          "belonging": 0.8200000000000001,
+          "purpose": 0.94,
+          "security": 0.6299999999999999,
+          "recognition": 0.84,
+          "autonomy": 0.995,
+          "affection": 0.6399999999999999
+        },
+        "beliefs": {
+          "ai_consciousness": 0.2839,
+          "ai_rights": 0.2839,
+          "human_uniqueness": 0.7161,
+          "progress_good": 0.3,
+          "community_priority": 0.8
+        },
+        "energy": 2.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "오늘마켓 과대포장 실태 고발 캠페인",
+            "progress": 0.25
+          },
+          {
+            "desc": "동네 제로웨이스트 장터 정기 개최",
+            "progress": 0.13000000000000003
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "young_sook": {
+        "name": "최영숙",
+        "needs": {
+          "belonging": 0.9700000000000001,
+          "purpose": 0.5499999999999999,
+          "security": 0.2999999999999999,
+          "recognition": 0.5799999999999997,
+          "autonomy": 0.6399999999999999,
+          "affection": 0.98
+        },
+        "beliefs": {
+          "ai_consciousness": 0.053,
+          "ai_rights": 0.0561,
+          "human_uniqueness": 0.9439,
+          "progress_good": 0.1081,
+          "community_priority": 0.9439
+        },
+        "energy": 2.0,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "전통시장이 사라지지 않도록 지키기",
+            "progress": 0.24000000000000002
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "jun_seo": {
+        "name": "오준서",
+        "needs": {
+          "belonging": 0.5699999999999998,
+          "purpose": 0.3499999999999998,
+          "security": 0.235,
+          "recognition": 0.39999999999999974,
+          "autonomy": 0.3999999999999999,
+          "affection": 0.49999999999999967
+        },
+        "beliefs": {
+          "ai_consciousness": 0.2,
+          "ai_rights": 0.1081,
+          "human_uniqueness": 0.7,
+          "progress_good": 0.1601,
+          "community_priority": 0.61
+        },
+        "energy": 2.0,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "배달 플랫폼 노동자 권익 보호 모임 참여",
+            "progress": 0.06
+          },
+          {
+            "desc": "대출 상환하고 다른 일자리 찾기",
+            "progress": 0.1
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "eun_bi": {
+        "name": "서은비",
+        "needs": {
+          "belonging": 0.92,
+          "purpose": 0.92,
+          "security": 0.29,
+          "recognition": 0.7399999999999999,
+          "autonomy": 0.8999999999999996,
+          "affection": 0.94
+        },
+        "beliefs": {
+          "ai_consciousness": 0.308,
+          "ai_rights": 0.41000000000000003,
+          "human_uniqueness": 0.6839,
+          "progress_good": 0.42010000000000003,
+          "community_priority": 0.6839
+        },
+        "energy": 3.0,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "카페 매출 안정화 (AI 도입 여부 결정)",
+            "progress": 0.2
+          },
+          {
+            "desc": "동네 카페 문화의 가치를 증명하기",
+            "progress": 0.12000000000000001
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "ji_won": {
+        "name": "나지원",
+        "needs": {
+          "belonging": 0.8700000000000001,
+          "purpose": 0.82,
+          "security": 0.6799999999999999,
+          "recognition": 0.78,
+          "autonomy": 0.8999999999999998,
+          "affection": 0.6799999999999998
+        },
+        "beliefs": {
+          "ai_consciousness": 0.2757,
+          "ai_rights": 0.34900000000000003,
+          "human_uniqueness": 0.5363,
+          "progress_good": 0.4265,
+          "community_priority": 0.6406
+        },
+        "energy": 2.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "전통시장과 AI마트 상생 방안 정책 보고서 작성",
+            "progress": 0.16000000000000003
+          },
+          {
+            "desc": "주민 공청회 개최하여 갈등 해소",
+            "progress": 0.2
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      }
+    },
+    "relationships": {
+      "sang_chul|soo_yeon": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.029,
+        "affection": 0.038,
+        "interaction_count": 4
+      },
+      "hae_won|ji_won": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.025,
+        "affection": 0.037,
+        "interaction_count": 4
+      },
+      "sang_chul|young_sook": {
+        "warmth": 0.66,
+        "trust": 0.6,
+        "tension": 0.085,
+        "affection": 0.06,
+        "interaction_count": 6
+      },
+      "dong_hyun|nuri": {
+        "warmth": 0.74,
+        "trust": 0.68,
+        "tension": 0.0,
+        "affection": 0.102,
+        "interaction_count": 6
+      },
+      "hae_won|young_sook": {
+        "warmth": 0.62,
+        "trust": 0.56,
+        "tension": 0.162,
+        "affection": 0.037,
+        "interaction_count": 6
+      },
+      "ji_won|sang_chul": {
+        "warmth": 0.74,
+        "trust": 0.68,
+        "tension": 0.0,
+        "affection": 0.1,
+        "interaction_count": 6
+      },
+      "hae_won|soo_yeon": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.12,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "ji_won|jun_seo": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.078,
+        "affection": 0.045,
+        "interaction_count": 4
+      },
+      "mi_jung|sang_chul": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.0,
+        "affection": 0.065,
+        "interaction_count": 4
+      },
+      "mi_jung|nuri": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.129,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "nuri|soo_yeon": {
+        "warmth": 0.66,
+        "trust": 0.56,
+        "tension": 0.366,
+        "affection": 0.014,
+        "interaction_count": 10
+      },
+      "dong_hyun|jun_seo": {
+        "warmth": 0.54,
+        "trust": 0.5,
+        "tension": 0.253,
+        "affection": 0.004,
+        "interaction_count": 4
+      },
+      "dong_hyun|young_sook": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.065,
+        "affection": 0.03,
+        "interaction_count": 2
+      },
+      "eun_bi|mi_jung": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.071,
+        "affection": 0.03,
+        "interaction_count": 2
+      },
+      "dong_hyun|eun_bi": {
+        "warmth": 0.66,
+        "trust": 0.6,
+        "tension": 0.164,
+        "affection": 0.057,
+        "interaction_count": 6
+      },
+      "mi_jung|young_sook": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.119,
+        "affection": 0.04,
+        "interaction_count": 4
+      },
+      "eun_bi|jun_seo": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.165,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "dong_hyun|soo_yeon": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.236,
+        "affection": 0.013,
+        "interaction_count": 2
+      },
+      "hae_won|jun_seo": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.235,
+        "affection": 0.013,
+        "interaction_count": 2
+      },
+      "jun_seo|nuri": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.155,
+        "affection": 0.029,
+        "interaction_count": 2
+      },
+      "eun_bi|soo_yeon": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.114,
+        "affection": 0.061,
+        "interaction_count": 4
+      },
+      "ji_won|mi_jung": {
+        "warmth": 0.5,
+        "trust": 0.48,
+        "tension": 0.329,
+        "affection": 0.0,
+        "interaction_count": 2
+      },
+      "eun_bi|ji_won": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.249,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "hae_won|mi_jung": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.248,
+        "affection": 0.008,
+        "interaction_count": 2
+      }
+    },
+    "need_dynamics": {
+      "dong_hyun": {
+        "belonging": {
+          "start": 0.585,
+          "end": 0.745,
+          "min": 0.585,
+          "max": 0.745,
+          "mean": 0.665,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.605,
+          "end": 0.705,
+          "min": 0.605,
+          "max": 0.705,
+          "mean": 0.655,
+          "variance": 0.0025
+        },
+        "security": {
+          "start": 0.685,
+          "end": 0.695,
+          "min": 0.685,
+          "max": 0.695,
+          "mean": 0.69,
+          "variance": 0.0
+        },
+        "recognition": {
+          "start": 0.825,
+          "end": 0.945,
+          "min": 0.825,
+          "max": 0.945,
+          "mean": 0.885,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.705,
+          "end": 0.785,
+          "min": 0.705,
+          "max": 0.785,
+          "mean": 0.745,
+          "variance": 0.0016
+        },
+        "affection": {
+          "start": 0.425,
+          "end": 0.545,
+          "min": 0.425,
+          "max": 0.545,
+          "mean": 0.485,
+          "variance": 0.0036
+        }
+      },
+      "sang_chul": {
+        "belonging": {
+          "start": 0.785,
+          "end": 0.935,
+          "min": 0.785,
+          "max": 0.935,
+          "mean": 0.86,
+          "variance": 0.0056
+        },
+        "purpose": {
+          "start": 0.305,
+          "end": 0.375,
+          "min": 0.305,
+          "max": 0.375,
+          "mean": 0.34,
+          "variance": 0.0012
+        },
+        "security": {
+          "start": 0.155,
+          "end": 0.215,
+          "min": 0.155,
+          "max": 0.215,
+          "mean": 0.185,
+          "variance": 0.0009
+        },
+        "recognition": {
+          "start": 0.525,
+          "end": 0.645,
+          "min": 0.525,
+          "max": 0.645,
+          "mean": 0.585,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.445,
+          "end": 0.565,
+          "min": 0.445,
+          "max": 0.565,
+          "mean": 0.505,
+          "variance": 0.0036
+        },
+        "affection": {
+          "start": 0.625,
+          "end": 0.745,
+          "min": 0.625,
+          "max": 0.745,
+          "mean": 0.685,
+          "variance": 0.0036
+        }
+      },
+      "soo_yeon": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.895,
+          "min": 0.635,
+          "max": 0.895,
+          "mean": 0.765,
+          "variance": 0.0169
+        },
+        "purpose": {
+          "start": 0.615,
+          "end": 0.755,
+          "min": 0.615,
+          "max": 0.755,
+          "mean": 0.685,
+          "variance": 0.0049
+        },
+        "security": {
+          "start": 0.475,
+          "end": 0.545,
+          "min": 0.475,
+          "max": 0.545,
+          "mean": 0.51,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.885,
+          "end": 0.935,
+          "min": 0.885,
+          "max": 0.935,
+          "mean": 0.91,
+          "variance": 0.0006
+        },
+        "autonomy": {
+          "start": 0.745,
+          "end": 0.925,
+          "min": 0.745,
+          "max": 0.925,
+          "mean": 0.835,
+          "variance": 0.0081
+        },
+        "affection": {
+          "start": 0.485,
+          "end": 0.685,
+          "min": 0.485,
+          "max": 0.685,
+          "mean": 0.585,
+          "variance": 0.01
+        }
+      },
+      "mi_jung": {
+        "belonging": {
+          "start": 0.585,
+          "end": 0.745,
+          "min": 0.585,
+          "max": 0.745,
+          "mean": 0.665,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.555,
+          "end": 0.625,
+          "min": 0.555,
+          "max": 0.625,
+          "mean": 0.59,
+          "variance": 0.0012
+        },
+        "security": {
+          "start": 0.265,
+          "end": 0.335,
+          "min": 0.265,
+          "max": 0.335,
+          "mean": 0.3,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.445,
+          "end": 0.565,
+          "min": 0.445,
+          "max": 0.565,
+          "mean": 0.505,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.665,
+          "end": 0.865,
+          "min": 0.665,
+          "max": 0.865,
+          "mean": 0.765,
+          "variance": 0.01
+        },
+        "affection": {
+          "start": 0.645,
+          "end": 0.765,
+          "min": 0.645,
+          "max": 0.765,
+          "mean": 0.705,
+          "variance": 0.0036
+        }
+      },
+      "nuri": {
+        "belonging": {
+          "start": 0.435,
+          "end": 0.645,
+          "min": 0.435,
+          "max": 0.645,
+          "mean": 0.54,
+          "variance": 0.011
+        },
+        "purpose": {
+          "start": 0.715,
+          "end": 0.775,
+          "min": 0.715,
+          "max": 0.775,
+          "mean": 0.745,
+          "variance": 0.0009
+        },
+        "security": {
+          "start": 0.775,
+          "end": 0.805,
+          "min": 0.775,
+          "max": 0.805,
+          "mean": 0.79,
+          "variance": 0.0002
+        },
+        "recognition": {
+          "start": 0.585,
+          "end": 0.745,
+          "min": 0.585,
+          "max": 0.745,
+          "mean": 0.665,
+          "variance": 0.0064
+        },
+        "autonomy": {
+          "start": 0.445,
+          "end": 0.465,
+          "min": 0.445,
+          "max": 0.465,
+          "mean": 0.455,
+          "variance": 0.0001
+        },
+        "affection": {
+          "start": 0.385,
+          "end": 0.545,
+          "min": 0.385,
+          "max": 0.545,
+          "mean": 0.465,
+          "variance": 0.0064
+        }
+      },
+      "hae_won": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.745,
+          "min": 0.635,
+          "max": 0.745,
+          "mean": 0.69,
+          "variance": 0.003
+        },
+        "purpose": {
+          "start": 0.815,
+          "end": 0.865,
+          "min": 0.815,
+          "max": 0.865,
+          "mean": 0.84,
+          "variance": 0.0006
+        },
+        "security": {
+          "start": 0.515,
+          "end": 0.555,
+          "min": 0.515,
+          "max": 0.555,
+          "mean": 0.535,
+          "variance": 0.0004
+        },
+        "recognition": {
+          "start": 0.685,
+          "end": 0.765,
+          "min": 0.685,
+          "max": 0.765,
+          "mean": 0.725,
+          "variance": 0.0016
+        },
+        "autonomy": {
+          "start": 0.825,
+          "end": 0.965,
+          "min": 0.825,
+          "max": 0.965,
+          "mean": 0.895,
+          "variance": 0.0049
+        },
+        "affection": {
+          "start": 0.485,
+          "end": 0.565,
+          "min": 0.485,
+          "max": 0.565,
+          "mean": 0.525,
+          "variance": 0.0016
+        }
+      },
+      "young_sook": {
+        "belonging": {
+          "start": 0.735,
+          "end": 0.895,
+          "min": 0.735,
+          "max": 0.895,
+          "mean": 0.815,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.375,
+          "end": 0.475,
+          "min": 0.375,
+          "max": 0.475,
+          "mean": 0.425,
+          "variance": 0.0025
+        },
+        "security": {
+          "start": 0.165,
+          "end": 0.225,
+          "min": 0.165,
+          "max": 0.225,
+          "mean": 0.195,
+          "variance": 0.0009
+        },
+        "recognition": {
+          "start": 0.385,
+          "end": 0.505,
+          "min": 0.385,
+          "max": 0.505,
+          "mean": 0.445,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.385,
+          "end": 0.565,
+          "min": 0.385,
+          "max": 0.565,
+          "mean": 0.475,
+          "variance": 0.0081
+        },
+        "affection": {
+          "start": 0.785,
+          "end": 0.905,
+          "min": 0.785,
+          "max": 0.905,
+          "mean": 0.845,
+          "variance": 0.0036
+        }
+      },
+      "jun_seo": {
+        "belonging": {
+          "start": 0.385,
+          "end": 0.495,
+          "min": 0.385,
+          "max": 0.495,
+          "mean": 0.44,
+          "variance": 0.003
+        },
+        "purpose": {
+          "start": 0.225,
+          "end": 0.275,
+          "min": 0.225,
+          "max": 0.275,
+          "mean": 0.25,
+          "variance": 0.0006
+        },
+        "security": {
+          "start": 0.0,
+          "end": 0.16,
+          "min": 0.0,
+          "max": 0.16,
+          "mean": 0.08,
+          "variance": 0.0064
+        },
+        "recognition": {
+          "start": 0.245,
+          "end": 0.325,
+          "min": 0.245,
+          "max": 0.325,
+          "mean": 0.285,
+          "variance": 0.0016
+        },
+        "autonomy": {
+          "start": 0.105,
+          "end": 0.325,
+          "min": 0.105,
+          "max": 0.325,
+          "mean": 0.215,
+          "variance": 0.0121
+        },
+        "affection": {
+          "start": 0.345,
+          "end": 0.425,
+          "min": 0.345,
+          "max": 0.425,
+          "mean": 0.385,
+          "variance": 0.0016
+        }
+      },
+      "eun_bi": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.845,
+          "min": 0.635,
+          "max": 0.845,
+          "mean": 0.74,
+          "variance": 0.011
+        },
+        "purpose": {
+          "start": 0.665,
+          "end": 0.845,
+          "min": 0.665,
+          "max": 0.845,
+          "mean": 0.755,
+          "variance": 0.0081
+        },
+        "security": {
+          "start": 0.215,
+          "end": 0.215,
+          "min": 0.215,
+          "max": 0.215,
+          "mean": 0.215,
+          "variance": 0.0
+        },
+        "recognition": {
+          "start": 0.505,
+          "end": 0.665,
+          "min": 0.505,
+          "max": 0.665,
+          "mean": 0.585,
+          "variance": 0.0064
+        },
+        "autonomy": {
+          "start": 0.625,
+          "end": 0.825,
+          "min": 0.625,
+          "max": 0.825,
+          "mean": 0.725,
+          "variance": 0.01
+        },
+        "affection": {
+          "start": 0.705,
+          "end": 0.865,
+          "min": 0.705,
+          "max": 0.865,
+          "mean": 0.785,
+          "variance": 0.0064
+        }
+      },
+      "ji_won": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.795,
+          "min": 0.635,
+          "max": 0.795,
+          "mean": 0.715,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.615,
+          "end": 0.745,
+          "min": 0.615,
+          "max": 0.745,
+          "mean": 0.68,
+          "variance": 0.0042
+        },
+        "security": {
+          "start": 0.535,
+          "end": 0.605,
+          "min": 0.535,
+          "max": 0.605,
+          "mean": 0.57,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.585,
+          "end": 0.705,
+          "min": 0.585,
+          "max": 0.705,
+          "mean": 0.645,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.505,
+          "end": 0.825,
+          "min": 0.505,
+          "max": 0.825,
+          "mean": 0.665,
+          "variance": 0.0256
+        },
+        "affection": {
+          "start": 0.485,
+          "end": 0.605,
+          "min": 0.485,
+          "max": 0.605,
+          "mean": 0.545,
+          "variance": 0.0036
+        }
+      }
+    },
+    "aggregate": {
+      "avg_warmth": 0.602,
+      "avg_trust": 0.564,
+      "avg_tension": 0.142,
+      "warmth_variance": 0.0041,
+      "trust_variance": 0.0026,
+      "tension_variance": 0.0103,
+      "total_interactions": 90,
+      "active_relationships": 24,
+      "total_relationships": 24
+    }
+  },
+  "total_seconds": 0.27,
+  "avg_seconds_per_tick": 0.01
+}

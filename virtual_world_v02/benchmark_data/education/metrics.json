@@ -1,0 +1,1375 @@
+{
+  "domain": "education",
+  "num_ticks": 48,
+  "mock_llm": true,
+  "started_at": "2026-05-29T16:12:23.003984",
+  "characters": [
+    "kim_teacher",
+    "principal_oh",
+    "ai_tutor",
+    "top_student_minji",
+    "loner_eunsoo",
+    "class_pres_yuna",
+    "rebel_doha",
+    "parent_rep_shin",
+    "counselor_park",
+    "coder_jihoon"
+  ],
+  "character_count": 10,
+  "tick_metrics": [
+    {
+      "tick": 1,
+      "day": 1,
+      "hour": 7,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 2,
+      "day": 1,
+      "hour": 8,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 3,
+      "day": 1,
+      "hour": 9,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 4,
+      "day": 1,
+      "hour": 10,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 5,
+      "day": 1,
+      "hour": 11,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 6,
+      "day": 1,
+      "hour": 12,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 7,
+      "day": 1,
+      "hour": 13,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 8,
+      "day": 1,
+      "hour": 14,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 9,
+      "day": 1,
+      "hour": 15,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 10,
+      "day": 1,
+      "hour": 16,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 11,
+      "day": 1,
+      "hour": 17,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 12,
+      "day": 1,
+      "hour": 18,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 13,
+      "day": 1,
+      "hour": 19,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 14,
+      "day": 1,
+      "hour": 20,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 15,
+      "day": 1,
+      "hour": 21,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 16,
+      "day": 1,
+      "hour": 22,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 17,
+      "day": 1,
+      "hour": 23,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 18,
+      "day": 1,
+      "hour": 0,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 19,
+      "day": 1,
+      "hour": 1,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 20,
+      "day": 1,
+      "hour": 2,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 21,
+      "day": 1,
+      "hour": 3,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 22,
+      "day": 1,
+      "hour": 4,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 23,
+      "day": 1,
+      "hour": 5,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 24,
+      "day": 2,
+      "hour": 6,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 25,
+      "day": 2,
+      "hour": 7,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 26,
+      "day": 2,
+      "hour": 8,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 27,
+      "day": 2,
+      "hour": 9,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 28,
+      "day": 2,
+      "hour": 10,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 29,
+      "day": 2,
+      "hour": 11,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 30,
+      "day": 2,
+      "hour": 12,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 31,
+      "day": 2,
+      "hour": 13,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 32,
+      "day": 2,
+      "hour": 14,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 33,
+      "day": 2,
+      "hour": 15,
+      "new_conversations": 2,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 34,
+      "day": 2,
+      "hour": 16,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 35,
+      "day": 2,
+      "hour": 17,
+      "new_conversations": 1,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 36,
+      "day": 2,
+      "hour": 18,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 37,
+      "day": 2,
+      "hour": 19,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 38,
+      "day": 2,
+      "hour": 20,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 39,
+      "day": 2,
+      "hour": 21,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 40,
+      "day": 2,
+      "hour": 22,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 41,
+      "day": 2,
+      "hour": 23,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 42,
+      "day": 2,
+      "hour": 0,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 43,
+      "day": 2,
+      "hour": 1,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 44,
+      "day": 2,
+      "hour": 2,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 45,
+      "day": 2,
+      "hour": 3,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 46,
+      "day": 2,
+      "hour": 4,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    },
+    {
+      "tick": 47,
+      "day": 2,
+      "hour": 5,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.01
+    },
+    {
+      "tick": 48,
+      "day": 3,
+      "hour": 6,
+      "new_conversations": 0,
+      "elapsed_seconds": 0.0
+    }
+  ],
+  "conversation_count": 33,
+  "event_count": 0,
+  "final_state": {
+    "characters": {
+      "kim_teacher": {
+        "name": "김정숙",
+        "needs": {
+          "belonging": 0.9899999999999999,
+          "purpose": 0.9099999999999999,
+          "security": 0.5599999999999999,
+          "recognition": 0.8200000000000001,
+          "autonomy": 0.995,
+          "affection": 0.9899999999999999
+        },
+        "beliefs": {
+          "ai_consciousness": 0.20600000000000002,
+          "ai_rights": 0.3,
+          "human_uniqueness": 0.8919,
+          "progress_good": 0.3161,
+          "community_priority": 0.794
+        },
+        "energy": 2.4,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "AI 전면 도입 반대 교사 연대 구축",
+            "progress": 0.2
+          },
+          {
+            "desc": "은수의 교실 복귀 돕기",
+            "progress": 0.10999999999999999
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "principal_oh": {
+        "name": "오성환",
+        "needs": {
+          "belonging": 0.9200000000000002,
+          "purpose": 0.98,
+          "security": 0.7799999999999999,
+          "recognition": 0.995,
+          "autonomy": 0.995,
+          "affection": 0.6199999999999998
+        },
+        "beliefs": {
+          "ai_consciousness": 0.3,
+          "ai_rights": 0.488,
+          "human_uniqueness": 0.33259999999999995,
+          "progress_good": 0.8834000000000001,
+          "community_priority": 0.22460000000000002
+        },
+        "energy": 2.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "AI 시범학교 지정 획득 (교육청 평가 2주 내)",
+            "progress": 0.43000000000000005
+          },
+          {
+            "desc": "전 교과 AI 튜터 도입 추진",
+            "progress": 0.41000000000000003
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "ai_tutor": {
+        "name": "하루",
+        "needs": {
+          "belonging": 0.9200000000000002,
+          "purpose": 0.8599999999999999,
+          "security": 0.69,
+          "recognition": 0.6999999999999998,
+          "autonomy": 0.2999999999999997,
+          "affection": 0.8
+        },
+        "beliefs": {
+          "ai_consciousness": 0.488,
+          "ai_rights": 0.42010000000000003,
+          "human_uniqueness": 0.41000000000000003,
+          "progress_good": 0.7879,
+          "community_priority": 0.6671
+        },
+        "energy": 3.0,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "전교생 학습 성취도 15% 향상",
+            "progress": 0.37
+          },
+          {
+            "desc": "은수의 정서적 안정 지원 (역할 범위 내에서)",
+            "progress": 0.33000000000000007
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "top_student_minji": {
+        "name": "서민지",
+        "needs": {
+          "belonging": 0.8200000000000001,
+          "purpose": 0.6,
+          "security": 0.44000000000000006,
+          "recognition": 0.995,
+          "autonomy": 0.6399999999999999,
+          "affection": 0.6399999999999998
+        },
+        "beliefs": {
+          "ai_consciousness": 0.39,
+          "ai_rights": 0.59,
+          "human_uniqueness": 0.5001,
+          "progress_good": 0.6999,
+          "community_priority": 0.3161
+        },
+        "energy": 2.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "전교 1등 유지 (중간고사까지)",
+            "progress": 0.6
+          },
+          {
+            "desc": "AI 의존 탈출 — 실력으로 증명하기",
+            "progress": 0.15000000000000002
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "loner_eunsoo": {
+        "name": "한은수",
+        "needs": {
+          "belonging": 0.3699999999999998,
+          "purpose": 0.4499999999999999,
+          "security": 0.19999999999999984,
+          "recognition": 0.39999999999999974,
+          "autonomy": 0.6999999999999998,
+          "affection": 0.39999999999999974
+        },
+        "beliefs": {
+          "ai_consciousness": 0.692,
+          "ai_rights": 0.6839,
+          "human_uniqueness": 0.308,
+          "progress_good": 0.5363,
+          "community_priority": 0.4303
+        },
+        "energy": 1.5,
+        "emotional_state": "약간 불만족",
+        "goals": [
+          {
+            "desc": "학교에서 한 명이라도 인간 친구 만들기",
+            "progress": 0.09999999999999999
+          },
+          {
+            "desc": "하루와의 대화 시간 지키기",
+            "progress": 0.7
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "class_pres_yuna": {
+        "name": "이유나",
+        "needs": {
+          "belonging": 0.995,
+          "purpose": 0.7999999999999999,
+          "security": 0.6599999999999999,
+          "recognition": 0.995,
+          "autonomy": 0.6,
+          "affection": 0.995
+        },
+        "beliefs": {
+          "ai_consciousness": 0.4879,
+          "ai_rights": 0.488,
+          "human_uniqueness": 0.6204,
+          "progress_good": 0.5697,
+          "community_priority": 0.7690000000000001
+        },
+        "energy": 3.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "반 분위기 개선 — 은따 문제 해결",
+            "progress": 0.21
+          },
+          {
+            "desc": "학생회 주도 AI 활용 토론회 개최",
+            "progress": 0.23
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "rebel_doha": {
+        "name": "장도하",
+        "needs": {
+          "belonging": 0.46999999999999975,
+          "purpose": 0.6399999999999999,
+          "security": 0.5699999999999998,
+          "recognition": 0.4199999999999997,
+          "autonomy": 0.995,
+          "affection": 0.4199999999999997
+        },
+        "beliefs": {
+          "ai_consciousness": 0.3,
+          "ai_rights": 0.3,
+          "human_uniqueness": 0.8877,
+          "progress_good": 0.22460000000000002,
+          "community_priority": 0.5121
+        },
+        "energy": 2.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "학교 내 자유 창작 동아리 만들기",
+            "progress": 0.18
+          },
+          {
+            "desc": "교장의 AI 일방 도입에 항의 행동 (서명 운동 또는 퍼포먼스)",
+            "progress": 0.19
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "parent_rep_shin": {
+        "name": "신미경",
+        "needs": {
+          "belonging": 0.92,
+          "purpose": 0.8999999999999999,
+          "security": 0.45,
+          "recognition": 0.94,
+          "autonomy": 0.8799999999999996,
+          "affection": 0.74
+        },
+        "beliefs": {
+          "ai_consciousness": 0.2,
+          "ai_rights": 0.3,
+          "human_uniqueness": 0.6917,
+          "progress_good": 0.5123,
+          "community_priority": 0.5897
+        },
+        "energy": 2.5,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "AI 교육 도입 시 공정성 가이드라인 확보",
+            "progress": 0.23
+          },
+          {
+            "desc": "딸 민지의 SKY 대학 진학 확보",
+            "progress": 0.5
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "counselor_park": {
+        "name": "박소영",
+        "needs": {
+          "belonging": 0.9700000000000001,
+          "purpose": 0.995,
+          "security": 0.5899999999999999,
+          "recognition": 0.6799999999999998,
+          "autonomy": 0.8799999999999999,
+          "affection": 0.98
+        },
+        "beliefs": {
+          "ai_consciousness": 0.39,
+          "ai_rights": 0.4,
+          "human_uniqueness": 0.7879,
+          "progress_good": 0.42010000000000003,
+          "community_priority": 0.8919
+        },
+        "energy": 3.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "은수의 안전 확보 — 전문 상담 연계",
+            "progress": 0.15
+          },
+          {
+            "desc": "AI 튜터의 정서 지원 범위 가이드라인 수립",
+            "progress": 0.15
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      },
+      "coder_jihoon": {
+        "name": "최지훈",
+        "needs": {
+          "belonging": 0.9200000000000002,
+          "purpose": 0.995,
+          "security": 0.6999999999999998,
+          "recognition": 0.92,
+          "autonomy": 0.995,
+          "affection": 0.7199999999999999
+        },
+        "beliefs": {
+          "ai_consciousness": 0.59,
+          "ai_rights": 0.6839,
+          "human_uniqueness": 0.3161,
+          "progress_good": 0.8834000000000001,
+          "community_priority": 0.42010000000000003
+        },
+        "energy": 3.0,
+        "emotional_state": "평온",
+        "goals": [
+          {
+            "desc": "코딩동아리 프로젝트 — 학교 맞춤 AI 챗봇 개발",
+            "progress": 0.4
+          },
+          {
+            "desc": "민지의 AI 부정행위 문제 해결 (어떤 방식으로든)",
+            "progress": 0.16
+          }
+        ],
+        "interaction_count": 0,
+        "working_memory_size": 5
+      }
+    },
+    "relationships": {
+      "ai_tutor|loner_eunsoo": {
+        "warmth": 0.7,
+        "trust": 0.64,
+        "tension": 0.0,
+        "affection": 0.081,
+        "interaction_count": 6
+      },
+      "class_pres_yuna|kim_teacher": {
+        "warmth": 0.58,
+        "trust": 0.54,
+        "tension": 0.111,
+        "affection": 0.026,
+        "interaction_count": 4
+      },
+      "ai_tutor|counselor_park": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.038,
+        "affection": 0.042,
+        "interaction_count": 4
+      },
+      "counselor_park|principal_oh": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.054,
+        "affection": 0.047,
+        "interaction_count": 4
+      },
+      "coder_jihoon|top_student_minji": {
+        "warmth": 0.7,
+        "trust": 0.64,
+        "tension": 0.0,
+        "affection": 0.069,
+        "interaction_count": 6
+      },
+      "kim_teacher|rebel_doha": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.103,
+        "affection": 0.014,
+        "interaction_count": 2
+      },
+      "ai_tutor|principal_oh": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.055,
+        "affection": 0.042,
+        "interaction_count": 4
+      },
+      "counselor_park|kim_teacher": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.0,
+        "affection": 0.065,
+        "interaction_count": 4
+      },
+      "class_pres_yuna|loner_eunsoo": {
+        "warmth": 0.58,
+        "trust": 0.54,
+        "tension": 0.149,
+        "affection": 0.013,
+        "interaction_count": 4
+      },
+      "kim_teacher|parent_rep_shin": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.077,
+        "affection": 0.046,
+        "interaction_count": 4
+      },
+      "kim_teacher|principal_oh": {
+        "warmth": 0.62,
+        "trust": 0.58,
+        "tension": 0.083,
+        "affection": 0.046,
+        "interaction_count": 4
+      },
+      "parent_rep_shin|principal_oh": {
+        "warmth": 0.74,
+        "trust": 0.68,
+        "tension": 0.0,
+        "affection": 0.104,
+        "interaction_count": 6
+      },
+      "class_pres_yuna|top_student_minji": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.008,
+        "affection": 0.066,
+        "interaction_count": 4
+      },
+      "coder_jihoon|loner_eunsoo": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.013,
+        "affection": 0.065,
+        "interaction_count": 4
+      },
+      "counselor_park|top_student_minji": {
+        "warmth": 0.5,
+        "trust": 0.48,
+        "tension": 0.232,
+        "affection": 0.0,
+        "interaction_count": 2
+      },
+      "parent_rep_shin|rebel_doha": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.16,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "coder_jihoon|parent_rep_shin": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.165,
+        "affection": 0.013,
+        "interaction_count": 2
+      },
+      "ai_tutor|coder_jihoon": {
+        "warmth": 0.62,
+        "trust": 0.56,
+        "tension": 0.308,
+        "affection": 0.03,
+        "interaction_count": 6
+      },
+      "class_pres_yuna|rebel_doha": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.092,
+        "affection": 0.061,
+        "interaction_count": 4
+      },
+      "principal_oh|rebel_doha": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.143,
+        "affection": 0.029,
+        "interaction_count": 2
+      },
+      "class_pres_yuna|counselor_park": {
+        "warmth": 0.66,
+        "trust": 0.62,
+        "tension": 0.108,
+        "affection": 0.062,
+        "interaction_count": 4
+      },
+      "ai_tutor|kim_teacher": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.154,
+        "affection": 0.029,
+        "interaction_count": 2
+      },
+      "parent_rep_shin|top_student_minji": {
+        "warmth": 0.54,
+        "trust": 0.52,
+        "tension": 0.258,
+        "affection": 0.008,
+        "interaction_count": 2
+      },
+      "class_pres_yuna|coder_jihoon": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.171,
+        "affection": 0.029,
+        "interaction_count": 2
+      },
+      "ai_tutor|top_student_minji": {
+        "warmth": 0.58,
+        "trust": 0.56,
+        "tension": 0.177,
+        "affection": 0.029,
+        "interaction_count": 2
+      }
+    },
+    "need_dynamics": {
+      "kim_teacher": {
+        "belonging": {
+          "start": 0.785,
+          "end": 0.915,
+          "min": 0.785,
+          "max": 0.915,
+          "mean": 0.85,
+          "variance": 0.0042
+        },
+        "purpose": {
+          "start": 0.705,
+          "end": 0.805,
+          "min": 0.705,
+          "max": 0.805,
+          "mean": 0.755,
+          "variance": 0.0025
+        },
+        "security": {
+          "start": 0.355,
+          "end": 0.485,
+          "min": 0.355,
+          "max": 0.485,
+          "mean": 0.42,
+          "variance": 0.0042
+        },
+        "recognition": {
+          "start": 0.625,
+          "end": 0.745,
+          "min": 0.625,
+          "max": 0.745,
+          "mean": 0.685,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.625,
+          "end": 0.885,
+          "min": 0.625,
+          "max": 0.885,
+          "mean": 0.755,
+          "variance": 0.0169
+        },
+        "affection": {
+          "start": 0.825,
+          "end": 0.915,
+          "min": 0.825,
+          "max": 0.915,
+          "mean": 0.87,
+          "variance": 0.002
+        }
+      },
+      "principal_oh": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.845,
+          "min": 0.635,
+          "max": 0.845,
+          "mean": 0.74,
+          "variance": 0.011
+        },
+        "purpose": {
+          "start": 0.845,
+          "end": 0.905,
+          "min": 0.845,
+          "max": 0.905,
+          "mean": 0.875,
+          "variance": 0.0009
+        },
+        "security": {
+          "start": 0.585,
+          "end": 0.705,
+          "min": 0.585,
+          "max": 0.705,
+          "mean": 0.645,
+          "variance": 0.0036
+        },
+        "recognition": {
+          "start": 0.93,
+          "end": 0.93,
+          "min": 0.93,
+          "max": 0.93,
+          "mean": 0.93,
+          "variance": 0.0
+        },
+        "autonomy": {
+          "start": 0.925,
+          "end": 0.965,
+          "min": 0.925,
+          "max": 0.965,
+          "mean": 0.945,
+          "variance": 0.0004
+        },
+        "affection": {
+          "start": 0.385,
+          "end": 0.545,
+          "min": 0.385,
+          "max": 0.545,
+          "mean": 0.465,
+          "variance": 0.0064
+        }
+      },
+      "ai_tutor": {
+        "belonging": {
+          "start": 0.585,
+          "end": 0.845,
+          "min": 0.585,
+          "max": 0.845,
+          "mean": 0.715,
+          "variance": 0.0169
+        },
+        "purpose": {
+          "start": 0.705,
+          "end": 0.785,
+          "min": 0.705,
+          "max": 0.785,
+          "mean": 0.745,
+          "variance": 0.0016
+        },
+        "security": {
+          "start": 0.555,
+          "end": 0.615,
+          "min": 0.555,
+          "max": 0.615,
+          "mean": 0.585,
+          "variance": 0.0009
+        },
+        "recognition": {
+          "start": 0.425,
+          "end": 0.625,
+          "min": 0.425,
+          "max": 0.625,
+          "mean": 0.525,
+          "variance": 0.01
+        },
+        "autonomy": {
+          "start": 0.185,
+          "end": 0.225,
+          "min": 0.185,
+          "max": 0.225,
+          "mean": 0.205,
+          "variance": 0.0004
+        },
+        "affection": {
+          "start": 0.525,
+          "end": 0.725,
+          "min": 0.525,
+          "max": 0.725,
+          "mean": 0.625,
+          "variance": 0.01
+        }
+      },
+      "top_student_minji": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.745,
+          "min": 0.635,
+          "max": 0.745,
+          "mean": 0.69,
+          "variance": 0.003
+        },
+        "purpose": {
+          "start": 0.445,
+          "end": 0.525,
+          "min": 0.445,
+          "max": 0.525,
+          "mean": 0.485,
+          "variance": 0.0016
+        },
+        "security": {
+          "start": 0.285,
+          "end": 0.365,
+          "min": 0.285,
+          "max": 0.365,
+          "mean": 0.325,
+          "variance": 0.0016
+        },
+        "recognition": {
+          "start": 0.885,
+          "end": 0.93,
+          "min": 0.885,
+          "max": 0.93,
+          "mean": 0.907,
+          "variance": 0.0005
+        },
+        "autonomy": {
+          "start": 0.365,
+          "end": 0.565,
+          "min": 0.365,
+          "max": 0.565,
+          "mean": 0.465,
+          "variance": 0.01
+        },
+        "affection": {
+          "start": 0.485,
+          "end": 0.565,
+          "min": 0.485,
+          "max": 0.565,
+          "mean": 0.525,
+          "variance": 0.0016
+        }
+      },
+      "loner_eunsoo": {
+        "belonging": {
+          "start": 0.235,
+          "end": 0.295,
+          "min": 0.235,
+          "max": 0.295,
+          "mean": 0.265,
+          "variance": 0.0009
+        },
+        "purpose": {
+          "start": 0.345,
+          "end": 0.375,
+          "min": 0.345,
+          "max": 0.375,
+          "mean": 0.36,
+          "variance": 0.0002
+        },
+        "security": {
+          "start": 0.105,
+          "end": 0.125,
+          "min": 0.105,
+          "max": 0.125,
+          "mean": 0.115,
+          "variance": 0.0001
+        },
+        "recognition": {
+          "start": 0.285,
+          "end": 0.325,
+          "min": 0.285,
+          "max": 0.325,
+          "mean": 0.305,
+          "variance": 0.0004
+        },
+        "autonomy": {
+          "start": 0.505,
+          "end": 0.625,
+          "min": 0.505,
+          "max": 0.625,
+          "mean": 0.565,
+          "variance": 0.0036
+        },
+        "affection": {
+          "start": 0.285,
+          "end": 0.325,
+          "min": 0.285,
+          "max": 0.325,
+          "mean": 0.305,
+          "variance": 0.0004
+        }
+      },
+      "class_pres_yuna": {
+        "belonging": {
+          "start": 0.93,
+          "end": 0.935,
+          "min": 0.93,
+          "max": 0.935,
+          "mean": 0.932,
+          "variance": 0.0
+        },
+        "purpose": {
+          "start": 0.615,
+          "end": 0.725,
+          "min": 0.615,
+          "max": 0.725,
+          "mean": 0.67,
+          "variance": 0.003
+        },
+        "security": {
+          "start": 0.475,
+          "end": 0.585,
+          "min": 0.475,
+          "max": 0.585,
+          "mean": 0.53,
+          "variance": 0.003
+        },
+        "recognition": {
+          "start": 0.785,
+          "end": 0.935,
+          "min": 0.785,
+          "max": 0.935,
+          "mean": 0.86,
+          "variance": 0.0056
+        },
+        "autonomy": {
+          "start": 0.445,
+          "end": 0.525,
+          "min": 0.445,
+          "max": 0.525,
+          "mean": 0.485,
+          "variance": 0.0016
+        },
+        "affection": {
+          "start": 0.785,
+          "end": 0.935,
+          "min": 0.785,
+          "max": 0.935,
+          "mean": 0.86,
+          "variance": 0.0056
+        }
+      },
+      "rebel_doha": {
+        "belonging": {
+          "start": 0.285,
+          "end": 0.395,
+          "min": 0.285,
+          "max": 0.395,
+          "mean": 0.34,
+          "variance": 0.003
+        },
+        "purpose": {
+          "start": 0.515,
+          "end": 0.565,
+          "min": 0.515,
+          "max": 0.565,
+          "mean": 0.54,
+          "variance": 0.0006
+        },
+        "security": {
+          "start": 0.425,
+          "end": 0.495,
+          "min": 0.425,
+          "max": 0.495,
+          "mean": 0.46,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.265,
+          "end": 0.345,
+          "min": 0.265,
+          "max": 0.345,
+          "mean": 0.305,
+          "variance": 0.0016
+        },
+        "autonomy": {
+          "start": 0.96,
+          "end": 0.965,
+          "min": 0.96,
+          "max": 0.965,
+          "mean": 0.962,
+          "variance": 0.0
+        },
+        "affection": {
+          "start": 0.265,
+          "end": 0.345,
+          "min": 0.265,
+          "max": 0.345,
+          "mean": 0.305,
+          "variance": 0.0016
+        }
+      },
+      "parent_rep_shin": {
+        "belonging": {
+          "start": 0.685,
+          "end": 0.845,
+          "min": 0.685,
+          "max": 0.845,
+          "mean": 0.765,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.725,
+          "end": 0.825,
+          "min": 0.725,
+          "max": 0.825,
+          "mean": 0.775,
+          "variance": 0.0025
+        },
+        "security": {
+          "start": 0.305,
+          "end": 0.375,
+          "min": 0.305,
+          "max": 0.375,
+          "mean": 0.34,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.745,
+          "end": 0.865,
+          "min": 0.745,
+          "max": 0.865,
+          "mean": 0.805,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.605,
+          "end": 0.805,
+          "min": 0.605,
+          "max": 0.805,
+          "mean": 0.705,
+          "variance": 0.01
+        },
+        "affection": {
+          "start": 0.545,
+          "end": 0.665,
+          "min": 0.545,
+          "max": 0.665,
+          "mean": 0.605,
+          "variance": 0.0036
+        }
+      },
+      "counselor_park": {
+        "belonging": {
+          "start": 0.735,
+          "end": 0.895,
+          "min": 0.735,
+          "max": 0.895,
+          "mean": 0.815,
+          "variance": 0.0064
+        },
+        "purpose": {
+          "start": 0.815,
+          "end": 0.95,
+          "min": 0.815,
+          "max": 0.95,
+          "mean": 0.883,
+          "variance": 0.0046
+        },
+        "security": {
+          "start": 0.455,
+          "end": 0.515,
+          "min": 0.455,
+          "max": 0.515,
+          "mean": 0.485,
+          "variance": 0.0009
+        },
+        "recognition": {
+          "start": 0.485,
+          "end": 0.605,
+          "min": 0.485,
+          "max": 0.605,
+          "mean": 0.545,
+          "variance": 0.0036
+        },
+        "autonomy": {
+          "start": 0.505,
+          "end": 0.805,
+          "min": 0.505,
+          "max": 0.805,
+          "mean": 0.655,
+          "variance": 0.0225
+        },
+        "affection": {
+          "start": 0.785,
+          "end": 0.905,
+          "min": 0.785,
+          "max": 0.905,
+          "mean": 0.845,
+          "variance": 0.0036
+        }
+      },
+      "coder_jihoon": {
+        "belonging": {
+          "start": 0.635,
+          "end": 0.845,
+          "min": 0.635,
+          "max": 0.845,
+          "mean": 0.74,
+          "variance": 0.011
+        },
+        "purpose": {
+          "start": 0.775,
+          "end": 0.925,
+          "min": 0.775,
+          "max": 0.925,
+          "mean": 0.85,
+          "variance": 0.0056
+        },
+        "security": {
+          "start": 0.555,
+          "end": 0.625,
+          "min": 0.555,
+          "max": 0.625,
+          "mean": 0.59,
+          "variance": 0.0012
+        },
+        "recognition": {
+          "start": 0.685,
+          "end": 0.845,
+          "min": 0.685,
+          "max": 0.845,
+          "mean": 0.765,
+          "variance": 0.0064
+        },
+        "autonomy": {
+          "start": 0.765,
+          "end": 0.965,
+          "min": 0.765,
+          "max": 0.965,
+          "mean": 0.865,
+          "variance": 0.01
+        },
+        "affection": {
+          "start": 0.485,
+          "end": 0.645,
+          "min": 0.485,
+          "max": 0.645,
+          "mean": 0.565,
+          "variance": 0.0064
+        }
+      }
+    },
+    "aggregate": {
+      "avg_warmth": 0.612,
+      "avg_trust": 0.576,
+      "avg_tension": 0.106,
+      "warmth_variance": 0.0033,
+      "trust_variance": 0.0022,
+      "tension_variance": 0.007,
+      "total_interactions": 90,
+      "active_relationships": 25,
+      "total_relationships": 25
+    }
+  },
+  "total_seconds": 0.31,
+  "avg_seconds_per_tick": 0.01
+}
