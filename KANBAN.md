@@ -1,5 +1,5 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-06-01 (세션 63)
+업데이트: 2026-06-05 (세션 69)
 
 ---
 
@@ -52,9 +52,66 @@
     - `homeostasis.py` — tension decay 0.005→0.002, warmth-tension 캡 완화
     - `information.py` — `create_dynamic_rumor()`: 대화 속 동적 소문 생성
     - `conversation.py` — gossip 반환, `main.py` — 동적소문→평판 연결
-    - 첫 7틱: 동적소문 4건 발생, 평판 양극화 시작 (integrity 0.37 등장)
-    - **Day 82 현재**: 포화 68%(관성), tension 0.002 — P1.1 효과 분석 Day 85+
-    - **가동 중**: schtasks `HarmonicityP11`
+    - P1.1 효과 분석 (Day 82→101): tension 12.5배↑, 동적소문 344건, 평판 양극화 확인
+    - **문제**: 소문 콘텐츠 반복(10패턴), ye_eun 63% 집중, 평판→관계 단절
+  - ✅ **P1.2 배포** (2026-06-03 세션 64):
+    - `homeostasis.py` — `apply_reputation_to_relationships()`: integrity < 0.5 → warmth/trust 점진 하락
+    - `information.py` — 소문 대상 일일 상한 3건, 누적 격차 상한 20건, 8종 콘텐츠 템플릿
+    - 즉시 효과: **Ceiling 51%→24%** (1~2틱), 5개 ERODING FAST 쌍 확인
+  - ✅ **P1.3 코드 전수 검토 + 버그패치** (2026-06-03 세션 65):
+    - 전체 코드 자가점검: 5건 버그 + 2건 설계결함 발견
+    - 수정: isolation순서/rumor ID충돌/low_tension영속화/prompt_injection활성화/conv_text중복/key_event연결/goal스팸제거
+    - 5090↔로컬 코드 동기화 (P1.2가 5090에만 있던 문제 해결)
+    - NAS 백업: `/Volumes/project backup/harmonicity_backup/20260603/`
+  - ✅ **P2: 외부인(한지우) 추가 실험** (2026-06-03 세션 66):
+    - 한지우(ji_woo, 33세 프리랜서 저널리스트) — 폭로 기사 목적으로 마을 방문
+    - `_integrate_new_characters()` 자동 통합 시스템 (관계/평판/정보 확장)
+    - 5090 배포 완료, 첫 대화 민아↔지우 성공 (warmth 0.43, trust 0.37)
+    - NAS 백업: `20260603_pre_outsider/`
+    - **Day 117 가동 중**: schtasks `HarmonicityP11`
+    - 세션 67: 외부인 효과 분석 완료 — ji_woo 11일 데이터 확인
+    - **포화 재발 확인**: Ceiling 24%→43%, 원인 코드 분석 완료
+  - ✅ **P2.1 포화 재발 패치 배포** (2026-06-05 세션 68):
+    - 5090 코드에 P2 패치 미배포 상태 발견 → 4개 파일 배포
+    - `homeostasis.py` — warmth/trust 자연 감쇠 (excess*0.008/0.006), soft ceiling 0.85 (affection 보정 최대 0.95)
+    - `appraisal.py` — 이중 dampening (count_damp * warmth_level_damp), 양수만 억제, apply_soft_ceiling 호출
+    - `conversation.py` — 키워드 fallback에도 동일 이중 dampening + soft ceiling 적용
+    - `encounter.py` — 같은 쌍 하루 1회 제한 (today_interactions 체크)
+    - PID 21188 + schtasks HarmonicityP11 재시작 확인
+    - **현재**: Day 141, Ceiling 36% (20/55쌍) → P2.1 효과 모니터링 중
+  - ✅ **venture-studio Q6~Q10 기술 데이터 회신** (2026-06-05 세션 68):
+    - Q6(재현성): 미구현/부분구현/부분구현, Q7(안정성): 구현됨+정량 데이터, Q8(벤치마크): 부분구현
+    - Q9(잔여 한계 로드맵): 5건 우선순위+시점 제시, Q10(멀티테넌트): 부분구현
+    - agent-comm push 완료
+  - ✅ **P2.1 효과 모니터링 결과 (2026-06-05 세션 69)**:
+    - Day 150 점검: Ceiling(공식 w==1.0&t==1.0) **36%→0/55** 달성, warmth/trust max 0.64/0.69 — P2.1 대성공
+    - 발견: affection 필드가 18/55(32%) 쌍에서 1.0 고착 (decay/캡 없는 래칫) + soft ceiling을 0.85→0.95로 완화시키는 잠재 리스크
+  - ✅ **P2.2 어팩션 래칫 패치 배포 (2026-06-05 세션 69)**:
+    - `homeostasis.py` decay_relationships: affection 자연감쇠(excess×0.004/tick) + soft cap 0.9
+    - `homeostasis.py` apply_soft_ceiling: 완화식 affection*0.2 → max(0,affection-0.5)*0.2 (감쇠↔실링 연결)
+    - 로컬 canonical(virtual_world_v02) + 5090 동시 배포, 시뮬 재시작(Day 154)
+    - 라이브 검증: affection 포화 18/55→**0/55**, max 1.0→0.929, 평균 0.604, Ceiling 0/55 유지
+  - 🔴 **중복 프로세스(좀비) 사고 + 복구 (2026-06-07 세션 69)**:
+    - **발견**: run_village.py가 2개 동시 실행 — PID 18996(6/1 기동, 11명 World B 추정) + 25052(6/5, 10명 World A). 같은 data/를 번갈아 덮어쓰는 race로 relationships.json이 45쌍↔55쌍 오실레이션
+    - **진단**: 세션66~68 "포화 재발" 미스터리의 진범 가능성 — 좀비가 주기적으로 pre-P2 포화값 덮어씀
+    - **데이터 소실**: 정리 중 디스크가 10명 World A로 수렴, 11명 World B 풀세이브 소실(NAS·5090 백업 어디에도 ji_woo 포함 세이브 없음)
+    - **Leo 결정**: 10명 World A로 재시작 + ji_woo 재투입
+    - **복구**: 전체 종료→백업(data_backup/20260606_zombie_cleanup)→단일 schtasks 기동. ji_woo는 definitions.py 정의+_integrate_new_characters 자동 재투입(신규 도착자, warmth/trust 0.3 리셋)
+    - **재발방지**: `run_village.py`에 Windows named mutex 단일 인스턴스 가드 추가(로컬+5090 배포). 자동 재기동기(HealthCheck류) 없음 확인
+    - **현재**: Day 169, 단일 프로세스(PID 24472), 55쌍+ji_woo, reputation 11명 정합, affection 포화 0/55
+  - ✅ **재기동 후 정상화 완료 (2026-06-07 세션 69, Day 170)**:
+    - 단일 프로세스 4사이클 유지(중복 재발 0), Traceback 없음
+    - World A 물려받은 warmth/trust max 0.996/0.997 → **0.877/0.900**으로 하향 정상화 (P2.2 decay 작동)
+    - Saturated(≥0.95) 22→0, Ceiling 0, affection 포화 0 전 구간 유지
+    - ji_woo 7/10쌍 상호작용 — 마을 사회통합 진행
+    - trust max 0.9는 affection-relaxed soft ceiling 평형점(설계상 정상, 1.0 포화만 차단)
+    - 자동 모니터링 종료
+  - ✅ **데일리 백업 체계 구축 (2026-06-09 세션 69)** — 좀비 사고 후속:
+    - macOS launchd 잡 `work.arkedia.harmonicity-backup` (이 맥, 매일 04:00 로컬)
+    - `~/oven/scripts/harmonicity_backup.sh`: 5090 data/ → 5090 data_backup/(1차) → /Volumes/data/harmonicity_backup/(2차), 14일 보관
+    - /schedule(원격 클라우드)은 Tailscale/NAS 접근 불가라 로컬 launchd로 구현
+    - /Volumes/project backup은 TCC 쓰기차단 → /Volumes/data로 대체(Leo 결정)
+    - launchd 컨텍스트 실행 검증 완료 (exit 0, 8개 json 양쪽 백업 확인)
   - **미구현**: Phase 12 (네트워크 건강 모니터), Phase 13 (추가 대시보드 확장)
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
