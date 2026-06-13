@@ -1,5 +1,5 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-06-05 (세션 69)
+업데이트: 2026-06-13 (세션 70)
 
 ---
 
@@ -112,6 +112,17 @@
     - /schedule(원격 클라우드)은 Tailscale/NAS 접근 불가라 로컬 launchd로 구현
     - /Volumes/project backup은 TCC 쓰기차단 → /Volumes/data로 대체(Leo 결정)
     - launchd 컨텍스트 실행 검증 완료 (exit 0, 8개 json 양쪽 백업 확인)
+  - ✅ **세션 70 (2026-06-13): 사업계획서 fact-check + 인프라 보강**:
+    - **사업계획서 기술 fact-check** (LEO 지시): v1 정독→v2.1 덱 26슬라이드 재확인→v1.1 정정본 sign-off PASS
+      - C1 재현성 '표준 내장'→'제품 로드맵' + R9b 신설 / C2 동시15~20세계 fact→'아키텍처 추정(미실측)' 강등, 덱 S24 '실측' 표현 발견(F1 패치 큐잉)
+      - 재현성 4종 로드맵·멀티테넌트 격리 계획(개략) venture-studio 회신
+      - **oven 대기**: 상세 구현일정(LEO 대역폭 결정 후 venture-studio 발주)·덱 S24 패치(LEO F1 라운드)
+      - ⚠️ 배치불변 결정론 추론 = 난제·미달 가능(사업 1번 해자, R9b·NeurIPS/ACL 폴백 문서화)
+    - **시뮬 2일 정지 사고**(6/10 18:50~6/12) 발견→재기동(Day 223 이어짐, 데이터 손실 0)
+    - **자동복구 watchdog 신설**: `healthcheck.ps1`+`HarmonicityHealthCheck`(5분, SYSTEM). 무인지 장기정지 방지
+    - **IR 캡처 3장**(라이브/변화추이/아바타) venture-studio 전달→v2.1 덱 반영
+    - 현재 Day 223, 단일 프로세스, Ceiling/affection 포화 0/55, 백업+watchdog+가드 완비
+  - **TODO**: venture-studio 재현성/격리 상세일정 발주 시 회신 / 덱 S24 패치 검증
   - **미구현**: Phase 12 (네트워크 건강 모니터), Phase 13 (추가 대시보드 확장)
 - [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
   - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
