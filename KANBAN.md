@@ -8,8 +8,10 @@
 - [ ] **하모니시티 재현성 트랙 (공격적)** — oven/ogo — 2026-06-15 착수예정 6/16
   - ✅ venture-studio에 일정 확정 회신 (SLA 6/16 이전): 공격적 트랙, PoC범위(①②③) 7/8 · 전체 7/11
   - ✅ LEO 결정(6/15): 음악 LoKR 병행 축소, 재현성 집중
-  - 🔄 **①시드고정 핵심완료 (6/15, 일정선행)**: llm seed 주입(옵트인)+repro.py+스모크테스트 ALL PASS(random결정성/LLM단일요청결정성/시드분리/라이브무영향). llama.cpp 단일요청 결정성 실측확인. 커밋 9489b81
-  - **TODO ① 나머지+격리② (6/16~18)**: run_reproducible.py 진입점(main max_ticks/fast 파라미터)+짧은런(48틱) 재현검증 + 프로세스 격리
+  - ✅ **①시드고정 완료 (6/15, 일정선행)**: llm seed 주입(옵트인)+repro.py+스모크 ALL PASS. llama.cpp 단일요청 결정성 실측. run_reproducible.py 검증 진입점(main max_ticks/fast, DATA_DIR 환경변수격리, 서브프로세스 2회 비교). 커밋 9489b81·3ab18d6
+  - ✅ **결정성 진단**: mock(순수엔진)=완전결정적 PASS / real LLM=배치비결정성(⑤, 라이브 동시부하) → ②replay는 LLM출력 로깅재생으로 ⑤우회 설계 확정
+  - **TODO 격리② 선반영 (6/16~18)**: 프로세스 상태 격리(좀비방지). DATA_DIR 격리가 부분토대
+  - **TODO 6/18 PoC프로토콜 사전합의안 송부** (venture-studio ACK로 내용합의됨)
   - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
   - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
   - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
