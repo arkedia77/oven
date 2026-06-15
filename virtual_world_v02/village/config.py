@@ -1,7 +1,9 @@
+import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent
-DATA_DIR = BASE_DIR / "data"
+# DATA_DIR: 재현성 검증런은 HARMONICITY_DATA_DIR 환경변수로 별도 dir 격리(라이브는 미설정→기본 data/)
+DATA_DIR = Path(os.environ.get("HARMONICITY_DATA_DIR", str(BASE_DIR / "data")))
 VILLAGE_DIR = Path(__file__).parent
 
 API_URL = "http://100.107.229.5:8080/v1/chat/completions"

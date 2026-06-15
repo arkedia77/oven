@@ -2,6 +2,9 @@
 data/
 data_backup/
 
+# 재현성 검증런 산출물 (run_reproducible.py — 휘발성)
+repro_runs/
+
 # Python 캐시
 __pycache__/
 *.pyc

@@ -450,12 +450,25 @@ def _run_retrospectives(characters: dict, world: WorldState):
         print(f"    📖 {char.name}: {retrospective[:60]}...")
 
 
-def main():
+def _save_full(world, characters, relationships):
+    """전체 상태 영속화 — KeyboardInterrupt/검증런 종료 시 공통 사용."""
+    save_all(world, characters, relationships)
+    save_need_history(dict(need_history))
+    save_atmosphere(get_atm_state())
+    save_reputation(reputation_matrix)
+    save_knowledge_base(knowledge_base, info_registry)
+
+
+def main(max_ticks: int = None, fast: bool = False):
+    """라이브: main()  — 무한루프 + 실시간 틱 대기.
+    검증런: main(max_ticks=N, fast=True) — N틱 실행 후 저장·종료, 틱 대기 생략."""
     print("=" * 60)
     print("🏙️  하모니 시티 #02 Ecosystem + P1.3 (외부인 실험)")
     print(f"   주민: {len(CHARACTERS)}명")
     print(f"   시간 압축: 실시간 {TICK_SECONDS}초 = 마을 1시간")
     print(f"   틱/일: {TICKS_PER_DAY}")
+    if max_ticks is not None:
+        print(f"   [검증런] max_ticks={max_ticks}, fast={fast}")
     print(f"   시작: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 60)
 
@@ -464,11 +477,21 @@ def main():
     print(f"   P1: 평판 매트릭스 {len(reputation_matrix)}명, "
           f"정보 {sum(len(v) for v in knowledge_base.values())}건 로드")
 
+    ticks_done = 0
     try:
         while True:
             tick_start = time.time()
             world.advance_tick()
             run_tick(world, characters, relationships)
+            ticks_done += 1
+
+            if max_ticks is not None and ticks_done >= max_ticks:
+                print(f"\n  [검증런] {ticks_done}틱 완료 — 상태 저장 후 종료")
+                _save_full(world, characters, relationships)
+                return
+
+            if fast:
+                continue  # 검증런: 틱 대기 생략
 
             elapsed = time.time() - tick_start
             wait = max(0, TICK_SECONDS - elapsed)
@@ -479,11 +502,7 @@ def main():
                     time.sleep(min(10, deadline - time.time()))
     except KeyboardInterrupt:
         print("\n\n🛑 시뮬레이션 중단 — 상태 저장 중...")
-        save_all(world, characters, relationships)
-        save_need_history(dict(need_history))
-        save_atmosphere(get_atm_state())
-        save_reputation(reputation_matrix)
-        save_knowledge_base(knowledge_base, info_registry)
+        _save_full(world, characters, relationships)
         print("✓ 저장 완료. 재시작하면 이어서 진행됩니다.")
         sys.exit(0)
 
