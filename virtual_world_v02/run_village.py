@@ -40,8 +40,22 @@ if _mutex_handle:
 
 try:
     sys.path.insert(0, str(base_dir))
+    # --- data dir 인스턴스 락 (좀비 race 2차 방어 + 멀티테넌트 격리) ---
+    # mutex(전역 1차) 우회/실패 시에도 같은 data dir 동시점유를 차단.
+    import atexit
+    from village import config
+    from village.persistence import instance_lock
+    try:
+        instance_lock.acquire(config.DATA_DIR)
+        atexit.register(instance_lock.release, config.DATA_DIR)
+        print(f"[{datetime.now()}] [guard] data dir 인스턴스 락 획득: {config.DATA_DIR}")
+    except instance_lock.InstanceLockError as e:
+        print(f"[{datetime.now()}] [guard] data dir 락 거부 — 중복 점유 차단, 종료: {e}")
+        sys.exit(0)
     from village.main import main
     main()
+except SystemExit:
+    raise
 except Exception:
     with open(crash_path, "a", encoding="utf-8") as ef:
         ef.write(f"\n[{datetime.now()}] {'='*40}\n")

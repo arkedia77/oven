@@ -38,10 +38,16 @@ COMPARE_FILES = [
 def _run_single(seed: int, ticks: int):
     """단일 검증 런 — seed 고정 후 N틱 실행. data dir은 부모가 환경변수로 지정."""
     sys.path.insert(0, str(BASE))
+    from village import config
+    from village.persistence import instance_lock
     from village.repro import seed_everything
     from village.main import main
-    seed_everything(seed)
-    main(max_ticks=ticks, fast=True)
+    instance_lock.acquire(config.DATA_DIR)  # 검증런도 자기 dir 격리(라이브 dir 오침범 방지)
+    try:
+        seed_everything(seed)
+        main(max_ticks=ticks, fast=True)
+    finally:
+        instance_lock.release(config.DATA_DIR)
 
 
 def _hash_dir(data_dir: Path):
