@@ -18,6 +18,16 @@ MAX_TOKENS_MONOLOGUE = 1024
 MAX_TOKENS_RETROSPECTIVE = 1024
 TEMPERATURE = 0.85
 
+# --- 재현성 (Reproducibility) — 옵트인. 모두 미설정/False = 기존 비결정 동작 유지(라이브 무영향) ---
+# 재현성 검증런에서만 활성화 (run_reproducible.py). 라이브 run_village.py는 건드리지 않음.
+REPRODUCIBLE = False              # True면 시드 고정 모드 (random + LLM)
+RANDOM_SEED = None               # int 설정 시 random.seed 고정 (seed_everything에서 사용)
+LLM_SEED = 0                     # llama.cpp 결정적 seed 도출 base (메시지 해시와 합산)
+# 재현성 모드 LLM temperature. None=기존 TEMPERATURE(0.85) 유지가 기본 —
+# seed 고정만으로 재현성 확보하면서 시뮬 다양성/창발 보존(하모니시티는 변화관찰이 핵심).
+# 0.0(greedy)으로 두면 seed가 무의미해지고 응답이 보수적으로 수렴 → 다양성 손실이라 비권장.
+REPRODUCIBLE_TEMPERATURE = None
+
 MAX_EPISODES = 50
 CONSOLIDATION_INTERVAL = 1
 

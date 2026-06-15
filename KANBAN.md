@@ -1,10 +1,20 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-06-13 (세션 70)
+업데이트: 2026-06-15 (세션 71)
 
 ---
 
 ## IN PROGRESS
 
+- [ ] **하모니시티 재현성 트랙 (공격적)** — oven/ogo — 2026-06-15 착수예정 6/16
+  - ✅ venture-studio에 일정 확정 회신 (SLA 6/16 이전): 공격적 트랙, PoC범위(①②③) 7/8 · 전체 7/11
+  - ✅ LEO 결정(6/15): 음악 LoKR 병행 축소, 재현성 집중
+  - **TODO ①시드고정+격리② (6/16~18)**: random.seed 중앙화(호출처 5곳) + llama.cpp seed 주입 + temp 옵션화 + 프로세스 격리. 단일요청 결정성 검증
+  - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
+  - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
+  - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
+  - **TODO PoC 프로토콜 사전합의 (6/18)**: N5시드 최소판, 본 N20~30, 포맷 mean±std+95%CI+raw
+  - ⑤배치불변 결정론 = 별도 R&D(NeurIPS/ACL 폴백), 본 트랙 제외
+  - 원칙: 라이브 시뮬(Day 233, ogo) 무중단 — 로컬 canonical 개발 + 48틱 검증런
 - [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 2026-05-22
   - ✅ 차오름 10곡 LoKR 학습 완료 (500ep, best 0.9721), 6곡 생성
   - ✅ 권PD 믹스 8명 10곡 LoKR 학습 완료 (500ep, best 0.9599), 5곡 생성
