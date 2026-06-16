@@ -36,17 +36,27 @@ COMPARE_FILES = [
 
 
 def _run_single(seed: int, ticks: int):
-    """단일 검증 런 — seed 고정 후 N틱 실행. data dir은 부모가 환경변수로 지정."""
+    """단일 검증 런 — seed 고정 후 N틱 실행. data dir은 부모가 환경변수로 지정.
+    REPRO_RECORD/REPRO_REPLAY 환경변수로 LLM record/replay 모드 활성화."""
     sys.path.insert(0, str(BASE))
-    from village import config
+    from village import config, replay
     from village.persistence import instance_lock
     from village.repro import seed_everything
     from village.main import main
+    rec_path = os.environ.get("REPRO_RECORD")
+    rep_path = os.environ.get("REPRO_REPLAY")
+    if rec_path:
+        replay.init_record(rec_path)
+    elif rep_path:
+        replay.init_replay(rep_path)
     instance_lock.acquire(config.DATA_DIR)  # 검증런도 자기 dir 격리(라이브 dir 오침범 방지)
     try:
         seed_everything(seed)
         main(max_ticks=ticks, fast=True)
     finally:
+        replay.close()
+        if rep_path:
+            print(f"[replay stats] {replay.stats()}")
         instance_lock.release(config.DATA_DIR)
 
 
@@ -73,10 +83,12 @@ def _hash_dir(data_dir: Path):
     return overall.hexdigest(), digest
 
 
-def _spawn(seed: int, ticks: int, data_dir: Path) -> int:
+def _spawn(seed: int, ticks: int, data_dir: Path, extra_env: dict = None) -> int:
     env = dict(os.environ)
     env["HARMONICITY_DATA_DIR"] = str(data_dir)
     env["PYTHONIOENCODING"] = "utf-8"
+    if extra_env:
+        env.update(extra_env)
     proc = subprocess.run(
         [sys.executable, str(BASE / "run_reproducible.py"), "--run", str(seed), str(ticks)],
         env=env, cwd=str(BASE),
@@ -118,6 +130,47 @@ def orchestrate(seed: int, ticks: int) -> bool:
     return False
 
 
+def orchestrate_replay(seed: int, ticks: int) -> bool:
+    """②replay 검증: record 런(실제 LLM, 로그 기록) → replay 런(로그 재생) → 산출물 동일성.
+    배치 비결정성(⑤)이 있어도 replay는 기록을 그대로 재생하므로 PASS여야 함."""
+    print(f"=== ②replay 검증: seed={seed}, ticks={ticks} (record→replay 완전 재현) ===")
+    rec_dir = REPRO_ROOT / f"replay_seed{seed}_record"
+    rep_dir = REPRO_ROOT / f"replay_seed{seed}_replay"
+    log_path = REPRO_ROOT / f"replay_seed{seed}_llm.jsonl"
+    for d in (rec_dir, rep_dir):
+        if d.exists():
+            shutil.rmtree(d)
+        (d / "characters").mkdir(parents=True, exist_ok=True)
+
+    print("\n--- record 런 (실제 LLM 호출 + 출력 기록) ---", flush=True)
+    rc = _spawn(seed, ticks, rec_dir, {"REPRO_RECORD": str(log_path)})
+    if rc != 0:
+        print(f"❌ record 런 실패(rc={rc})")
+        return False
+
+    print("\n--- replay 런 (기록 재생, LLM 서버 미사용) ---", flush=True)
+    rc = _spawn(seed, ticks, rep_dir, {"REPRO_REPLAY": str(log_path)})
+    if rc != 0:
+        print(f"❌ replay 런 실패(rc={rc})")
+        return False
+
+    n_calls = sum(1 for line in open(log_path, encoding="utf-8") if line.strip())
+    ha, da = _hash_dir(rec_dir)
+    hb, db = _hash_dir(rep_dir)
+    print(f"\n기록된 LLM 호출: {n_calls}건")
+    print(f"record 해시: {ha[:16]}  ({len(da)}개 파일)")
+    print(f"replay 해시: {hb[:16]}  ({len(db)}개 파일)")
+
+    if ha == hb:
+        print("②replay 검증: PASS ✅ (record→replay 완전 재현, ⑤ 배치비결정성 우회 성공)")
+        return True
+    print("②replay 검증: FAIL ❌ — 불일치 파일:")
+    for k in sorted(set(da) | set(db)):
+        if da.get(k) != db.get(k):
+            print(f"  - {k}: A={(da.get(k) or '-')[:10]} B={(db.get(k) or '-')[:10]}")
+    return False
+
+
 def main_cli():
     args = sys.argv[1:]
     if args and args[0] == "--run":
@@ -129,6 +182,9 @@ def main_cli():
         seed = int(args[args.index("--seed") + 1])
     if "--ticks" in args:
         ticks = int(args[args.index("--ticks") + 1])
+    if "--replay-test" in args:
+        ok = orchestrate_replay(seed, ticks)
+        sys.exit(0 if ok else 1)
     if "--mock" in args:
         os.environ["REPRO_MOCK_LLM"] = "1"  # _spawn이 env 복사 → 서브프로세스 전파
         print("[mock LLM 모드] 순수 엔진(random) 결정성만 검증")

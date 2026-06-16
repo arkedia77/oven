@@ -25,6 +25,10 @@ def chat(messages: list, max_tokens: int = 1024, temperature: float = None,
     # 재현성 진단용 결정적 mock (환경변수 가드 — 라이브 무영향)
     if os.environ.get("REPRO_MOCK_LLM") == "1":
         return _mock_response(messages)
+    # replay 모드: 기록된 출력 재생(서버 미사용) → 배치 비결정성(⑤) 우회
+    from village import replay
+    if replay.is_replaying():
+        return replay.replay_call(messages)
     if temperature is None:
         temperature = config.TEMPERATURE
     # --- 재현성(옵트인): REPRODUCIBLE=True일 때만 seed 주입 + temp 고정. 라이브(False)는 무영향 ---
@@ -53,6 +57,9 @@ def chat(messages: list, max_tokens: int = 1024, temperature: float = None,
         content = msg.get("content", "").strip()
         if not content:
             content = "(무응답)"
+        # record 모드: 실제 출력을 기록 → 이후 replay로 완전 재현
+        if replay.is_recording():
+            replay.record_call(messages, content, seed)
         return content
     except Exception as e:
         return f"[오류: {e}]"
