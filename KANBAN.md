@@ -14,11 +14,12 @@
   - ✅ **watchdog 실전검증 (6/15)**: 라이브 18616 외부요인 사망→watchdog DOWN감지+자동재기동, 데이터손실0. 현 가동 pid=23752 Day277
   - 🔴 config.py 머신분기 주의: ogo=localhost / 로컬=100.107.229.5. 배포시 API_URL 보존 필수
   - ✅ **②로그/replay 완료 (6/16, 일정 대폭선행)**: replay.py(record/replay+드리프트감지). positive(같은seed 비트단위동일) + negative(다른seed miss17 드리프트감지) PASS. ⑤배치비결정성 우회 완전재현 달성. ogo 배포완료. 커밋 c1150cd
-  - ✅ **③다회통계 메커니즘 완료 (6/16)**: orchestrate_multiseed(N시드→mean±std+95%CI+시드별raw, 리포트json). record로 재현가능 다회통계. mock 변별력 검증 PASS. 커밋 1ed3cb4
-  - **TODO 6/18 PoC프로토콜 사전합의안 송부** (venture-studio ACK로 내용합의됨)
-  - **TODO ④export**: multiseed_report→표/figure + 재현패키지 번들
-  - **TODO 본 다회통계 실행** (N=20~30, 충분한 틱 — 라이브 서버 공유라 야간/별도 실행)
-  - 📌 PoC범위(①②③) 메커니즘 전부 완성 — 원 일정(7/8)보다 ~3주 선행
+  - ✅ **③다회통계 완료 (6/16)**: orchestrate_multiseed(N시드→mean±std+95%CI+raw). real실증 N=3 std 0.011~0.024(mock대비 100~240배, LLM다양성 정량화). 커밋 1ed3cb4
+  - ✅ **④export+재현패키지 실증 완료 (6/16)**: export_report.py(summary.md/csv+REPRODUCE.md). seed1 로그재생 relationships 비트단위 재현 True. 커밋 f58374f
+  - 🎉 **재현성 ①②③④ 전부 완성+실증 — 원 일정(7/25)보다 ~5주 선행**. ⑤배치불변만 별도R&D(②replay로 우회)
+  - **TODO venture 진척보고** (메커니즘완성 vs 본실행 구분, Leo확인 후)
+  - **TODO 6/18 PoC프로토콜 사전합의안 송부**
+  - **TODO 본 다회통계 실행** (N=20~30, 1일↑틱 — 야간/별도)
   - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
   - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
   - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
