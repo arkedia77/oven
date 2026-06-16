@@ -13,8 +13,10 @@
   - ✅ **격리② 완료+라이브 배포 (6/15)**: instance_lock.py(data dir별 PID락, 좀비race 2차방어). 락로직7종+2프로세스 race차단 실측 PASS. ogo 7파일 배포(config는 API_URL=localhost 보존). 커밋 da90a27
   - ✅ **watchdog 실전검증 (6/15)**: 라이브 18616 외부요인 사망→watchdog DOWN감지+자동재기동, 데이터손실0. 현 가동 pid=23752 Day277
   - 🔴 config.py 머신분기 주의: ogo=localhost / 로컬=100.107.229.5. 배포시 API_URL 보존 필수
+  - ✅ **②로그/replay 완료 (6/16, 일정 대폭선행)**: replay.py(record/replay+드리프트감지). positive(같은seed 비트단위동일) + negative(다른seed miss17 드리프트감지) PASS. ⑤배치비결정성 우회 완전재현 달성. ogo 배포완료. 커밋 c1150cd
   - **TODO 6/18 PoC프로토콜 사전합의안 송부** (venture-studio ACK로 내용합의됨)
-  - **TODO ②로그/replay (6/19~27)**: LLM출력 로깅+재생으로 ⑤배치비결정 우회
+  - **TODO ③다회통계**: run_benchmark _variance 확장, N시드(PoC5/본20~30) mean±std+95%CI. PoC범위(①②③) 중 ③만 남음
+  - **TODO ④export**: 메트릭→표/figure + 재현패키지
   - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
   - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
   - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
