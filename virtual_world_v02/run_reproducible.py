@@ -19,8 +19,10 @@ world_state 등)을 정규화 해시로 비교. 같은 seed → 동일 상태면
 import sys
 import os
 import json
+import math
 import shutil
 import hashlib
+import statistics
 import subprocess
 from pathlib import Path
 
@@ -171,6 +173,83 @@ def orchestrate_replay(seed: int, ticks: int) -> bool:
     return False
 
 
+def _extract_metrics(data_dir: Path) -> dict:
+    """산출물 relationships.json에서 다회통계용 메트릭 추출."""
+    rel = json.loads((data_dir / "relationships.json").read_text(encoding="utf-8"))
+    pairs = list(rel.values()) if isinstance(rel, dict) else rel
+    n = len(pairs) or 1
+
+    def g(p, k):
+        return p.get(k, 0) if isinstance(p, dict) else 0
+
+    warmths = [g(p, "warmth") for p in pairs]
+    trusts = [g(p, "trust") for p in pairs]
+    tensions = [g(p, "tension") for p in pairs]
+    return {
+        "avg_warmth": round(sum(warmths) / n, 4),
+        "avg_trust": round(sum(trusts) / n, 4),
+        "avg_tension": round(sum(tensions) / n, 4),
+        "ceiling": sum(1 for p in pairs if g(p, "warmth") >= 1.0 and g(p, "trust") >= 1.0),
+        "affection_sat": sum(1 for p in pairs if g(p, "affection") >= 0.95),
+        "active_rels": sum(1 for p in pairs if g(p, "interaction_count") > 0),
+        "n_pairs": len(pairs),
+    }
+
+
+def _stats(values: list) -> dict:
+    """mean±std + 95% CI (정규근사). N<2면 CI=0(표기상 단일관측)."""
+    n = len(values)
+    m = statistics.mean(values) if n else 0.0
+    sd = statistics.stdev(values) if n > 1 else 0.0
+    ci = 1.96 * sd / math.sqrt(n) if n > 1 else 0.0
+    return {"mean": round(m, 4), "std": round(sd, 4), "ci95": round(ci, 4), "n": n}
+
+
+def orchestrate_multiseed(seeds: list, ticks: int, mock: bool = False, record: bool = True) -> dict:
+    """③다회통계: N시드 반복 실행 → 메트릭별 mean±std/95%CI + 시드별 raw.
+    venture 합의 포맷. record=True면 시드별 LLM 로그도 보관(재현가능 다회통계)."""
+    mode = "mock" if mock else "real LLM"
+    print(f"=== ③다회통계: seeds={seeds} ({len(seeds)}회), ticks={ticks}, {mode} ===")
+    per_seed = {}
+    for s in seeds:
+        d = REPRO_ROOT / f"multiseed_s{s}"
+        if d.exists():
+            shutil.rmtree(d)
+        (d / "characters").mkdir(parents=True, exist_ok=True)
+        extra = {}
+        if mock:
+            extra["REPRO_MOCK_LLM"] = "1"
+        elif record:
+            extra["REPRO_RECORD"] = str(REPRO_ROOT / f"multiseed_s{s}_llm.jsonl")
+        print(f"\n--- seed {s} 실행 ---", flush=True)
+        rc = _spawn(s, ticks, d, extra)
+        if rc != 0:
+            print(f"❌ seed {s} 실패(rc={rc}) — 제외")
+            continue
+        per_seed[s] = _extract_metrics(d)
+
+    keys = ["avg_warmth", "avg_trust", "avg_tension", "ceiling", "affection_sat", "active_rels"]
+    summary = {k: _stats([per_seed[s][k] for s in per_seed]) for k in keys}
+    report = {
+        "seeds": list(per_seed.keys()), "ticks": ticks, "mode": mode,
+        "per_seed": per_seed, "summary": summary,
+    }
+    out = REPRO_ROOT / "multiseed_report.json"
+    out.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print(f"\n=== 다회통계 리포트 (N={len(per_seed)}) ===")
+    print(f"{'metric':<16}{'mean':>10}{'std':>10}{'95%CI':>10}")
+    for k in keys:
+        st = summary[k]
+        print(f"{k:<16}{st['mean']:>10}{st['std']:>10}{st['ci95']:>10}")
+    print("\n시드별 raw:")
+    print(f"{'seed':<8}" + "".join(f"{k[:9]:>11}" for k in keys))
+    for s in per_seed:
+        print(f"{s:<8}" + "".join(f"{per_seed[s][k]:>11}" for k in keys))
+    print(f"\n리포트 저장: {out}")
+    return report
+
+
 def main_cli():
     args = sys.argv[1:]
     if args and args[0] == "--run":
@@ -185,6 +264,11 @@ def main_cli():
     if "--replay-test" in args:
         ok = orchestrate_replay(seed, ticks)
         sys.exit(0 if ok else 1)
+    if "--multiseed" in args:
+        nseed = int(args[args.index("--multiseed") + 1])
+        seeds = list(range(1, nseed + 1))
+        orchestrate_multiseed(seeds, ticks, mock="--mock" in args)
+        sys.exit(0)
     if "--mock" in args:
         os.environ["REPRO_MOCK_LLM"] = "1"  # _spawn이 env 복사 → 서브프로세스 전파
         print("[mock LLM 모드] 순수 엔진(random) 결정성만 검증")
