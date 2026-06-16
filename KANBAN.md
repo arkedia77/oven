@@ -17,9 +17,8 @@
   - ✅ **③다회통계 완료 (6/16)**: orchestrate_multiseed(N시드→mean±std+95%CI+raw). real실증 N=3 std 0.011~0.024(mock대비 100~240배, LLM다양성 정량화). 커밋 1ed3cb4
   - ✅ **④export+재현패키지 실증 완료 (6/16)**: export_report.py(summary.md/csv+REPRODUCE.md). seed1 로그재생 relationships 비트단위 재현 True. 커밋 f58374f
   - 🎉 **재현성 ①②③④ 전부 완성+실증 — 원 일정(7/25)보다 ~5주 선행**. ⑤배치불변만 별도R&D(②replay로 우회)
-  - **TODO venture 진척보고** (메커니즘완성 vs 본실행 구분, Leo확인 후)
-  - **TODO 6/18 PoC프로토콜 사전합의안 송부**
-  - **TODO 본 다회통계 실행** (N=20~30, 1일↑틱 — 야간/별도)
+  - ✅ **venture 진척보고+6/18 PoC합의확정+N5 다회통계 실증 송부 (6/16)**: agent-comm 516ec651. 메커니즘완성 vs 본실행 명확구분
+  - **TODO 본 다회통계 풀실행** (N=20~30, 24틱↑ — 라이브서버 공유로 야간/별도, 완료후 export→venture 회신)
   - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
   - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
   - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
