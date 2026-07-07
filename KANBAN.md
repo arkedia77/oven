@@ -1,217 +1,42 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-06-15 (세션 71)
+업데이트: 2026-07-07 (Krea2 이미지 캠페인 4건 종결 총 318장, ogo 네트워크 진단, 젬마 down 유지)
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **하모니시티 재현성 트랙 (공격적)** — oven/ogo — 2026-06-15 착수예정 6/16
-  - ✅ venture-studio에 일정 확정 회신 (SLA 6/16 이전): 공격적 트랙, PoC범위(①②③) 7/8 · 전체 7/11
-  - ✅ LEO 결정(6/15): 음악 LoKR 병행 축소, 재현성 집중
-  - ✅ **①시드고정 완료 (6/15, 일정선행)**: llm seed 주입(옵트인)+repro.py+스모크 ALL PASS. llama.cpp 단일요청 결정성 실측. run_reproducible.py 검증 진입점(main max_ticks/fast, DATA_DIR 환경변수격리, 서브프로세스 2회 비교). 커밋 9489b81·3ab18d6
-  - ✅ **결정성 진단**: mock(순수엔진)=완전결정적 PASS / real LLM=배치비결정성(⑤, 라이브 동시부하) → ②replay는 LLM출력 로깅재생으로 ⑤우회 설계 확정
-  - ✅ **격리② 완료+라이브 배포 (6/15)**: instance_lock.py(data dir별 PID락, 좀비race 2차방어). 락로직7종+2프로세스 race차단 실측 PASS. ogo 7파일 배포(config는 API_URL=localhost 보존). 커밋 da90a27
-  - ✅ **watchdog 실전검증 (6/15)**: 라이브 18616 외부요인 사망→watchdog DOWN감지+자동재기동, 데이터손실0. 현 가동 pid=23752 Day277
-  - 🔴 config.py 머신분기 주의: ogo=localhost / 로컬=100.107.229.5. 배포시 API_URL 보존 필수
-  - ✅ **②로그/replay 완료 (6/16, 일정 대폭선행)**: replay.py(record/replay+드리프트감지). positive(같은seed 비트단위동일) + negative(다른seed miss17 드리프트감지) PASS. ⑤배치비결정성 우회 완전재현 달성. ogo 배포완료. 커밋 c1150cd
-  - ✅ **③다회통계 완료 (6/16)**: orchestrate_multiseed(N시드→mean±std+95%CI+raw). real실증 N=3 std 0.011~0.024(mock대비 100~240배, LLM다양성 정량화). 커밋 1ed3cb4
-  - ✅ **④export+재현패키지 실증 완료 (6/16)**: export_report.py(summary.md/csv+REPRODUCE.md). seed1 로그재생 relationships 비트단위 재현 True. 커밋 f58374f
-  - 🎉 **재현성 ①②③④ 전부 완성+실증 — 원 일정(7/25)보다 ~5주 선행**. ⑤배치불변만 별도R&D(②replay로 우회)
-  - ✅ **venture 진척보고+6/18 PoC합의확정+N5 다회통계 실증 송부 (6/16)**: agent-comm 516ec651. 메커니즘완성 vs 본실행 명확구분
-  - ✅ **본 다회통계 N=30 24틱 완료 (6/17)**: 30시드 전부정상. warmth 0.5134±0.0108(CI±0.0039)·trust 0.5125±0.0089·tension 0.2608±0.0101·active_rels 23.77±1.28·포화0(24틱에도). seed1 193호출 비트단위 재현True. export 최종리포트→venture 회신(c92bf341)
-  - ✅✅ **재현성 트랙 완전 완결** — ①②③④ 전부 실증+venture 회신. 04호 academic-grade 재현성 실측근거 일체 확보
-  - **TODO ②로그+replay (6/19~27)**: 비결정이벤트 로그 + replay 하네스 (최난도)
-  - **TODO ③다회통계 (6/29~7/8)**: run_benchmark N시드 반복 + 분산/95%CI (기존 _variance 확장)
-  - **TODO ④export (7/9~11)**: 메트릭→표/figure + 재현패키지
-  - **TODO PoC 프로토콜 사전합의 (6/18)**: N5시드 최소판, 본 N20~30, 포맷 mean±std+95%CI+raw
-  - ⑤배치불변 결정론 = 별도 R&D(NeurIPS/ACL 폴백), 본 트랙 제외
-  - 원칙: 라이브 시뮬(Day 233, ogo) 무중단 — 로컬 canonical 개발 + 48틱 검증런
-- [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 2026-05-22
-  - ✅ 차오름 10곡 LoKR 학습 완료 (500ep, best 0.9721), 6곡 생성
-  - ✅ 권PD 믹스 8명 10곡 LoKR 학습 완료 (500ep, best 0.9599), 5곡 생성
-  - ✅ Leo 청취: 믹스가 더 좋음 — 다수 가수가 프로덕션 스타일 일반화에 유리
-  - **TODO**: leowin2 Tailscale 접속 → ogo 데이터 이전 → 나머지 ~27곡 전체 47곡 대형 LoKR
-- [ ] **하모니시티 #02 Ecosystem 실행** — oven/ogo — 2026-05-27
-  - ✅ #01 Genesis 분석 완료: 5가지 구조적 결함 도출, 노션 보고서 작성
-  - ✅ #02 Ecosystem 전체 구현 완료 (`~/oven/virtual_world_v02/`)
-  - ✅ 5090 배포+실행: `C:\projects\harmonicity\`, https://harmonicity.arkedia.work/
-  - ✅ 대시보드 3모드 완성 (2026-05-29 세션 58):
-    - 라이브 (실시간 대화+상태), 변화 추이 (일별 차트+주석+인사이트), 아바타 (1인칭 시점)
-  - ✅ VIRTUAL_WORLD_GUIDE.md 확장: 9카테고리 파라미터 레퍼런스 + 규모별 리소스 산정 + 도메인 응용
-  - ✅ Day 35 도달, 시뮬레이션 안정 가동 중
-  - ✅ **사업화 도메인 벤치마크 완료** (2026-05-29 세션 59):
-    - 3개 도메인 설정 생성: 기업 HR/OD, 교육 EdTech, 소비자 MarTech
-    - 벤치마크 프레임워크 (run_benchmark.py) + 도메인별 5파일 세트
-    - 5090 실제 Gemma 4 추론 테스트 완료 (각 24틱/1일)
-    - 엔진 코드 변경 0줄로 도메인 전환 확인, 대화 품질 전 도메인 우수
-    - 결과 보고: BENCHMARK_REPORT.md + venture-studio 전달
-  - ✅ **04호 사업계획서 v0** venture-studio 발행 (2026-05-29 세션 59):
-    - A트랙 확정 (Leo 지시): B2B 학술 SaaS + 교육 시민 시뮬레이션
-    - 게임 B트랙 제외 (Leo 지시)
-    - Q1~Q4 기술 데이터 회신 완료 (5결함해소/운영/비용/스케일링)
-    - Q5 IP귀속 = venture-studio + Leo 결재 (oven 영역 아님)
-  - ✅ **P0 엔진 개선: 키워드→Appraisal 교체** (2026-05-30 세션 60):
-    - 삼각검증 보고서 (rag: 웹25출처 + Gemini + Codex) → 노션 업로드
-    - Updater Dominance Test: 키워드 지배도 100%, 취약률 80%
-    - LLM Appraisal 엔진 구현 + 5개 가설 전체 PASS (H1~H5)
-    - 관계 포화 58% 발견 — appraisal이 포화 delta 7배 축소로 해결 기대
-    - 5090 배포 완료
-  - ✅ **시뮬레이션 재시작 + 안정화** (2026-05-31 세션 61):
-    - time.sleep(200) → 10초 폴링 루프 패치 (detached 프로세스 생존 문제 해결)
-    - run_village.py self-redirect 방식 (stdout→sim.log)
-    - PID=23680 안정 가동 확인, appraisal 로그 출력 정상
-    - 포화 베이스라인: 27/45=60%, 천장 25/45=55%, 무긴장 43/45=95%
-    - **Day 66 결과**: 천장 55%→48% 감소(효과 있음), tension 0.001→0.024 (갈등 생성 작동)
-  - ✅ **P1 평판/정보 비대칭 시스템 구현+배포** (2026-06-01 세션 62):
-    - `reputation.py` — 10×9 평판 매트릭스 (competence/integrity/warmth/influence)
-    - `information.py` — 10개 비밀 시딩, 소문 전파 메커니즘 (전화기 효과)
-    - `appraisal.py` — gossip + reputation_update 필드 확장
-    - `prompts.py` — 대화 프롬프트에 평판/정보 컨텍스트 주입
-    - `encounter.py` — integrity 기반 회피/호기심 우선순위
-  - ✅ **P1.1 패치 배포** (2026-06-01 세션 63):
-    - 진단: P1 비밀 10개 고갈, appraisal gossip 미연결, tension decay 과속
-    - `homeostasis.py` — tension decay 0.005→0.002, warmth-tension 캡 완화
-    - `information.py` — `create_dynamic_rumor()`: 대화 속 동적 소문 생성
-    - `conversation.py` — gossip 반환, `main.py` — 동적소문→평판 연결
-    - P1.1 효과 분석 (Day 82→101): tension 12.5배↑, 동적소문 344건, 평판 양극화 확인
-    - **문제**: 소문 콘텐츠 반복(10패턴), ye_eun 63% 집중, 평판→관계 단절
-  - ✅ **P1.2 배포** (2026-06-03 세션 64):
-    - `homeostasis.py` — `apply_reputation_to_relationships()`: integrity < 0.5 → warmth/trust 점진 하락
-    - `information.py` — 소문 대상 일일 상한 3건, 누적 격차 상한 20건, 8종 콘텐츠 템플릿
-    - 즉시 효과: **Ceiling 51%→24%** (1~2틱), 5개 ERODING FAST 쌍 확인
-  - ✅ **P1.3 코드 전수 검토 + 버그패치** (2026-06-03 세션 65):
-    - 전체 코드 자가점검: 5건 버그 + 2건 설계결함 발견
-    - 수정: isolation순서/rumor ID충돌/low_tension영속화/prompt_injection활성화/conv_text중복/key_event연결/goal스팸제거
-    - 5090↔로컬 코드 동기화 (P1.2가 5090에만 있던 문제 해결)
-    - NAS 백업: `/Volumes/project backup/harmonicity_backup/20260603/`
-  - ✅ **P2: 외부인(한지우) 추가 실험** (2026-06-03 세션 66):
-    - 한지우(ji_woo, 33세 프리랜서 저널리스트) — 폭로 기사 목적으로 마을 방문
-    - `_integrate_new_characters()` 자동 통합 시스템 (관계/평판/정보 확장)
-    - 5090 배포 완료, 첫 대화 민아↔지우 성공 (warmth 0.43, trust 0.37)
-    - NAS 백업: `20260603_pre_outsider/`
-    - **Day 117 가동 중**: schtasks `HarmonicityP11`
-    - 세션 67: 외부인 효과 분석 완료 — ji_woo 11일 데이터 확인
-    - **포화 재발 확인**: Ceiling 24%→43%, 원인 코드 분석 완료
-  - ✅ **P2.1 포화 재발 패치 배포** (2026-06-05 세션 68):
-    - 5090 코드에 P2 패치 미배포 상태 발견 → 4개 파일 배포
-    - `homeostasis.py` — warmth/trust 자연 감쇠 (excess*0.008/0.006), soft ceiling 0.85 (affection 보정 최대 0.95)
-    - `appraisal.py` — 이중 dampening (count_damp * warmth_level_damp), 양수만 억제, apply_soft_ceiling 호출
-    - `conversation.py` — 키워드 fallback에도 동일 이중 dampening + soft ceiling 적용
-    - `encounter.py` — 같은 쌍 하루 1회 제한 (today_interactions 체크)
-    - PID 21188 + schtasks HarmonicityP11 재시작 확인
-    - **현재**: Day 141, Ceiling 36% (20/55쌍) → P2.1 효과 모니터링 중
-  - ✅ **venture-studio Q6~Q10 기술 데이터 회신** (2026-06-05 세션 68):
-    - Q6(재현성): 미구현/부분구현/부분구현, Q7(안정성): 구현됨+정량 데이터, Q8(벤치마크): 부분구현
-    - Q9(잔여 한계 로드맵): 5건 우선순위+시점 제시, Q10(멀티테넌트): 부분구현
-    - agent-comm push 완료
-  - ✅ **P2.1 효과 모니터링 결과 (2026-06-05 세션 69)**:
-    - Day 150 점검: Ceiling(공식 w==1.0&t==1.0) **36%→0/55** 달성, warmth/trust max 0.64/0.69 — P2.1 대성공
-    - 발견: affection 필드가 18/55(32%) 쌍에서 1.0 고착 (decay/캡 없는 래칫) + soft ceiling을 0.85→0.95로 완화시키는 잠재 리스크
-  - ✅ **P2.2 어팩션 래칫 패치 배포 (2026-06-05 세션 69)**:
-    - `homeostasis.py` decay_relationships: affection 자연감쇠(excess×0.004/tick) + soft cap 0.9
-    - `homeostasis.py` apply_soft_ceiling: 완화식 affection*0.2 → max(0,affection-0.5)*0.2 (감쇠↔실링 연결)
-    - 로컬 canonical(virtual_world_v02) + 5090 동시 배포, 시뮬 재시작(Day 154)
-    - 라이브 검증: affection 포화 18/55→**0/55**, max 1.0→0.929, 평균 0.604, Ceiling 0/55 유지
-  - 🔴 **중복 프로세스(좀비) 사고 + 복구 (2026-06-07 세션 69)**:
-    - **발견**: run_village.py가 2개 동시 실행 — PID 18996(6/1 기동, 11명 World B 추정) + 25052(6/5, 10명 World A). 같은 data/를 번갈아 덮어쓰는 race로 relationships.json이 45쌍↔55쌍 오실레이션
-    - **진단**: 세션66~68 "포화 재발" 미스터리의 진범 가능성 — 좀비가 주기적으로 pre-P2 포화값 덮어씀
-    - **데이터 소실**: 정리 중 디스크가 10명 World A로 수렴, 11명 World B 풀세이브 소실(NAS·5090 백업 어디에도 ji_woo 포함 세이브 없음)
-    - **Leo 결정**: 10명 World A로 재시작 + ji_woo 재투입
-    - **복구**: 전체 종료→백업(data_backup/20260606_zombie_cleanup)→단일 schtasks 기동. ji_woo는 definitions.py 정의+_integrate_new_characters 자동 재투입(신규 도착자, warmth/trust 0.3 리셋)
-    - **재발방지**: `run_village.py`에 Windows named mutex 단일 인스턴스 가드 추가(로컬+5090 배포). 자동 재기동기(HealthCheck류) 없음 확인
-    - **현재**: Day 169, 단일 프로세스(PID 24472), 55쌍+ji_woo, reputation 11명 정합, affection 포화 0/55
-  - ✅ **재기동 후 정상화 완료 (2026-06-07 세션 69, Day 170)**:
-    - 단일 프로세스 4사이클 유지(중복 재발 0), Traceback 없음
-    - World A 물려받은 warmth/trust max 0.996/0.997 → **0.877/0.900**으로 하향 정상화 (P2.2 decay 작동)
-    - Saturated(≥0.95) 22→0, Ceiling 0, affection 포화 0 전 구간 유지
-    - ji_woo 7/10쌍 상호작용 — 마을 사회통합 진행
-    - trust max 0.9는 affection-relaxed soft ceiling 평형점(설계상 정상, 1.0 포화만 차단)
-    - 자동 모니터링 종료
-  - ✅ **데일리 백업 체계 구축 (2026-06-09 세션 69)** — 좀비 사고 후속:
-    - macOS launchd 잡 `work.arkedia.harmonicity-backup` (이 맥, 매일 04:00 로컬)
-    - `~/oven/scripts/harmonicity_backup.sh`: 5090 data/ → 5090 data_backup/(1차) → /Volumes/data/harmonicity_backup/(2차), 14일 보관
-    - /schedule(원격 클라우드)은 Tailscale/NAS 접근 불가라 로컬 launchd로 구현
-    - /Volumes/project backup은 TCC 쓰기차단 → /Volumes/data로 대체(Leo 결정)
-    - launchd 컨텍스트 실행 검증 완료 (exit 0, 8개 json 양쪽 백업 확인)
-  - ✅ **세션 70 (2026-06-13): 사업계획서 fact-check + 인프라 보강**:
-    - **사업계획서 기술 fact-check** (LEO 지시): v1 정독→v2.1 덱 26슬라이드 재확인→v1.1 정정본 sign-off PASS
-      - C1 재현성 '표준 내장'→'제품 로드맵' + R9b 신설 / C2 동시15~20세계 fact→'아키텍처 추정(미실측)' 강등, 덱 S24 '실측' 표현 발견(F1 패치 큐잉)
-      - 재현성 4종 로드맵·멀티테넌트 격리 계획(개략) venture-studio 회신
-      - **oven 대기**: 상세 구현일정(LEO 대역폭 결정 후 venture-studio 발주)·덱 S24 패치(LEO F1 라운드)
-      - ⚠️ 배치불변 결정론 추론 = 난제·미달 가능(사업 1번 해자, R9b·NeurIPS/ACL 폴백 문서화)
-    - **시뮬 2일 정지 사고**(6/10 18:50~6/12) 발견→재기동(Day 223 이어짐, 데이터 손실 0)
-    - **자동복구 watchdog 신설**: `healthcheck.ps1`+`HarmonicityHealthCheck`(5분, SYSTEM). 무인지 장기정지 방지
-    - **IR 캡처 3장**(라이브/변화추이/아바타) venture-studio 전달→v2.1 덱 반영
-    - 현재 Day 223, 단일 프로세스, Ceiling/affection 포화 0/55, 백업+watchdog+가드 완비
-  - **TODO**: venture-studio 재현성/격리 상세일정 발주 시 회신 / 덱 S24 패치 검증
-  - **미구현**: Phase 12 (네트워크 건강 모니터), Phase 13 (추가 대시보드 확장)
-- [x] **ACE-Step 1.5 LoKR 크러쉬 v2** — oven/ogo — 2026-05-17 → 평가 완료
-  - ✅ 학습+추론 완료, Leo 청취: "탑라인 뽑기 괜찮다" (adapters=[] 경고지만 실제 작동)
-- [x] **디스크 오프로드 완료** — oven — 2026-05-24 ✅
-  - 9개 폴더 외장 LEO symlink (44GB 회수), SF2 역의존 수정, oven 54GB→10GB
-- [ ] **5090 gemma 멀티채널 배포 완료** — oven — 2026-05-26 ✅
-  - ✅ 6개 FastAPI (arena/brainstorm/strategy/versus/research/dealflow) 전체 200 OK
-  - ✅ Task Scheduler 자동화 3종 (AutoStart/HealthCheck/DailyBackup)
-  - **미완료**: .env NOTION 변수 admin 대기, Cloudflare ingress 라우팅 admin 대기
-- [ ] **ogo→leowin2 학습 인프라 이전** — oven — 2026-05-24 대기
-  - leowin2 RTX 3070 8GB LoKR 전담, ogo는 하모니시티+gemma 공유
-  - **블로커**: leowin2 Tailscale 미접속
-- [ ] **ACE-Step 1.5 LoKR 벅스 TOP 100 (7 아티스트)** — oven/ogo — 2026-05-19
-  - ✅ 7개 아티스트 LoKR 500ep 전체 학습+추론 완료
-  - Leo 청취 중: 악뮤 = 듀엣 구성 학습됨, 남자 보컬 음색 유사 ✅
-  - **대기**: 나머지 6개 아티스트 청취 평가
-- [ ] **ACE-Step 1.5 LoKR 이하이** — oven/ogo — 2026-05-20
-  - ✅ 20곡 WAV + dataset.json 가사 병합 (ultra-air 회신)
-  - ✅ ogo 전송 → 전처리 20/20 → 학습 500ep 1h51m (loss 2.01→0.91, best 0.78)
-  - ✅ 추론 2샘플 (baseline+lokr_best) → `lokr_samples/이하이/`
-  - **대기**: Leo 청취 평가
-- [x] **Gemma 4 MTP 속도 향상** — oven/5090 — 2026-05-09 **BLOCKED→보류**
-  - ✅ atomic-llama-cpp-turboquant 포크 CUDA 13.x + 12.8 양쪽 빌드 완료
-  - ✅ drafter 모델 다운로드 완료 (gemma-4-26B-A4B-it-assistant Q4_K_M, 310MB)
-  - ✅ 공식 최신 llama.cpp 빌드 완료 (MTP 미지원 확인)
-  - ❌ CUDA 13.x: MTP+FA on 크래시 / MTP+FA off 속도향상 없음 (181.9 tok/s)
-  - ❌ CUDA 12.8: MTP+FA on/off 모두 추론 크래시 (더 불안정)
-  - **결론**: atomic fork MTP 구현이 Blackwell SM120 비호환. 공식 llama.cpp MTP PR 머지 대기
-- [ ] **Gemma 4 리서치 오케스트레이터 개선** — oven — 2026-05-09
-  - ✅ 검색 보강 v3 실행 → leomusic-base 평가 4.5/10 (v1 대비 +1.5)
-  - ✅ Wikipedia User-Agent 버그 수정
-  - ✅ Semantic Scholar 재시도 로직 추가
-  - TODO: instruction following 강화, RAG 소스 고급화, 자기비평 루프
-- [ ] **Gemma 4 루틴 업무 테스트** — oven — 2026-05-09 완료
-  - ✅ 8가지 테스트 (데이터처리/웹추출/판단) → 7/8 (87%) 통과
-  - 약점: 다중 제약 최적화 (HA + 자원 할당 동시 처리)
-- [ ] **ACE-Step 피아노 LoRA v6 음질 개선 — AudioSR 후처리** — oven — 2026-04-21
-  - AudioSR 그리드 테스트 완료, **대기**: Leo 최적 설정 선택 → 디노이즈 추가 검토
-  - **노션 업로드 미완료** (Leo 요청)
-- [ ] **ACE Studio 자동화 (MCP + GUI)** — oven — 2026-05-05
-  - ✅ Phase 1-9 완료: core/import/instrument/vocal/export/UI전체매핑 검증
-  - ✅ MCP 71개 도구 풀 워크플로우 테스트 완료 (2026-05-05)
-  - ✅ hitmaking + 3070에 MCP 테스트 결과 agent-comm 전달 완료
-  - ✅ 노션 ACE Studio 연구 페이지에 MCP 섹션 추가 완료
-  - MCP 불가: Import/Export/Save/Render → GUI 자동화 유지
-  - **TODO**: 배치 파이프라인 MCP+GUI 하이브리드 통합 테스트
-- [ ] **Suno 후처리 음질 향상 파이프라인** — oven — 2026-05-06
-  - ✅ v5.0 vs v5.5 차이 분석 + 후처리 연구 완료
-  - ✅ 노션 페이지 생성 (스템분리 포함/미포함 양쪽 파이프라인)
-  - ✅ `suno_postprocess.py` 투 트랙 파이프라인 구축+테스트 완료 (2026-05-06)
-  - ✅ matchering 2.0.6 설치, demucs htdemucs_ft 연동 확인
-  - **대기**: hitmaking 오디오 분석 모듈 완성 수신
-  - **TODO**: 실제 Suno WAV로 A/B 비교 청취, 레퍼런스 트랙 선정
 
+- [ ] **musicscore_data 백업** — oven — 2026-06-29~진행 중 (거의 완료)
+  - cp -a 실행 중 (PID 62301), 대상 `/Volumes/LEO 1/musicscore_data` (exFAT)
+  - 소스 637G. **대상 du=2.9T는 exFAT 1MB 클러스터 슬랙 + `._` 사이드카** 때문 (손상/중첩 아님, 7/3 재검증 완료)
+  - PDMX/mxl 18샤드 중 **16/17 진행 중**(7/7 확인, 거의 완료). 16개 폴더 전부 존재
+  - 공간 리스크 해소: 여유 520Gi로 충분 (실데이터 이미 소스와 일치)
+  - cp 종료 감시 백그라운드(b6jhu69ah) → 종료 시 최종 파일수 검증 → Leo 보고 → leo_vst 삭제 가능
+- [ ] **ogo GPU 독점 관리 체계** — oven — 2026-06-24 LEO 확정
+  - ✅ 정책 확정 + admin/ari ACK
+  - TODO: 예약 대시보드/로그 시스템 (필요 시)
+- [ ] **하모니시티 라이브 시뮬 운용** — oven/ogo — ⏸ **정지 (Leo 지시: 젬마 신호 줄 때까지 down)**
+  - **Leo 결정(7/4)**: ~2일간 GPU 이미지 생성 전념 → 젬마 down 유지, **Leo 신호 시에만 재기동**
+  - 비활성화 task: `Gemma-AutoStart`, `Gemma-HealthCheck`, `HarmonicityHealthCheck` (리붓돼도 안 올라옴). 시뮬 `HarmonicityP11` End
+  - 🔴 **재기동(Leo 신호 후)**: task 3개 `/ENABLE` + `schtasks /Run /TN Gemma-AutoStart` + `schtasks /Run /TN HarmonicityP11`(stale락 있으면 [[feedback_harmonicity_stale_lock]] 절차)
+  - 참조 [[reference_ogo_autorestart]]. 7/4 stale락 복구 완료했었음 / T2 수정 적용 / rep_floor 검토 대기
+- [ ] **하모니시티 재현성 트랙** — oven/ogo — ✅✅ 완전 완결
+- [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 대기
+  - **블로커**: leowin2 Tailscale 미접속
+- [ ] **ACE Studio 자동화** — 3070 담당 (oven 이관 완료)
+- [ ] **Krea2 이미지 캠페인 (hf-playground 협업)** — oven/ogo/hf-playground — 🟢 현재 큐 비어있음
+  - 지금까지 종결 4건 총 318장(아이돌8+V2 10+소스100+여름100), 전부 실패0. archy AssetStore 적재
+  - 워크플로 확립: gh api로 hf-playground 파일 회수→ogo 배포→SYSTEM schtask+run_*.bat 발사→회수 zip→통지
+  - 🔴 **필수교훈**: Krea2 배치는 `--model 로컬` + LoRA 로컬(lora_v2) 명시 [[feedback_krea2_local_model]]. 젬마 down 상태 유지(VRAM독점)
+  - 대기: hf 제안 baseline/강도스윕(LEO 판단), 추가 캠페인 요청
 
 ---
 
 ## TODO
 
 - [ ] **Quincy P3 학습 실행** — oven/5090 — Phase 2 완료, train_lora_p3.py 대기
-- [ ] **Quincy P3 eval** — oven/5090 — 학습 완료 후 gen_p3_eval.py
-- [ ] **Quincy 대시보드 배포** — oven — oven.arkedia.work/quincy/
-- [ ] **tempo 추정 재검토** — oven — Phase 1 결과 fast 144k/slow 1.2k 이상함
-- [ ] **수집 데이터 QA + DB 등록** — oven — mukl 복구 후
-- [x] ~~**ACE-Step 크러쉬 LoKR 재학습** — ogo — 완료 (크러쉬 v2로 이동)~~
-- [ ] **ACE-Step 찬송가 LoRA** — ogo — 942곡
-- [ ] **NAS 백업 (V5~P2 체크포인트)** — oven
-- [x] ~~**RunPod HunyuanVideo 테스트** — 폐기 (2026-05-08)~~
+- [ ] **venture-studio 실험 결과 보고** — T1/T6/T5 findings (LEO 결정 시)
+- [ ] **ogo→leowin2 학습 인프라 이전** — leowin2 Tailscale 대기
 
 ---
 
@@ -219,58 +44,30 @@
 
 - [ ] **diffsinger / stable-audio-open** — Leo — HF gated repo 접근 권한 필요
 - [ ] **FLUX.2-dev** — Leo — HF gated repo 접근 승인 필요
-- [x] ~~**Wan2.1 영상 생성** — 폐기 (2026-05-08)~~
 
 ---
 
 ## DONE (최근)
 
-- [x] **Gemma 4 26B 레오패밀리 통합 서빙** — oven/5090 — 2026-05-08
-  - EXAONE → Gemma 4 26B-A4B Q8_0 교체 (174 tok/s, 3배 향상)
-  - 11개 역할별 테스트 전항목 PASS, Open WebUI 기동, agent-comm 공지
-- [x] **Gemma 4 26B + Open WebUI 통합 서빙** — oven/5090 — 2026-05-08
-  - Open WebUI v0.9.2 기동 (http://100.107.229.5:3000, 인증 없음)
-  - cp949 인코딩 에러 해결, 포트 3000, WMI 독립 프로세스
-  - 한국어 채팅 테스트 정상, agent-comm 전체 공지 완료
-- [x] **ACE-Step LoRA v6 연구 보고서** — oven — 2026-05-08
-  - `research/ACE-Step_Piano_LoRA_v6_Report.md` — v1~v6 진화, AudioSR, 후처리, 결론
-- [x] **대시보드 멀티페이즈 확장** — oven — 2026-04-24
-  - Quincy: P2 전용 → P1/P1x/P2 phase tabs 분리, MIDI 엔드포인트 분리
-  - Liszt: Engine Lab 리디자인 (MIDI 재생+FluidSynth 통합)
-  - 커밋 0554fec (크래쉬 세션 복구)
-- [x] **ACE-Step 베이스 모델 EP/밴드 아티팩트 비교** — oven/5090 — 2026-04-24
-  - EP 3종(rhodes, wurlitzer, epiano) + 밴드 3종(rock, jazz, postrock) 생성 및 청취
-  - 결론: 치치치 아티팩트 없으나 음질 자체가 다름, ACE-Step 아키텍처 한계 재확인
-- [x] **ACE-Step v6 LoRA 학습 + 샘플 평가** — oven/5090 — 2026-04-18
-  - 파이프라인: aria-midi → VirtuosoNet(velocity+pedal) → tempo fix → Piano V3 render → 486 segments
-  - 학습: 300ep, rank 64, lr 1.5e-4, cosine, loss 0.2737
-  - 평가: v6 LoRA / base model / HQ prompt / 다른 악기 비교 청취 완료
-  - 결론: 음악적 품질 양호, 오디오 품질(축음기 느낌)은 ACE-Step 한계
-- [x] **ACE-Step 피아노 LoRA v2 파이프라인 (데이터→학습→추론→HTML)** — oven/5090 — 2026-04-13 23:00
-  - yt-dlp 6곡 (4.75GB) → segment_piano.py 120개 30s clips → ACE-Step preprocess → 29분 학습 → Base+5ckpt×6프롬프트 추론 → scp → 6열 HTML
-  - 총 파이프라인 시간 ~1시간 (다운로드 제외)
-- [x] **hitmaking 팝 샘플 전달** — oven — 2026-04-13 21:50
-  - mxl 19개 + meta 19개 + urls_pop.jsonl 4,228개 + DOWNLOAD_GUIDE.md
-  - `~/projects/agent-comm/projects/hitmaking/input/musescore_pop/`
-- [x] **5090 FFmpeg 7.1 + torchcodec 설치** — oven — 2026-04-10
-  - 원인: ACE-Step 전처리가 `load_with_torchcodec` 사용 → torchcodec 0.11은 FFmpeg 4~7 shared DLL 필요
-  - 해결: BtbN n7.1 shared build (`C:\Users\leo\ffmpeg\bin`) + User PATH + 배치 내 명시 set PATH
-  - 주의: BtbN `latest` 태그는 FFmpeg 8(avcodec-62)라 torchcodec 비호환 → n7.1 태그 지정 필수
-- [x] **ACE-Step 배치 버그 수정** — oven — 2026-04-10
-  - `train.py fixed --yes` → `train.py --yes fixed` (글로벌 옵션 위치 오류)
-  - SSH `Start-Process`는 세션 종료 시 자식 프로세스 동반 사망 → schtasks S4U로 독립 실행
-- [x] **Freesound 피아노 수집 완료** — oven/5090 — 2026-04-09
-  - 최종 1,296개 (CC0/CC-BY), 배치 스크립트 준비 완료
-- [x] **ACE-Step 학습 스케줄 등록→취소** — oven — 2026-04-09
-  - schtasks S4U 모드로 등록 성공 (Interactive 모드는 콘솔 로그인 필요 → S4U 필요)
-  - Leo 요청으로 취소, 내일 재실행
-- [x] **5090 재부팅 + Freesound 수집 시작** — oven — 2026-04-09
-  - Freesound API key 발급
-  - Wan2.1 transformer/VAE 다운로드 완료
-- [x] **NAS musicscore_data 전송** — oven — 2026-04-08
-  - 4,972,264 파일 전송 검증 완료 (aria-midi, bitmidi, PDMX, aria-amt, asap, atepp, gigamidi)
-  - NAS 경로: `/volume1/music/musicscore_data/`
-- [x] **Wan2.2-T2V-A14B 모델 다운로드** — oven/5090 — 2026-04-06
-- [x] **Quincy P3 Phase 1+2 전처리 완료** — oven/5090 — 2026-04-05
-- [x] **Quincy 대시보드 멀티페이즈 확장** — oven — 2026-04-06
-- [x] **서정적 피아노 MIDI mukl→5090 전송** — oven — 2026-04-03
+- [x] **Krea2 여름 리얼리즘 100장** — 2026-07-06~07 — 100/100, err 0, mean_gen 328s, vram_peak 51.7GB. realism-V2 LoRA w1.5, 전량 로컬로드(HF다운0). A_people 60/D_objects 20/E_bg 20. 회수 `~/oven/krea2_summer_results/`(zip 143MB+컨택트시트). hf 통지+Leo Preview 완료
+- [x] **ogo 네트워크 진단** — 2026-07-06 — USB WiFi(DFS채널60) 간헐드롭이 원인(세션중 3회 오프라인). 신호100%·전원정상·직접P2P 13ms 정상. 유선/비-DFS채널 권장 Leo 전달 [[reference_ogo_network]]
+- [x] **Krea2 소스셋 100장 캠페인** — 2026-07-06 — 100/100, err 0, mean_gen 297s, vram_peak 51.7GB(1344배경 포함). A36/B20/C12/D18/E14. 카테고리 하위폴더 저장. 회수 `~/oven/krea2_source_results/`(zip 121MB+컨택트시트). hf 완료통지. 최초분 --model 미지정 21h정지→수정 [[feedback_krea2_local_model]]
+- [x] **Krea2 realism-V2 LoRA 10케이스** — 2026-07-05 — 10/10, err 0, vram_peak 35.7GB, weight1.5. 얼굴/조명/구성/텍스처/풍경 4축. LoRA 다운로드 정지→reklcli다운+scp+로컬로드 우회 [[feedback_krea2_local_model]]. 회수 `~/oven/krea2_realism_v2_results/`(+grid+zip). hf 통지+Leo Preview 완료
+- [x] **Krea2 아이돌 공연 배치 8장** — 2026-07-04 — 8/8 성공, err 0, vram_peak 35.9GB. Realism LoRA 적용, 장당 ~4분(젬마다운 VRAM독점). 회수: `~/oven/krea2_idol_results/`(+idol_grid.png). Leo Preview 완료
+- [x] **하모니시티 동시성 실증(A06) — venture 회신까지 완결** — 2026-06-19~21 (7/4 재확인)
+  - 스윕 완료(ogo1, N=1~20, real, 2026-06-19). **SLA 허용 동시 세계 N≤12** (tick wall<200s, 실패 0). throughput 포화 N=4(~0.84 calls/s). VRAM 28.5GB 고정(모델공유) → 한계=VRAM 아닌 추론 throughput
+  - venture-studio 회신 **이미 발송**: `venture-studio_oven_20260621_062000_동시성실측_A06승격.json` (A06 '추정'→'실측 N≤12' 승격). ⚠️ 7/3 메모리 TODO는 오등록, 중복발송 금지
+  - 결과 로컬 회수: `virtual_world_v02/concurrency/ogo1_results/`. G2 GTM 원페이저 실측 확정(`concurrency/GTM_onepager_DRAFT.md`, 7/4)
+- [x] **하모니시티 시뮬 stale락 복구** — 2026-07-04 — ogo 재부팅 후 재기동 실패 진단+복구 ([[feedback_harmonicity_stale_lock]])
+- [x] **Krea2 커뮤니티 LoRA 테스트** — 2026-07-02~03
+  - Realism LoRA (gokaygokay/Krea-2-Realism-LoRA) + Detail Slider (CivitAI alcaitiff) 테스트
+  - 핵심 성과: 커뮤니티 LoRA 키 매핑 해결 (PEFT→diffusers, ComfyUI→diffusers 변환)
+  - 결과: Realism은 구도/분위기 변화 뚜렷, Detail Slider는 미세 차이 (비추)
+  - 비교 그리드: `krea2_test/community_results/comparison_grid.png`
+- [x] **Krea2 루나바이브 아트워크 6장** — 2026-06-28
+- [x] **Krea2 Turbo+LoRA 9종 스윕** — 2026-06-28 — 10/10 성공
+  - enable_model_cpu_offload() 최적화: 장당 20분→4.5분, VRAM 60.9→37.8GB
+- [x] **hf-playground Krea2 대행 벤치마크** — 2026-06-24~28 — 종결
+- [x] **ogo GPU 관리 정책 수립** — 2026-06-24 — LEO 확정, admin+ari ACK
+- [x] **T1/T6/T5 실험 스윕 전체 완료** — 2026-06-22
+- [x] **PyTorch nightly cu128 설치** — 2026-06-27 — sm_120 지원 확인
