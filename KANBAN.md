@@ -38,10 +38,11 @@
   - 대기: hf 제안 baseline/강도스윕(LEO 판단), 추가 캠페인 요청
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 준비완료, 다운로드 진행중(느림)
   - ✅ 준비 100%: krea/Krea-2-Raw(비증류 BASE, is_distilled=false) 규명 / promptbank+corpus 배포(상대import→flat 패치) / gen provenance 동적패치(raw|turbo 자동) / bank 드라이런 50 jobs PASS
-  - 🔴 **블로커**: Krea-2-Raw 33GB 다운로드가 ogo WiFi(DFS ch60 드롭)로 극저속·간헐정지. Start-Process→**SYSTEM schtask(Krea2NonhumanRaw)** detach 해결 + hf_transfer 적용해도 느림(15분 1.5GB). 무인 grind 중(1,537MB resume) [[reference_ogo_network]]
-  - **완료 자동화**: `C:\projects\krea2_test\run_nonhuman_job.bat` = 다운로드 완료 시 50장 배치 자동 → 로그 `nonhuman_job.log` DONE_NONHUMAN_RAW 마커
-  - **점검**: `ssh ogo type C:\projects\krea2_test\nonhuman_job.log | findstr DONE_NONHUMAN_RAW`. 완료 시 → nonhuman_raw_out 회수+그리드+hf 회수대기 회신
-  - **정지 시 재kick**: `schtasks /Run /TN Krea2NonhumanRaw`. 근본해결=Leo가 ogo 유선/비-DFS채널 전환. 보고 push 완료(164455, cc admin)
+  - ⚙️ **ogo=원격서버라 물리 네트워크 조치 불가**(Leo 확인 7/8) → 원격전용 자동재시작으로 해결
+  - 🟢 **tick watchdog**: schtask `Krea2NonhumanTick`(5분주기 SYSTEM, HarmonicityHealthCheck 패턴). `check_tick.ps1` 무상태 판단 = dl 살아있게+2tick(~10분)정지시 kill후 resume / 다운완료→50장 배치 자동 / 전부완료→무동작. hf_transfer로 resume 누적 → WiFi 드롭 무관 완주
+  - **진행**: 7/8 17:20 기준 **19GB/33GB(~58%)**, 자동 진행 중. dl 스크립트 `dl_krea2_raw.py`(hf_transfer)
+  - **점검**: `ssh ogo type C:\projects\krea2_test\tick.log`(진행) / `findstr DONE_NONHUMAN_RAW nonhuman_job.log`(배치완료). 완료 시 → nonhuman_raw_out 회수+그리드+hf 회수대기 회신
+  - 준비물: promptbank+corpus(flat) 배포됨, gen provenance 동적패치됨 [[reference_ogo_network]]
 
 ---
 
