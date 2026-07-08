@@ -1,10 +1,17 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-07 (Krea2 이미지 캠페인 4건 종결 총 318장, ogo 네트워크 진단, 젬마 down 유지)
+업데이트: 2026-07-08 (하모니시티 확대 Phase A 구현 완료 — E1 API + E2 A/B실험, mock 검증 PASS)
 
 ---
 
 ## IN PROGRESS
 
+- [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
+  - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
+  - 구현: metrics.py/intervention.py/run_ab.py/api/server.py 신규 + save_load(원자적)/main(개입훅)/export(--ab) 수정
+  - E1 관측·개입 API(FastAPI 17라우트) + E2 A/B paired 실험프레임(개입 4타입) 완성. 라이브 무영향 회귀 확인
+  - 🔴 **real LLM 검증 대기**(젬마 복귀 후): run_ab real 효과리포트 / API 라이브 read-only 관측
+  - 대기: Leo 결정 4건 (S2 선행 / V1 내부적용 / S4 정책 / ogo 배포 여부). 커밋 완료
+  - 다음(Phase B): E6 도메인팩 / E3 서사기억 / config_set 개입(모듈참조 전환)
 
 - [ ] **musicscore_data 백업** — oven — 2026-06-29~진행 중 (거의 완료)
   - cp -a 실행 중 (PID 62301), 대상 `/Volumes/LEO 1/musicscore_data` (exFAT)

@@ -409,7 +409,12 @@ def _end_of_day(world: WorldState, characters: dict, relationships: dict):
         if injection:
             target_id = event.get("character")
             if target_id and target_id in characters:
-                char = characters[target_id]
+                targets = [characters[target_id]]
+            elif not target_id:
+                targets = list(characters.values())
+            else:
+                targets = []
+            for char in targets:
                 char.working_memory.append(f"[내면] {injection}")
                 if len(char.working_memory) > 5:
                     char.working_memory = char.working_memory[-5:]
@@ -477,13 +482,27 @@ def main(max_ticks: int = None, fast: bool = False):
     print(f"   P1: 평판 매트릭스 {len(reputation_matrix)}명, "
           f"정보 {sum(len(v) for v in knowledge_base.values())}건 로드")
 
+    # A-4: 개입 파이프 초기화 (spec/inbox 미설정 시 no-op → 라이브 무영향)
+    from village import config, intervention
+    intervention.init(config.DATA_DIR)
+
     ticks_done = 0
     try:
         while True:
             tick_start = time.time()
             world.advance_tick()
+            # A-4: 개입 적용(예약 spec + inbox) — run_tick 앞이라 이번 틱 encounter/대화에 즉시 반영
+            n_iv = intervention.apply_pending(
+                world, characters, relationships,
+                reputation_matrix, knowledge_base, info_registry,
+            )
+            if n_iv:
+                print(f"  ⚡ 개입 {n_iv}건 적용 (tick {world.tick})")
             run_tick(world, characters, relationships)
             ticks_done += 1
+            # 동시성 실측: 틱 wall-clock + LLM 대기/엔진 분리 기록(옵트인, 무영향)
+            from village import profiling
+            profiling.record_tick(world.tick, world.day, time.time() - tick_start)
 
             if max_ticks is not None and ticks_done >= max_ticks:
                 print(f"\n  [검증런] {ticks_done}틱 완료 — 상태 저장 후 종료")

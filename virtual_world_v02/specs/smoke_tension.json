@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "name": "smoke_tension",
+  "interventions": [
+    {"id": "t1", "at_tick": 1, "type": "relationship_delta", "pair": ["min_ah", "tae_sik"], "delta": {"tension": 0.6}},
+    {"id": "t2", "at_tick": 1, "type": "relationship_delta", "pair": ["seo_jin", "luna"], "delta": {"tension": 0.6}},
+    {"id": "t3", "at_tick": 1, "type": "relationship_delta", "pair": ["joon_ho", "nexus"], "delta": {"tension": 0.6}}
+  ]
+}

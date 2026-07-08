@@ -173,36 +173,8 @@ def orchestrate_replay(seed: int, ticks: int) -> bool:
     return False
 
 
-def _extract_metrics(data_dir: Path) -> dict:
-    """산출물 relationships.json에서 다회통계용 메트릭 추출."""
-    rel = json.loads((data_dir / "relationships.json").read_text(encoding="utf-8"))
-    pairs = list(rel.values()) if isinstance(rel, dict) else rel
-    n = len(pairs) or 1
-
-    def g(p, k):
-        return p.get(k, 0) if isinstance(p, dict) else 0
-
-    warmths = [g(p, "warmth") for p in pairs]
-    trusts = [g(p, "trust") for p in pairs]
-    tensions = [g(p, "tension") for p in pairs]
-    return {
-        "avg_warmth": round(sum(warmths) / n, 4),
-        "avg_trust": round(sum(trusts) / n, 4),
-        "avg_tension": round(sum(tensions) / n, 4),
-        "ceiling": sum(1 for p in pairs if g(p, "warmth") >= 1.0 and g(p, "trust") >= 1.0),
-        "affection_sat": sum(1 for p in pairs if g(p, "affection") >= 0.95),
-        "active_rels": sum(1 for p in pairs if g(p, "interaction_count") > 0),
-        "n_pairs": len(pairs),
-    }
-
-
-def _stats(values: list) -> dict:
-    """mean±std + 95% CI (정규근사). N<2면 CI=0(표기상 단일관측)."""
-    n = len(values)
-    m = statistics.mean(values) if n else 0.0
-    sd = statistics.stdev(values) if n > 1 else 0.0
-    ci = 1.96 * sd / math.sqrt(n) if n > 1 else 0.0
-    return {"mean": round(m, 4), "std": round(sd, 4), "ci95": round(ci, 4), "n": n}
+# 메트릭 추출/집계는 village.metrics로 공용화(A-1) — API/A-B 실험과 재사용.
+from village.metrics import extract_metrics as _extract_metrics, stats as _stats  # noqa: E402
 
 
 def orchestrate_multiseed(seeds: list, ticks: int, mock: bool = False, record: bool = True) -> dict:

@@ -19,6 +19,99 @@ BASE = Path(__file__).parent
 REPRO_ROOT = BASE / "repro_runs"
 
 
+def export_ab(report_path):
+    """A/B 개입 실험 리포트(run_ab.py 산출) → md/csv + REPRODUCE (A-7).
+    effect 표에 각 메트릭 95%CI가 0을 제외하는지(sig ★) 표기 — 검정 아닌 CI 기반."""
+    report_path = Path(report_path)
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    out = report_path.parent / "export"
+    out.mkdir(parents=True, exist_ok=True)
+
+    name = report["name"]
+    seeds = report["seeds"]
+    ticks = report["ticks"]
+    mode = report.get("mode", "?")
+    summary = report["summary"]
+    per_seed = report["per_seed"]
+    keys = list(summary["effect"].keys())
+    spec = report.get("spec", {})
+
+    def ps(seed):
+        return per_seed.get(str(seed)) or per_seed.get(seed)
+
+    def sig(e):
+        return "★" if e["n"] > 1 and abs(e["mean"]) > e["ci95"] else ""
+
+    # 1) markdown
+    md = [
+        f"# 하모니시티 A/B 개입 실험 리포트 — {name}",
+        "",
+        f"- 시드: {seeds} (N={len(seeds)})",
+        f"- 틱/런: {ticks}",
+        f"- LLM 모드: {mode}",
+        f"- spec: `{spec.get('path','?')}` (sha256 `{spec.get('sha256','?')[:16]}`)",
+        "",
+        "## 개입 효과 (treat − ctrl, paired)",
+        "",
+        "| 메트릭 | ctrl mean | treat mean | effect | 95% CI | sig |",
+        "|---|---|---|---|---|---|",
+    ]
+    for k in keys:
+        c, t, e = summary["ctrl"][k], summary["treat"][k], summary["effect"][k]
+        md.append(f"| {k} | {c['mean']} | {t['mean']} | {e['mean']:+} | ±{e['ci95']} | {sig(e)} |")
+    md += ["", "> sig ★ = 95%CI가 0을 제외(효과의 CI 하한 > 0). 통계 검정이 아닌 CI 기반 표기 — 과대해석 주의.",
+           "", "## 시드별 diff (treat − ctrl)", "",
+           "| seed | " + " | ".join(keys) + " |",
+           "|---|" + "|".join("---" for _ in keys) + "|"]
+    for s in seeds:
+        row = ps(s)["diff"]
+        md.append(f"| {s} | " + " | ".join(f"{row[k]:+}" for k in keys) + " |")
+    (out / "ab_summary.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+
+    # 2) ab_summary.csv (효과 요약)
+    with open(out / "ab_summary.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["metric", "ctrl_mean", "treat_mean", "effect_mean", "effect_std", "effect_ci95", "sig"])
+        for k in keys:
+            c, t, e = summary["ctrl"][k], summary["treat"][k], summary["effect"][k]
+            w.writerow([k, c["mean"], t["mean"], e["mean"], e["std"], e["ci95"], sig(e)])
+
+    # 3) per_seed diff csv
+    with open(out / "ab_per_seed.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["seed"] + [f"{k}_diff" for k in keys])
+        for s in seeds:
+            row = ps(s)["diff"]
+            w.writerow([s] + [row[k] for k in keys])
+
+    # 4) 재현 패키지
+    repro = [
+        f"# 재현 패키지 (A/B: {name})",
+        "",
+        "paired 개입 실험. 같은 seed의 ctrl/treat은 첫 개입 틱까지 동일 궤적이며,",
+        "개입 spec은 순수 상태변경이라 mock 모드에서 완전 결정적으로 재현된다.",
+        f"real LLM 모드는 record 로그(`s{{seed}}_{{cond}}_llm.jsonl`, record={report.get('record')})로 재생 재현.",
+        "",
+        "## 개입 spec (전문)",
+        "```json",
+        json.dumps(spec.get("content", {}), ensure_ascii=False, indent=2),
+        "```",
+        f"- sha256: `{spec.get('sha256','?')}`",
+        "",
+        "## 재현 명령",
+        "```bash",
+        f"python run_ab.py --spec {spec.get('path','<spec>')} --seeds {len(seeds)} --ticks {ticks}"
+        + (" --mock" if mode == "mock" else ""),
+        "```",
+    ]
+    (out / "REPRODUCE.md").write_text("\n".join(repro) + "\n", encoding="utf-8")
+
+    print(f"A-7 A/B export 완료: {out}")
+    for f in sorted(out.glob("*")):
+        print(f"  - {f.name}")
+    return out
+
+
 def export(report_path=None):
     report_path = Path(report_path) if report_path else REPRO_ROOT / "multiseed_report.json"
     report = json.loads(report_path.read_text(encoding="utf-8"))
@@ -104,4 +197,8 @@ def export(report_path=None):
 
 
 if __name__ == "__main__":
-    export(sys.argv[1] if len(sys.argv) > 1 else None)
+    args = sys.argv[1:]
+    if "--ab" in args:
+        export_ab(args[args.index("--ab") + 1])
+    else:
+        export(args[0] if args else None)
