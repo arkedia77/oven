@@ -1,5 +1,5 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-08 (하모니시티 확대 Phase A 구현 완료 — E1 API + E2 A/B실험, mock 검증 PASS)
+업데이트: 2026-07-09 (하모니시티 Phase A 구현완료 + Krea2 #26 BASE 재검 착수·tick watchdog 무인다운로드)
 
 ---
 
@@ -40,9 +40,9 @@
   - ✅ 준비 100%: krea/Krea-2-Raw(비증류 BASE, is_distilled=false) 규명 / promptbank+corpus 배포(상대import→flat 패치) / gen provenance 동적패치(raw|turbo 자동) / bank 드라이런 50 jobs PASS
   - ⚙️ **ogo=원격서버라 물리 네트워크 조치 불가**(Leo 확인 7/8) → 원격전용 자동재시작으로 해결
   - 🟢 **tick watchdog**: schtask `Krea2NonhumanTick`(5분주기 SYSTEM, HarmonicityHealthCheck 패턴). `check_tick.ps1` 무상태 판단 = dl 살아있게+2tick(~10분)정지시 kill후 resume / 다운완료→50장 배치 자동 / 전부완료→무동작. hf_transfer로 resume 누적 → WiFi 드롭 무관 완주
-  - **진행**: 7/8 17:20 기준 **19GB/33GB(~58%)**, 자동 진행 중. dl 스크립트 `dl_krea2_raw.py`(hf_transfer)
-  - **점검**: `ssh ogo type C:\projects\krea2_test\tick.log`(진행) / `findstr DONE_NONHUMAN_RAW nonhuman_job.log`(배치완료). 완료 시 → nonhuman_raw_out 회수+그리드+hf 회수대기 회신
-  - 준비물: promptbank+corpus(flat) 배포됨, gen provenance 동적패치됨 [[reference_ogo_network]]
+  - **진행**: 7/8 17:20 기준 **19GB/33GB(~58%)**. 7/9 갈무리 시점 **ogo 오프라인(WiFi 드롭)** — 진행률 미확인. tick schtask는 재부팅·드롭 견디고 재접속 시 자동 resume(dl_krea2_raw.py hf_transfer가 .incomplete 이어받음)
+  - **다음 세션 최우선**: ogo 복귀 확인 → `ssh ogo type C:\projects\krea2_test\tick.log`(진행) / `findstr DONE_NONHUMAN_RAW nonhuman_job.log`(배치완료). 완료면 nonhuman_raw_out 50장 회수(iCloud+NAS+README, 도메인폴더)+그리드+hf 회수대기 회신. 미완이면 tick watchdog이 계속 진행 중일 것(정지 시 `schtasks /Run /TN Krea2NonhumanTick`)
+  - 준비물: promptbank+corpus(flat import 패치) 배포됨, gen provenance 동적패치(raw/turbo) 됨. hf 통지 3건 push(162012 확보경로/164455 블로커/172608 자동재시작정정) [[reference_ogo_network]]
 
 ---
 
