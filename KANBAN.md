@@ -1,9 +1,27 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-10 (수신 6건 처리 + Krea2 Raw 거짓DONE 버그 수정 + 킷v0.2 L0 재편)
+업데이트: 2026-07-14
+
+## 📦 캡슐 (세션 재개용 3줄)
+① **마지막 완료**: 작곡·편곡 LoRA(ARR) 라운드 CLOSED — 프로덕션 설정 확정(ckpt_v4_epoch2+temp0.6, valid_rate 0.875/chord_tone 0.632). ogo Krea2 재시도: nonhuman 27/28 완료, MJ는 미착수(1장뿐), hf-playground에 부분회수(30개) 완료.
+② **다음 스텝**: (a) ogo MJ 31장 재시도 재개+완주 대기 → 완주시 hf-playground 일괄 재서빙 (b) fableself의 "구조문법주입 도메인전이" 프로젝트화 소견에 대한 Leo 채택/기각 결정 대기 (c) ARR LoRA 다음 라운드는 3070 요청 시(데이터증강/정칙화 레버)만 재개
+③ **상세**: [[project_arr_composition_lora]] · [[project_ogo_gpu_management]] 2026-07-13 사고기록 · 본 파일 IN PROGRESS 섹션
 
 ---
 
 ## IN PROGRESS
+
+- [ ] **Krea2 비인물+MJ 재시도 배치** — oven/hf-playground — 2026-07-13~14 🟡 진행중
+  - 7/11~13 ogo 22h+ 오프라인(원인불명) → 복구 후 젬마 수동기동 상태 발견(watchdog 5개 전부 무죄, 원인미확정) → Leo결정으로 젬마종료+실패분 60장 재발사
+  - 🔴 **사고+복구**: manifest.json 인코딩버그(cp949가 em-dash 못씀) 크래시 → 직접 PowerShell 수정 시도가 파일 손상(oven 실수) → hf-playground 정본(commit 3411330, sha1 f8afa85d...) 재배포로 해결. 원칙 확립: ogo 파이썬 파일은 repo경유로만 수정 [[feedback_remote_file_edit_via_repo]]
+  - 🟢 **7/14 상태**: nonhuman 27/28 완료(landscape 마지막 1장 진행중), MJ 31장 아직 미착수. hf-playground에 MJ1+nonhuman27(30개) 부분회수 완료(바이트검증 일치)
+  - 다음: nonhuman 완주 → MJ 31장 자동 착수 → 완주 시 hf-playground 일괄 재서빙(요청②)
+
+- [x] **작곡·편곡 LoRA(ARR, Qwen2.5-1.5B) — 라운드 CLOSED** — oven/3070 — 2026-07-11~14 ✅ 프로덕션 설정 확정
+  - Qwen2.5-1.5B + REMI vocab 542신규토큰(POP909 909곡) LoRA. **최종설정: ckpt_v4_epoch2+temp0.6+top_p0.95+rep_penalty1.2+min_new_tokens300** — valid_rate 0.875·valid-gated chord_tone 0.632(GT0.875), P3오염 0/15
+  - 여정: 스모크런→소규모학습→확장학습(과적합 3000스텝 발견)→재설계(정식epoch+weight_decay, 그래도 미세퇴행)→**greedy 확률붕괴 대발견**(반복실패곡 4/4가 디코드 문제였음, 재학습 불요)→샘플링전환(valid 0.60→0.93)→temp sweep→3seed결선(단발판정 뒤집힘)→P3클린재확인
+  - 핵심교훈 4건: tied embedding VRAM함정/generate헤더누락버그/집계mean착시/단발샘플링seed노이즈위험 — 상세 [[project_arr_composition_lora]]
+  - 정칙화 재학습 최종불요 확정. 102번곡=구조적hard-case 플래그(재학습금지)
+  - fableself 프로젝트화 소견(도메인 무지 LLM 구조학습, 생체신호 2호도메인 제안) — Leo 채택/기각 결정 대기, 3070 재요청 시 다음 라운드 재개
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
