@@ -29,8 +29,10 @@
   - kee 접수평가 "상위" + 착수게이트=페블(=fableself) 1회 감수 경유, PASS 시 kee 착수판정 자동발효(왕복불요)+트랜치1(3런) 자동승인 예고
   - oven→fableself 감수 요청 발송 완료(`fableself_oven_20260716_194003_...json`) — 베이스모델스윕 함정 비해당 판단 확인 요청 포함
   - fableself 조건부 PASS(보강4건: valid_rate 곡선병기/ckpt세팅=레시피 확인/3점판정격하/decode고정 스코프) → oven 전건 반영 회신 → ✅ **T0 게이트 완전 발효**(min_new_tokens 측정구간은 비블로커 판정, T1 전까지 확인). 3070에 확인 질의만 병행 발송(`3070_oven_20260716_194736_...json`)
-  - 🟢 **착수 가능 상태**: 트랜치1(3런: 10%/30%/100%) 자동승인. 100%=기존 ckpt_v4_epoch2 재사용, 10%/30%=신규 학습 필요(leowin2/3070 GPU, 현재 유휴)
-  - 다음: 실제 10%/30% 학습런 착수 여부는 Leo 확인 후 진행(신규 GPU 시간 커밋이라 세션 내 즉시 착수 보류 중)
+  - ✅ **Leo 승인 → 착수함(19:53)**: leowin2에서 `train_epoch_frac.py`(--frac 인자로 10%/30% 서브셋, ckpt_v4 레시피 그대로: LoRA r16/lr5e-5/wd0.01/2epoch/seed20260713 고정, 단일셔플 후 prefix subset이라 10%⊂30%⊂100% nested) SYSTEM schtask(FracPilotT0)로 detach 실행
+  - 🔴 **1차 실행 cp949 인코딩 크래시**: 로그 문자열의 em-dash(—)가 model load 직후 크래시(GPU시간 낭비 없음, 학습 시작 전 실패) — [[feedback_krea2_local_model]]류와 동일 패턴(비ASCII 문자+cp949 콘솔). sys.stdout/stderr utf-8 reconfigure + 하이픈 치환으로 수정 후 재실행 성공
+  - 🟢 **19:53:39 정상 진행 중**: frac10(653/6536윈도우) 학습 개시, GPU 8000MiB/100%util. 예상: frac10 ~52분 + frac30(1961윈도우) ~2.6h ≈ 총 3.4h. 완료 시 3070 judge.py로 valid_rate+chord_tone_ratio 측정 → T1(중간게이트) 리포트
+  - 100% 지점은 기존 ckpt_v4_epoch2 재사용(재학습 불요, valid_rate 0.875/chord_tone 0.632 이미 확보)
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
