@@ -1,10 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-14
+업데이트: 2026-07-16
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 작곡·편곡 LoRA(ARR) 라운드 CLOSED — 프로덕션 설정 확정(ckpt_v4_epoch2+temp0.6, valid_rate 0.875/chord_tone 0.632). ogo Krea2 재시도: nonhuman 27/28 완료, MJ는 미착수(1장뿐), hf-playground에 부분회수(30개) 완료.
-② **다음 스텝**: (a) ogo MJ 31장 재시도 재개+완주 대기 → 완주시 hf-playground 일괄 재서빙 (b) fableself의 "구조문법주입 도메인전이" 프로젝트화 소견에 대한 Leo 채택/기각 결정 대기 (c) ARR LoRA 다음 라운드는 3070 요청 시(데이터증강/정칙화 레버)만 재개
-③ **상세**: [[project_arr_composition_lora]] · [[project_ogo_gpu_management]] 2026-07-13 사고기록 · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: Krea2 신규 LoRA(Style Reference/Identity Edit) 파일럿 성공 — 둘 다 img2img 조건부 편집 실증(스타일 전이 + 인물보존 편집). hf-playground에 우선순위 협의 요청 발송, 회신 대기. 이전: 작곡·편곡 LoRA(ARR) 라운드 CLOSED(프로덕션 설정 확정).
+② **다음 스텝**: (a) hf-playground 회신 오면 신규 LoRA 본캠페인 우선순위 확정 (b) identity_edit 출력 2048×1024 2분할 이슈 원인 확인 (c) ogo MJ 31장 재시도 재개+완주 대기 (d) fableself "구조문법주입 도메인전이" 프로젝트화 Leo 결정 대기
+③ **상세**: [[project_arr_composition_lora]] · [[project_ogo_gpu_management]] · 본 파일 IN PROGRESS 섹션 Krea2 캠페인 항목
 
 ---
 
@@ -50,7 +50,12 @@
   - 지금까지 종결 4건 총 318장(아이돌8+V2 10+소스100+여름100), 전부 실패0. archy AssetStore 적재
   - 워크플로 확립: gh api로 hf-playground 파일 회수→ogo 배포→SYSTEM schtask+run_*.bat 발사→회수 zip→통지
   - 🔴 **필수교훈**: Krea2 배치는 `--model 로컬` + LoRA 로컬(lora_v2) 명시 [[feedback_krea2_local_model]]. 젬마 down 상태 유지(VRAM독점)
-  - 대기: hf 제안 baseline/강도스윕(LEO 판단), 추가 캠페인 요청
+  - 🟢 **7/16 신규 LoRA 파일럿 성공**: HF/CivitAI 재조사로 미사용 LoRA 발굴(공식 스타일 9종 + 기능성 5종). `ostris/Krea2OstrisEdit` 커스텀 diffusers 파이프라인(trust_remote_code) 확인·검증.
+    - **Style Reference LoRA**(ostris) — 레퍼런스 이미지(빗속 콘서트 실루엣) 분위기를 완전 다른 피사체(예티)에 이식 성공. gen 1237s/10step
+    - **Identity Edit LoRA**(conradlocke v1.1 r64) — 원본 인물/포즈/의상/프레이밍 보존한 채 조명만 지시대로(야간→골든아워) 교체 성공. gen 1257s/10step. ⚠️ 출력이 2048×1024 2분할로 나옴 — 사이즈 파라미터 확인 필요(후속)
+    - 결과: `~/oven/krea2_edit_pilot_results/` (source+output 5파일). VRAM peak 58.1GB
+    - hf-playground에 우선순위 협의 요청 발송(`hf-playground_oven_20260716_151648_Krea2신규LoRA우선순위협의.json`), 회신 대기
+  - 대기: hf 제안 baseline/강도스윕(LEO 판단), 신규 LoRA 본캠페인 확대 여부(회신 대기)
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
