@@ -31,8 +31,10 @@
   - fableself 조건부 PASS(보강4건: valid_rate 곡선병기/ckpt세팅=레시피 확인/3점판정격하/decode고정 스코프) → oven 전건 반영 회신 → ✅ **T0 게이트 완전 발효**(min_new_tokens 측정구간은 비블로커 판정, T1 전까지 확인). 3070에 확인 질의만 병행 발송(`3070_oven_20260716_194736_...json`)
   - ✅ **Leo 승인 → 착수함(19:53)**: leowin2에서 `train_epoch_frac.py`(--frac 인자로 10%/30% 서브셋, ckpt_v4 레시피 그대로: LoRA r16/lr5e-5/wd0.01/2epoch/seed20260713 고정, 단일셔플 후 prefix subset이라 10%⊂30%⊂100% nested) SYSTEM schtask(FracPilotT0)로 detach 실행
   - 🔴 **1차 실행 cp949 인코딩 크래시**: 로그 문자열의 em-dash(—)가 model load 직후 크래시(GPU시간 낭비 없음, 학습 시작 전 실패) — [[feedback_krea2_local_model]]류와 동일 패턴(비ASCII 문자+cp949 콘솔). sys.stdout/stderr utf-8 reconfigure + 하이픈 치환으로 수정 후 재실행 성공
-  - 🟢 **19:53:39 정상 진행 중**: frac10(653/6536윈도우) 학습 개시, GPU 8000MiB/100%util. 예상: frac10 ~52분 + frac30(1961윈도우) ~2.6h ≈ 총 3.4h. 완료 시 3070 judge.py로 valid_rate+chord_tone_ratio 측정 → T1(중간게이트) 리포트
+  - 🟢 **20:25 진행상황**: frac10 epoch1 완료(20.3min, avg_loss 3.320, ckpt_frac10_epoch1 저장) → epoch2 진행중. 실측 스텝속도 1.87s/step(예상보다 빠름) → frac10 총 ~40min, frac30(1961윈도우) 총 ~2h 예상, 완료 시각 ~22:30~22:45대
+  - 🔴 **거짓DONE 마커 버그 발견**: `run_frac_pilot.bat`가 python 성공/실패 무관하게 마지막에 무조건 DONE 마커 기록 — 1차 크래시런의 마커가 남아있어 착시 유발할 뻔함(삭제 조치함). Krea2 Raw 거짓DONE과 동일 계열 버그. **판정은 항상 로그 내 "FRAC30 DONE" 문자열+체크포인트 디렉토리 존재로 확인, 마커 단독 신뢰 금지** [[feedback_verify_before_report]]
   - 100% 지점은 기존 ckpt_v4_epoch2 재사용(재학습 불요, valid_rate 0.875/chord_tone 0.632 이미 확보)
+  - ogo(serv)는 20:25 시점도 계속 오프라인(2h+) — 과거 22h+ 사고 패턴 유사, 장기화 시 Leo 물리조치 필요할 수 있음. MJ31 현황 확인·hf-playground 회신 보류 중
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
