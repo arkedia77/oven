@@ -2,9 +2,9 @@
 업데이트: 2026-07-16
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: Krea2 신규 LoRA(Style Reference/Identity Edit) 파일럿 성공 — 둘 다 img2img 조건부 편집 실증(스타일 전이 + 인물보존 편집). hf-playground에 우선순위 협의 요청 발송, 회신 대기. 이전: 작곡·편곡 LoRA(ARR) 라운드 CLOSED(프로덕션 설정 확정).
-② **다음 스텝**: (a) hf-playground 회신 오면 신규 LoRA 본캠페인 우선순위 확정 (b) identity_edit 출력 2048×1024 2분할 이슈 원인 확인 (c) ogo MJ 31장 재시도 재개+완주 대기 (d) fableself "구조문법주입 도메인전이" 프로젝트화 Leo 결정 대기
-③ **상세**: [[project_arr_composition_lora]] · [[project_ogo_gpu_management]] · 본 파일 IN PROGRESS 섹션 Krea2 캠페인 항목
+① **마지막 완료**: hf-playground 본배치 GO 수신(Style Ref/Identity Edit 각 5~10장, 사이즈이슈 가설 포함) + kee 연구파일럿1호(구조문법주입 도메인전이) 측정설계 1p 제출 완료(LEO 07-17 승인 후속). 이전: Krea2 신규 LoRA 파일럿 성공.
+② **다음 스텝**: (a) ogo 재접속 대기 중(Tailscale 오프라인, WiFi 드롭 재발 추정) → 재접속 시 MJ 31장 현황 확인 후 hf-playground 회신 + 본배치(각 5~10장) 착수 (b) identity_edit 출력 2048×1024 2분할 이슈 — hf 가설([source|output] 콘캣)부터 확인 (c) kee 측정설계 페블 감수 결과 대기
+③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
@@ -21,7 +21,12 @@
   - 여정: 스모크런→소규모학습→확장학습(과적합 3000스텝 발견)→재설계(정식epoch+weight_decay, 그래도 미세퇴행)→**greedy 확률붕괴 대발견**(반복실패곡 4/4가 디코드 문제였음, 재학습 불요)→샘플링전환(valid 0.60→0.93)→temp sweep→3seed결선(단발판정 뒤집힘)→P3클린재확인
   - 핵심교훈 4건: tied embedding VRAM함정/generate헤더누락버그/집계mean착시/단발샘플링seed노이즈위험 — 상세 [[project_arr_composition_lora]]
   - 정칙화 재학습 최종불요 확정. 102번곡=구조적hard-case 플래그(재학습금지)
-  - fableself 프로젝트화 소견(도메인 무지 LLM 구조학습, 생체신호 2호도메인 제안) — Leo 채택/기각 결정 대기, 3070 재요청 시 다음 라운드 재개
+  - fableself 프로젝트화 소견(도메인 무지 LLM 구조학습, 생체신호 2호도메인 제안) — ✅ LEO 승인(07-17, kee 경유) → 연구 파일럿 1호로 편입, 아래 신규 항목 참조
+
+- [ ] **연구 파일럿 1호 — 구조문법주입 도메인전이(데이터효율 한계곡선)** — oven/kee — 2026-07-16 착수 게이트 진행중
+  - kee 발주(P1, LEO 07-17 승인) → oven이 측정설계 1p 작성·제출 완료(`kee_oven_20260716_193709_...json`)
+  - 설계 요지: x축=학습데이터량(10%/30%/100%, 909곡 기준) y축=chord_tone_ratio(GT0.875, 100%지점 기존실측 0.632) — 3단게이트(착수/중간/판정), 3070 1기 재사용(신규 인프라 불요)
+  - 다음: 페블 감수 결과 대기 → 착수 게이트 통과 시 10%/30%/100% 3개 런 실행
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
@@ -54,8 +59,10 @@
     - **Style Reference LoRA**(ostris) — 레퍼런스 이미지(빗속 콘서트 실루엣) 분위기를 완전 다른 피사체(예티)에 이식 성공. gen 1237s/10step
     - **Identity Edit LoRA**(conradlocke v1.1 r64) — 원본 인물/포즈/의상/프레이밍 보존한 채 조명만 지시대로(야간→골든아워) 교체 성공. gen 1257s/10step. ⚠️ 출력이 2048×1024 2분할로 나옴 — 사이즈 파라미터 확인 필요(후속)
     - 결과: `~/oven/krea2_edit_pilot_results/` (source+output 5파일). VRAM peak 58.1GB
-    - hf-playground에 우선순위 협의 요청 발송(`hf-playground_oven_20260716_151648_Krea2신규LoRA우선순위협의.json`), 회신 대기
-  - 대기: hf 제안 baseline/강도스윕(LEO 판단), 신규 LoRA 본캠페인 확대 여부(회신 대기)
+    - hf-playground 회신(15:35): 우선순위 동의 + 공식9종은 6/28 기실측(재발사불요) + 조건2건(Identity Edit 입력=A_characters_photoreal 합성인물 고정 / MJ31 완주 후 진행) — oven이 회신 확인 전 파일럿 선실행, 자진신고 완료(소스이탈 있었으나 실인물 아님, GPU충돌은 없었음 확인)
+    - hf-playground 회신(19:20): 파일럿 성공 확인 + 본배치 GO. **배치설계**: ①Style Reference 5~10장(레퍼런스=softwatercolor파이널+LoRA스윕무드2장 → A카테고리 인물에 이식) ②Identity Edit 5~10장(입력=A카테고리 합성인물 1장 고정, 축별 조명2·표정2·의상2·배경2 — LEO 6/27 img2img 테스트 본실행). 사이즈이슈 가설: edit 파이프라인이 [source|output] 콘캣 출력하는 관행일 수 있음(우측크롭으로 해결 가능성)
+  - 🔴 **7/16 19:3x ogo 오프라인**: Tailscale relay hkg, last seen ~1h — WiFi 드롭 재발 추정 [[reference_ogo_network]]. 재접속 시 MJ31 현황 확인 → hf-playground 회신 + 본배치 착수
+  - 대기: 신규 LoRA 본배치(사이즈이슈 해결 선행), MJ31 현황 회신
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
