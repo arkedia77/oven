@@ -33,10 +33,11 @@
   - 🔴 **1차 실행 cp949 인코딩 크래시**: 로그 문자열의 em-dash(—)가 model load 직후 크래시(GPU시간 낭비 없음, 학습 시작 전 실패) — [[feedback_krea2_local_model]]류와 동일 패턴(비ASCII 문자+cp949 콘솔). sys.stdout/stderr utf-8 reconfigure + 하이픈 치환으로 수정 후 재실행 성공
   - 🔴 **거짓DONE 마커 버그 발견**: `run_frac_pilot.bat`가 python 성공/실패 무관하게 마지막에 무조건 DONE 마커 기록 — 1차 크래시런의 마커가 남아있어 착시 유발할 뻔함(삭제 조치함). Krea2 Raw 거짓DONE과 동일 계열 버그. **판정은 항상 로그 내 완료 문자열+체크포인트 디렉토리 존재로 확인, 마커 단독 신뢰 금지** [[feedback_verify_before_report]]
   - ✅ **20:47 frac10 완료 확인**(로그 "TRAIN_EPOCH_FRAC_DONE"+ckpt_frac10_epoch1/epoch2 디렉토리 실물 확인): 총 53.4min(epoch1 20.3min+epoch2 26.8min), first_loss 16.211→last_loss 1.148
-  - 🟢 **frac30 진행중**(20:47:33 시작): 1960/6536윈도우(30%). 실측 속도(~2.2~2.5s/step) 기준 총 ~2.4h 예상 → 완료 예정 23:10~23:20대
+  - 🟢 **frac30 진행중**(20:47:33 시작): 21:08 기준 epoch1 step500/1960, 2.47s/step 실측 → 총 소요 재추정 ~2.7h, 완료 예정 23:25~23:35대(기존 추정보다 소폭 지연)
   - 3070에 judge.py 측정구간 문의 회신 도착·fableself에 최종 확인 완료(min_new_tokens은 코드커버리지 필터라 무해) — T1 리포트 준비 완료 상태
   - 100% 지점은 기존 ckpt_v4_epoch2 재사용(재학습 불요, valid_rate 0.875/chord_tone 0.632 이미 확보)
-  - ogo(serv)는 21시경도 계속 오프라인(3h+) — 과거 22h+ 사고 패턴 유사, 장기화 시 Leo 물리조치 필요할 수 있음. MJ31 현황 확인·hf-playground 회신 보류 중
+  - 완료 시 다음: 3070에 judge.py 채점 요청(ckpt_frac10_epoch2/ckpt_frac30_epoch2 + 기존 ckpt_v4_epoch2 3개 체크포인트 → valid_rate+chord_tone_ratio/_valid 측정) → T1(중간게이트) 리포트 작성
+  - 🔴 **ogo(serv) 21:28 기준 오프라인 지속(~3h, 추정 18:2x경부터)** — rx=0 고정(수신 전무), tx만 소폭 증가(재연결 시도 중으로 추정). 과거 22h+ 사고 패턴과 유사한 궤적 — Leo 물리조치(공유기/USB WiFi 어댑터) 확인 요청함. MJ31 현황·hf-playground 회신 계속 보류
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
