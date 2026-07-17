@@ -103,8 +103,8 @@
   - ✅ **15:00 LEO 신규지시(hf경유) — 3기법 쌍비교 12장**: "플레인/앵커/앵커+락 다시 2개씩 비교, 인물은 락 걸리면 좋겠다". 구성: fashion_editorial(1024)+street_film(1344) × plain/anchor(기존 promptbank, Krea-2-Raw 32step guidance3.5)/anchor_lock(Krea2OstrisEdit+Identity Edit LoRA, 고정정체성=kr_young_woman_casual_seed42, 프롬프트접두 "Place this exact person...") × 시드42/123 = 12장
   - `gen_3technique_comparison.py` 작성 완료, SYSTEM task(Krea23TechCompare) 등록(트리거는 본배치 완료 후로 대기) — 동시 GPU 로드 시 OOM위험 판단, 순차실행 결정하고 hf에 근거+우선순위 재확인 발송
   - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
-  - 🟢 **18:25 진행상황**: 4/12 유지(street_film 1344사이즈 5번째 이미지 생성중으로 추정, 사이즈 큰 만큼 시간 더 소요). 에러 0
-  - 다음: 3기법비교 12장 완주(~3~4h) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
+  - 🟡 **19:07 진행상황**: 4/12 완료, 5번째(street_film_plain_seed42) 진행중 14/32step. street_film(1344사이즈)이 fashion_editorial(1024)보다 스텝당 ~4배 느림(~203s/step vs ~51s/step) — 남은 street_film 계열(Raw 3장+edit 일부) 감안 시 총 소요 재추정 상향 필요(기존 ~3~4h보다 지연 예상), 정확한 재추정은 이 이미지 완료 후
+  - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
