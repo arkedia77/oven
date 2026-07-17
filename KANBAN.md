@@ -60,7 +60,7 @@
   - ✅ **재고정 최종기준**: valid_rate ≤0.65=딥연속 / 0.65~0.79=애매(자동+2seed) / ≥0.79=회복. chord_tone(30%mean 0.4395 대비 비단조=자동보강)은 변경없음
   - fableself가 별도로 시작통지(ⓐⓑ) 자체는 수용 회신(17:21:30, kee의 경계지적과 시간상 교차) — nested확인으로 T2 valid_rate딥의 '구성효과' 교란변수 해소, '중간데이터량 불안정' 가설 후보등재 성립 확정
   - ✅ **21:01 frac50 완주**(ckpt_frac50_epoch2 실물 확인, adapter 5.6GB) — **frac70 착수**(4575윈도우, epoch1 시작). 예상 소요 frac50 대비 1.4배(~4.7h)
-  - 🟢 **22:49 진행상황**: frac70 epoch1 step2500/4575(87.8min 경과, 정상 페이스)
+  - 🟢 **23:01 진행상황**: frac70 epoch1 step3000/4575(107.4min 경과, 정상 페이스)
   - 다음: frac50→frac70 순차완주 대기 → 재고정 기준(0.65/0.79)으로 에스컬레이션 판정 → T3 게이트 리포트
   - ✅ **ogo(serv) 07-17 13:47 복구 완료**(19h 오프라인 후) — 상세는 Krea2 이미지 캠페인 섹션 참조
 
@@ -104,7 +104,7 @@
   - ✅ **15:00 LEO 신규지시(hf경유) — 3기법 쌍비교 12장**: "플레인/앵커/앵커+락 다시 2개씩 비교, 인물은 락 걸리면 좋겠다". 구성: fashion_editorial(1024)+street_film(1344) × plain/anchor(기존 promptbank, Krea-2-Raw 32step guidance3.5)/anchor_lock(Krea2OstrisEdit+Identity Edit LoRA, 고정정체성=kr_young_woman_casual_seed42, 프롬프트접두 "Place this exact person...") × 시드42/123 = 12장
   - `gen_3technique_comparison.py` 작성 완료, SYSTEM task(Krea23TechCompare) 등록(트리거는 본배치 완료 후로 대기) — 동시 GPU 로드 시 OOM위험 판단, 순차실행 결정하고 hf에 근거+우선순위 재확인 발송
   - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
-  - 🟡 **22:49 진행상황**: 6/12 유지, 7번째(street_film_anchor_seed42) 24/32step, 완료 임박(~27min)
+  - 🟡 **23:01 진행상황**: **7/12 완료**(street_film_anchor_seed42 끝, 107.1min). 8번째(street_film_anchor_seed123) 시작 — Raw street_film 마지막 이미지. 이후 edit(anchor_lock) 4장만 남음
   - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
   - 📋 **21:34 hf-playground 큐 예약(회신불요)**: "프롬프트 공식 벤치 v1"(Krea-2-Raw 32step guidance3.5, 3모델레그×8브리프×2시드=48장) — 순번 3번째(3기법비교→본배치재개→이것)
   - ✅ **22:05 자료 준비 완료(회신불요)**: promptbank 정본 커밋됨(hf-playground repo `pipeline/krea2_prompt_formula_promptbank.py`, standalone·JSON의존없음), 드라이런 PASS. **실행 커맨드**(순번 되면): `gen_krea2_source.py --bank krea2_prompt_formula_promptbank --model C:\projects\krea2_test\model_raw --steps 32 --guidance 3.5 --out C:\projects\krea2_test\prompt_formula_out`. 파일명에 key(브리프id__레그)+seed 보존 필요
