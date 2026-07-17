@@ -46,7 +46,7 @@
   - ✅ **10:55:45 FracTranche2 착수**: frac10 seed7부터 시작, GPU 정상 점유 확인, seed 인자 정상 동작(cp949 인코딩버그 재발 없음)
   - ✅ **11:24 frac10 seed7 완주**(ckpt_frac10_seed7_epoch1/epoch2 실물 확인)
   - ✅ **12:00 frac10 seed13 완주**(ckpt_frac10_seed13_epoch1/epoch2 실물 확인)
-  - 🟢 **12:40 frac30 seed7 epoch1 완료**(ckpt_frac30_seed7_epoch1 실물 확인) → epoch2 진행중, 완료 예상 13:20대. 이후 마지막 1런(frac30 seed13, ~1.3h) 남음
+  - 🟢 **12:40 frac30 seed7 epoch1 완료**(ckpt_frac30_seed7_epoch1 실물 확인) → epoch2 13:11 기준 step1540/1960, 완료 임박(13:26대 예상). 이후 마지막 1런(frac30 seed13, ~1.3h) 남음
   - 다음: 남은 frac30 seed13 완주 대기 → 완료 시 3070에 채점요청 → T2 게이트 리포트(kee cc fableself)
   - 🔴 **ogo(serv) 오프라인 17h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
 
