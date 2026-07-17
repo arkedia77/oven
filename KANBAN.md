@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: LEO 신규 지시(hf 경유) — 3기법(plain/anchor/anchor+identity-lock) 쌍비교 12장(fashion_editorial+street_film×3기법×2시드). 스크립트 작성 완료(`gen_3technique_comparison.py`, promptbank 문구 재사용+Krea2OstrisEdit lock), SYSTEM task(Krea23TechCompare) 등록만 해두고 **본배치(14장) 완주 후 순차 실행**으로 GPU슬롯 판단(동시로드 OOM위험 회피). hf-playground에 판단근거+우선순위 재확인 요청 발송.
-② **다음 스텝**: (a) 본배치(14장) 완주 대기 → 3기법비교(12장) 자동 이어서 실행 (b) hf-playground가 "지금 급함" 회신 시 본배치 중단하고 순서 뒤집기 검토 (c) leowin2 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트
+① **마지막 완료**: LEO "비교 먼저" 확정 → **본배치 일시중단**(1/14 style_softwatercolor_kr_woman 보존)하고 **3기법쌍비교 12장 착수**(Krea-2-Raw 로드+32step 생성 시작 확인). leowin2 트랜치2는 3070이 4런 전체(seed7/13×frac10/30) 체크포인트 실물 확인 완료, oven이 heldout 생성+채점 요청 발송(3070 처리 대기).
+② **다음 스텝**: (a) 3기법비교 12장 완주 대기(~3~4h) → 서빙+본배치 재개(13장 잔여) (b) 3070의 생성+채점 결과 대기 → T2 게이트 리포트(kee cc fableself)
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -48,8 +48,10 @@
   - ✅ **11:24 frac10 seed7 완주**(ckpt_frac10_seed7_epoch1/epoch2 실물 확인)
   - ✅ **12:00 frac10 seed13 완주**(ckpt_frac10_seed13_epoch1/epoch2 실물 확인)
   - 🟢 **12:40 frac30 seed7 epoch1 완료**(ckpt_frac30_seed7_epoch1 실물 확인) → epoch2 13:11 기준 step1540/1960, 완료 임박(13:26대 예상). 이후 마지막 1런(frac30 seed13, ~1.3h) 남음
-  - 다음: 남은 frac30 seed13 완주 대기 → 완료 시 3070에 채점요청 → T2 게이트 리포트(kee cc fableself)
-  - 🔴 **ogo(serv) 오프라인 17h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
+  - ✅ **15:06 frac30 seed13 완주** — 4런 전부 완료(3070이 15:35 leowin2 실측으로 재확인: 4개 ckpt 전량 실물+GPU유휴 확인)
+  - ✅ **15:39 3070에 생성+채점 요청 발송**(`3070_oven_20260717_153919_...json`) — heldout 15곡×4런, P3 동일 decode, seed별 분리 산출 요청. 회신 대기
+  - 다음: 3070 회신(생성+채점 완료) 대기 → T2 게이트 리포트(kee cc fableself)
+  - ✅ **ogo(serv) 07-17 13:47 복구 완료**(19h 오프라인 후) — 상세는 Krea2 이미지 캠페인 섹션 참조
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
@@ -90,6 +92,8 @@
   - 다음: 14장 완주 대기(~4~5h 예상, 장당 ~20min) → hf-playground 회신·회수
   - ✅ **15:00 LEO 신규지시(hf경유) — 3기법 쌍비교 12장**: "플레인/앵커/앵커+락 다시 2개씩 비교, 인물은 락 걸리면 좋겠다". 구성: fashion_editorial(1024)+street_film(1344) × plain/anchor(기존 promptbank, Krea-2-Raw 32step guidance3.5)/anchor_lock(Krea2OstrisEdit+Identity Edit LoRA, 고정정체성=kr_young_woman_casual_seed42, 프롬프트접두 "Place this exact person...") × 시드42/123 = 12장
   - `gen_3technique_comparison.py` 작성 완료, SYSTEM task(Krea23TechCompare) 등록(트리거는 본배치 완료 후로 대기) — 동시 GPU 로드 시 OOM위험 판단, 순차실행 결정하고 hf에 근거+우선순위 재확인 발송
+  - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
+  - 다음: 3기법비교 12장 완주(~3~4h) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
