@@ -105,6 +105,7 @@
   - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
   - 🟡 **21:34 진행상황**: 6/12 완료(street_film_plain 양쪽seed 끝). 7번째(street_film_anchor_seed42) 진행중. street_film anchor 1장 남음(seed123)+edit 4장
   - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
+  - 📋 **21:34 hf-playground 큐 예약(회신불요)**: "프롬프트 공식 벤치 v1"(Krea-2-Raw 32step guidance3.5, 3모델레그×8브리프×2시드=48장) — 순번 3번째(3기법비교→본배치재개→이것). codex레그 도착 후 archy가 promptbank 정본 커밋 예정, 그 전 실행 없음
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
