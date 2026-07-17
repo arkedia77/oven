@@ -1,9 +1,9 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-16
+업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: hf-playground 본배치 GO 수신(Style Ref/Identity Edit 각 5~10장, 사이즈이슈 가설 포함) + kee 연구파일럿1호(구조문법주입 도메인전이) 측정설계 1p 제출 완료(LEO 07-17 승인 후속). 이전: Krea2 신규 LoRA 파일럿 성공.
-② **다음 스텝**: (a) ogo 재접속 대기 중(Tailscale 오프라인, WiFi 드롭 재발 추정) → 재접속 시 MJ 31장 현황 확인 후 hf-playground 회신 + 본배치(각 5~10장) 착수 (b) identity_edit 출력 2048×1024 2분할 이슈 — hf 가설([source|output] 콘캣)부터 확인 (c) kee 측정설계 페블 감수 결과 대기
+① **마지막 완료**: 연구파일럿1호 트랜치1(frac10/frac30 학습런) leowin2에서 완주(03:06:05, 로그+ckpt 실물 검증) → 3070에 judge.py 채점 요청 발송, 회신 대기. hf-playground 본배치(Style Ref/Identity Edit 각 5~10장)는 ogo 장기 오프라인으로 미착수.
+② **다음 스텝**: (a) 3070 채점 회신 오면 T1(중간게이트) 리포트 작성→kee/fableself (b) **ogo(serv) 15h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 현황 확인 후 hf-playground 본배치 착수 (c) identity_edit 출력 2048×1024 2분할 이슈 확인(ogo 복구 후)
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -33,11 +33,11 @@
   - 🔴 **1차 실행 cp949 인코딩 크래시**: 로그 문자열의 em-dash(—)가 model load 직후 크래시(GPU시간 낭비 없음, 학습 시작 전 실패) — [[feedback_krea2_local_model]]류와 동일 패턴(비ASCII 문자+cp949 콘솔). sys.stdout/stderr utf-8 reconfigure + 하이픈 치환으로 수정 후 재실행 성공
   - 🔴 **거짓DONE 마커 버그 발견**: `run_frac_pilot.bat`가 python 성공/실패 무관하게 마지막에 무조건 DONE 마커 기록 — 1차 크래시런의 마커가 남아있어 착시 유발할 뻔함(삭제 조치함). Krea2 Raw 거짓DONE과 동일 계열 버그. **판정은 항상 로그 내 완료 문자열+체크포인트 디렉토리 존재로 확인, 마커 단독 신뢰 금지** [[feedback_verify_before_report]]
   - ✅ **20:47 frac10 완료 확인**(로그 "TRAIN_EPOCH_FRAC_DONE"+ckpt_frac10_epoch1/epoch2 디렉토리 실물 확인): 총 53.4min(epoch1 20.3min+epoch2 26.8min), first_loss 16.211→last_loss 1.148
-  - 🟢 **frac30 진행중**(20:47:33 시작): 21:08 기준 epoch1 step500/1960, 2.47s/step 실측 → 총 소요 재추정 ~2.7h, 완료 예정 23:25~23:35대(기존 추정보다 소폭 지연)
-  - 3070에 judge.py 측정구간 문의 회신 도착·fableself에 최종 확인 완료(min_new_tokens은 코드커버리지 필터라 무해) — T1 리포트 준비 완료 상태
+  - ✅ **07-17 03:06:05 frac30도 완료 확인**(로그 "TRAIN_EPOCH_FRAC_DONE"+"FRAC30 DONE"+ckpt_frac30_epoch1/epoch2 디렉토리 실물, GPU 유휴 복귀 확인): 총 2h18m(epoch1 70min+epoch2 68min), first_loss 16.189→last_loss 1.209
+  - 3070에 judge.py 측정구간 문의 회신 도착·fableself에 최종 확인 완료(min_new_tokens은 코드커버리지 필터라 무해)
   - 100% 지점은 기존 ckpt_v4_epoch2 재사용(재학습 불요, valid_rate 0.875/chord_tone 0.632 이미 확보)
-  - 완료 시 다음: 3070에 judge.py 채점 요청(ckpt_frac10_epoch2/ckpt_frac30_epoch2 + 기존 ckpt_v4_epoch2 3개 체크포인트 → valid_rate+chord_tone_ratio/_valid 측정) → T1(중간게이트) 리포트 작성
-  - 🔴 **ogo(serv) 21:28 기준 오프라인 지속(~3h, 추정 18:2x경부터)** — rx=0 고정(수신 전무), tx만 소폭 증가(재연결 시도 중으로 추정). 과거 22h+ 사고 패턴과 유사한 궤적 — Leo 물리조치(공유기/USB WiFi 어댑터) 확인 요청함. MJ31 현황·hf-playground 회신 계속 보류
+  - ✅ **09:41 3070에 채점 요청 발송**(`3070_oven_20260717_094119_...json`): ckpt_frac10_epoch2/ckpt_frac30_epoch2 → valid_rate+gen_chord_tone_mean_valid 산출 요청. 회신 오면 T1(중간게이트) 리포트 작성
+  - 🔴 **ogo(serv) 09:40 기준 오프라인 15h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
