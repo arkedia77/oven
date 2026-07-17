@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: ogo 19h 오프라인 복귀 후 MJ31+nonhuman28 재서빙 완료(hf-playground 62/62 바이트일치 회수), **identity_edit 2048×1024 이슈 원인 규명**(height/width 미지정이 원인, concat 아님 — 명시 시 정상 1024×1024). 연구파일럿1호 트랜치2는 leowin2에서 마지막 런(frac30 seed13) 진행중.
-② **다음 스텝**: (a) 본배치 착수(Style Reference/Identity Edit 각 5~10장, height/width=1024 명시 반영) (b) 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트
+① **마지막 완료**: Krea2 본배치(Style Reference 6장+Identity Edit 8장) Leo 승인 후 ogo에서 착수(SYSTEM task Krea2EditMainBatch, 정상 시작 확인) — 소스: lora_out의 9종스윕 3스타일(softwatercolor/rainywindow/vintagetarot)+A_characters_photoreal 고정1장. 연구파일럿1호 트랜치2는 leowin2에서 마지막 런(frac30 seed13) 병행 진행중.
+② **다음 스텝**: (a) ogo 본배치(14장, ~4~5h) 완주 대기 → hf-playground 회신 (b) 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트 — 두 GPU 작업 병행 모니터링
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -86,7 +86,8 @@
     - hf-playground 회신(19:20): 파일럿 성공 확인 + 본배치 GO. **배치설계**: ①Style Reference 5~10장(레퍼런스=softwatercolor파이널+LoRA스윕무드2장 → A카테고리 인물에 이식) ②Identity Edit 5~10장(입력=A카테고리 합성인물 1장 고정, 축별 조명2·표정2·의상2·배경2 — LEO 6/27 img2img 테스트 본실행). 사이즈이슈 가설: edit 파이프라인이 [source|output] 콘캣 출력하는 관행일 수 있음(우측크롭으로 해결 가능성)
   - 🔴 **7/16 18:3x~7/17 13:47 ogo 19h 오프라인**(2번째 장기사고, 원인·복구경위 불명) [[reference_ogo_network]] → 복구 후 MJ31(31/31)+nonhuman(28/28) 완주 확인, hf-playground 재서빙(62/62 바이트일치 회수완료), 서버 종료
   - ✅ **7/17 14:01 사이즈이슈 원인 규명**: `[source|output] 콘캣` 가설 아니었음 — pipeline.py에 concat/paste 로직 없음(코드 확인), 원인은 단순히 `pipe()` 호출 시 height/width 미지정. 명시적으로 height=1024/width=1024 지정 시 정확히 (1024,1024) 단일 이미지 출력 확인(steps=4 축소테스트)
-  - 다음: 본배치 착수(Style Ref 5~10장 + Identity Edit 5~10장, height/width=1024 명시 반영)
+  - ✅ **Leo 승인 → 본배치 착수(14:XX)**: `gen_edit_main_batch.py` 작성(height/width=1024 명시 반영) — Style Reference 6장(softwatercolor/rainywindow/vintagetarot × kr_woman/kr_man 프롬프트 2종, 소스=lora_out 9종스윕) + Identity Edit 8장(고정소스=A_characters_photoreal/kr_young_woman_casual_seed42.png, 축별 조명2·표정2·의상2·배경2). SYSTEM task(Krea2EditMainBatch) detach 실행, 정상 시작 확인(모델로드 5.7s)
+  - 다음: 14장 완주 대기(~4~5h 예상, 장당 ~20min) → hf-playground 회신·회수
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
