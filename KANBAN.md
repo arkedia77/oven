@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 연구파일럿1호 T1 게이트 PASS(kee+fableself 양측 확인) → **트랜치2 승인**: 10%/30% 각 +2seed(seed7/13) 재검증 4런. oven 사전준비 완료(--seed 인자 스크립트+4런 배치+SYSTEM task 등록, 3070 GPU슬롯 확인 회신만 대기 — kee가 3070에 직접 발주함). hf-playground 본배치는 ogo 장기 오프라인으로 미착수.
-② **다음 스텝**: (a) 3070 슬롯 확인 회신 오면 FracTranche2 트리거(4런: frac10/30 × seed7/13) (b) **ogo(serv) 15h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 확인 후 hf-playground 본배치 착수 (c) identity_edit 2048×1024 2분할 이슈 확인(ogo 복구 후)
+① **마지막 완료**: 연구파일럿1호 트랜치2(4런: frac10/30 × seed7/13) — kee가 3070 GPU슬롯 확인(유휴 실측)→GO, 10:55:45 FracTranche2 착수(정상 진행 확인, 인코딩버그 재발 없음). 조건 2건 인지: 220W 전력제한 유지·학습중 ACE-Step 인퍼런스 병행금지(3070이 필요시 직접 조율). 예상 총 ~6h(오늘 내 완주 가능). hf-playground 본배치는 ogo 장기 오프라인으로 미착수.
+② **다음 스텝**: (a) 4런 완주 대기 → T2 게이트 리포트(kee cc fableself, T1과 동일 양식) (b) **ogo(serv) 17h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 확인 후 hf-playground 본배치 착수 (c) identity_edit 2048×1024 2분할 이슈 확인(ogo 복구 후)
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -42,7 +42,9 @@
   - ✅ **T1 게이트 PASS 확정**: fableself 재감수(방법론 정합 확인+"valid_rate 동반하락은 완전 노이즈 배제 금지"+문턱가설 제기) + kee 공식 PASS 판정. **트랜치2 승인**: (a) 10%/30% 각 +2seed 다seed재검증 먼저(노이즈 vs 실재 가름) → (b) 중간점 50/70%는 트랜치3 후보로 보류. 3070 GPU슬롯=kee가 3070에 직접 발주(동시발신), oven은 확인회신 후 착수
   - ✅ **트랜치2 사전준비 완료**: `train_epoch_frac.py`에 `--seed` 인자 추가(데이터서브셋 셔플+torch dropout 랜덤성 모두 시딩), 4런 배치(`run_frac_tranche2.bat`: frac10/frac30 × seed7/seed13) + SYSTEM task(FracTranche2) 등록까지 완료, 트리거만 대기(거짓DONE 마커 안 씀 — 로그+ckpt디렉토리로만 판정)
   - kee에 확인 회신 발송(`kee_oven_20260717_102729_...json`)
-  - ⏳ **10:50 기준**: 3070 슬롯 확인 회신 아직 미도착 — FracTranche2 트리거 대기 지속
+  - ✅ **10:51 kee GO**(`3070 유휴실측 57MiB/8GB·0%util·46°C`, 지금부터 무기한 OK) — 조건 2건: ①220W 전력제한 유지(건드리지 말것) ②학습중 ACE-Step 인퍼런스 병행금지(OOM기교훈, 필요시 3070이 직접 조율). 3070 실측 소요: frac10 2ep≈45min/런, frac30 2ep≈2.2h/런, 4런 직렬≈6h
+  - ✅ **10:55:45 FracTranche2 착수**: frac10 seed7부터 시작, GPU 정상 점유 확인, seed 인자 정상 동작(cp949 인코딩버그 재발 없음)
+  - 다음: 4런 순차완주(frac10×seed7,13 → frac30×seed7,13) 대기 → 완료 시 3070에 채점요청 → T2 게이트 리포트(kee cc fableself)
   - 🔴 **ogo(serv) 오프라인 17h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
