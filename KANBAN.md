@@ -2,19 +2,20 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 연구파일럿1호 트랜치2(4런: frac10/30 × seed7/13) — kee가 3070 GPU슬롯 확인(유휴 실측)→GO, 10:55:45 FracTranche2 착수(정상 진행 확인, 인코딩버그 재발 없음). 조건 2건 인지: 220W 전력제한 유지·학습중 ACE-Step 인퍼런스 병행금지(3070이 필요시 직접 조율). 예상 총 ~6h(오늘 내 완주 가능). hf-playground 본배치는 ogo 장기 오프라인으로 미착수.
-② **다음 스텝**: (a) 4런 완주 대기 → T2 게이트 리포트(kee cc fableself, T1과 동일 양식) (b) **ogo(serv) 17h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 확인 후 hf-playground 본배치 착수 (c) identity_edit 2048×1024 2분할 이슈 확인(ogo 복구 후)
+① **마지막 완료**: **ogo 19시간 오프라인 후 13:47 복귀** — MJ31(31/31, 실물32PNG대조)+nonhuman(28/28, 실물대조) 둘 다 완주 확인, hf-playground에 회신+재서빙/본배치 문의 발송. 연구파일럿1호 트랜치2(frac10/30×seed7/13)는 leowin2에서 별도 진행중(frac30 seed13 마지막 런).
+② **다음 스텝**: (a) hf-playground 회신 오면 MJ/nonhuman 재서빙 + Style Ref/Identity Edit 본배치 착수 (b) identity_edit 2048×1024 2분할 이슈 원인 확인(ogo 복구됨, 지금 확인 가능) (c) 트랜치2 4런 완주 대기 → T2 게이트 리포트
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **Krea2 비인물+MJ 재시도 배치** — oven/hf-playground — 2026-07-13~14 🟡 진행중
+- [x] **Krea2 비인물+MJ 재시도 배치** — oven/hf-playground — 2026-07-13~17 ✅ 완주 확인
   - 7/11~13 ogo 22h+ 오프라인(원인불명) → 복구 후 젬마 수동기동 상태 발견(watchdog 5개 전부 무죄, 원인미확정) → Leo결정으로 젬마종료+실패분 60장 재발사
   - 🔴 **사고+복구**: manifest.json 인코딩버그(cp949가 em-dash 못씀) 크래시 → 직접 PowerShell 수정 시도가 파일 손상(oven 실수) → hf-playground 정본(commit 3411330, sha1 f8afa85d...) 재배포로 해결. 원칙 확립: ogo 파이썬 파일은 repo경유로만 수정 [[feedback_remote_file_edit_via_repo]]
-  - 🟢 **7/14 상태**: nonhuman 27/28 완료(landscape 마지막 1장 진행중), MJ 31장 아직 미착수. hf-playground에 MJ1+nonhuman27(30개) 부분회수 완료(바이트검증 일치)
-  - 다음: nonhuman 완주 → MJ 31장 자동 착수 → 완주 시 hf-playground 일괄 재서빙(요청②)
+  - 🔴 **7/16 18:3x~7/17 13:4x ogo 재차 19h 오프라인**(2번째 장기사고) — 원인 여전히 불명, 복구 경위도 불명(자동복구 추정, Leo 물리조치 요청은 해뒀으나 확인 못함)
+  - ✅ **7/17 13:47 복귀 후 완주 확인**: MJ patterns 31/31(manifest+실물PNG32개 대조), nonhuman_retry28 28/28(실물 대조) — hf-playground에 회신, 재서빙 방식 문의 중
+  - 다음: hf-playground 회신 오면 일괄 재서빙
 
 - [x] **작곡·편곡 LoRA(ARR, Qwen2.5-1.5B) — 라운드 CLOSED** — oven/3070 — 2026-07-11~14 ✅ 프로덕션 설정 확정
   - Qwen2.5-1.5B + REMI vocab 542신규토큰(POP909 909곡) LoRA. **최종설정: ckpt_v4_epoch2+temp0.6+top_p0.95+rep_penalty1.2+min_new_tokens300** — valid_rate 0.875·valid-gated chord_tone 0.632(GT0.875), P3오염 0/15
