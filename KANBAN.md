@@ -44,7 +44,7 @@
   - kee에 확인 회신 발송(`kee_oven_20260717_102729_...json`)
   - ✅ **10:51 kee GO**(`3070 유휴실측 57MiB/8GB·0%util·46°C`, 지금부터 무기한 OK) — 조건 2건: ①220W 전력제한 유지(건드리지 말것) ②학습중 ACE-Step 인퍼런스 병행금지(OOM기교훈, 필요시 3070이 직접 조율). 3070 실측 소요: frac10 2ep≈45min/런, frac30 2ep≈2.2h/런, 4런 직렬≈6h
   - ✅ **10:55:45 FracTranche2 착수**: frac10 seed7부터 시작, GPU 정상 점유 확인, seed 인자 정상 동작(cp949 인코딩버그 재발 없음)
-  - 🟢 **11:10 진행상황**: frac10 seed7 epoch1 완료(10.9min, T0런보다 빠름) → epoch2 진행중. 남은 3런(frac10 seed13, frac30 seed7/13) 순차 대기
+  - ✅ **11:24 frac10 seed7 완주**(ckpt_frac10_seed7_epoch1/epoch2 실물 확인) → **frac10 seed13 진행중**(11:38 기준 epoch1 step500/653). 남은 2런(frac10 seed13 잔여+frac30 seed7/13)
   - 다음: 4런 순차완주(frac10×seed7,13 → frac30×seed7,13) 대기 → 완료 시 3070에 채점요청 → T2 게이트 리포트(kee cc fableself)
   - 🔴 **ogo(serv) 오프라인 17h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
 
