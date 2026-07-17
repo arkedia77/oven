@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **ogo 19시간 오프라인 후 13:47 복귀** — MJ31(31/31, 실물32PNG대조)+nonhuman(28/28, 실물대조) 둘 다 완주 확인, hf-playground에 회신+재서빙/본배치 문의 발송. 연구파일럿1호 트랜치2(frac10/30×seed7/13)는 leowin2에서 별도 진행중(frac30 seed13 마지막 런).
-② **다음 스텝**: (a) hf-playground 회신 오면 MJ/nonhuman 재서빙 + Style Ref/Identity Edit 본배치 착수 (b) identity_edit 2048×1024 2분할 이슈 원인 확인(ogo 복구됨, 지금 확인 가능) (c) 트랜치2 4런 완주 대기 → T2 게이트 리포트
+① **마지막 완료**: ogo 19h 오프라인 복귀 후 MJ31+nonhuman28 재서빙 완료(hf-playground 62/62 바이트일치 회수), **identity_edit 2048×1024 이슈 원인 규명**(height/width 미지정이 원인, concat 아님 — 명시 시 정상 1024×1024). 연구파일럿1호 트랜치2는 leowin2에서 마지막 런(frac30 seed13) 진행중.
+② **다음 스텝**: (a) 본배치 착수(Style Reference/Identity Edit 각 5~10장, height/width=1024 명시 반영) (b) 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -84,8 +84,9 @@
     - 결과: `~/oven/krea2_edit_pilot_results/` (source+output 5파일). VRAM peak 58.1GB
     - hf-playground 회신(15:35): 우선순위 동의 + 공식9종은 6/28 기실측(재발사불요) + 조건2건(Identity Edit 입력=A_characters_photoreal 합성인물 고정 / MJ31 완주 후 진행) — oven이 회신 확인 전 파일럿 선실행, 자진신고 완료(소스이탈 있었으나 실인물 아님, GPU충돌은 없었음 확인)
     - hf-playground 회신(19:20): 파일럿 성공 확인 + 본배치 GO. **배치설계**: ①Style Reference 5~10장(레퍼런스=softwatercolor파이널+LoRA스윕무드2장 → A카테고리 인물에 이식) ②Identity Edit 5~10장(입력=A카테고리 합성인물 1장 고정, 축별 조명2·표정2·의상2·배경2 — LEO 6/27 img2img 테스트 본실행). 사이즈이슈 가설: edit 파이프라인이 [source|output] 콘캣 출력하는 관행일 수 있음(우측크롭으로 해결 가능성)
-  - 🔴 **7/16 19:3x ogo 오프라인**: Tailscale relay hkg, last seen ~1h — WiFi 드롭 재발 추정 [[reference_ogo_network]]. 재접속 시 MJ31 현황 확인 → hf-playground 회신 + 본배치 착수
-  - 대기: 신규 LoRA 본배치(사이즈이슈 해결 선행), MJ31 현황 회신
+  - 🔴 **7/16 18:3x~7/17 13:47 ogo 19h 오프라인**(2번째 장기사고, 원인·복구경위 불명) [[reference_ogo_network]] → 복구 후 MJ31(31/31)+nonhuman(28/28) 완주 확인, hf-playground 재서빙(62/62 바이트일치 회수완료), 서버 종료
+  - ✅ **7/17 14:01 사이즈이슈 원인 규명**: `[source|output] 콘캣` 가설 아니었음 — pipeline.py에 concat/paste 로직 없음(코드 확인), 원인은 단순히 `pipe()` 호출 시 height/width 미지정. 명시적으로 height=1024/width=1024 지정 시 정확히 (1024,1024) 단일 이미지 출력 확인(steps=4 축소테스트)
+  - 다음: 본배치 착수(Style Ref 5~10장 + Identity Edit 5~10장, height/width=1024 명시 반영)
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
