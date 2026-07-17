@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: Krea2 본배치(Style Reference 6장+Identity Edit 8장) Leo 승인 후 ogo에서 착수(SYSTEM task Krea2EditMainBatch, 정상 시작 확인) — 소스: lora_out의 9종스윕 3스타일(softwatercolor/rainywindow/vintagetarot)+A_characters_photoreal 고정1장. 연구파일럿1호 트랜치2는 leowin2에서 마지막 런(frac30 seed13) 병행 진행중.
-② **다음 스텝**: (a) ogo 본배치(14장, ~4~5h) 완주 대기 → hf-playground 회신 (b) 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트 — 두 GPU 작업 병행 모니터링
+① **마지막 완료**: LEO 신규 지시(hf 경유) — 3기법(plain/anchor/anchor+identity-lock) 쌍비교 12장(fashion_editorial+street_film×3기법×2시드). 스크립트 작성 완료(`gen_3technique_comparison.py`, promptbank 문구 재사용+Krea2OstrisEdit lock), SYSTEM task(Krea23TechCompare) 등록만 해두고 **본배치(14장) 완주 후 순차 실행**으로 GPU슬롯 판단(동시로드 OOM위험 회피). hf-playground에 판단근거+우선순위 재확인 요청 발송.
+② **다음 스텝**: (a) 본배치(14장) 완주 대기 → 3기법비교(12장) 자동 이어서 실행 (b) hf-playground가 "지금 급함" 회신 시 본배치 중단하고 순서 뒤집기 검토 (c) leowin2 트랜치2 마지막 런 완주 대기 → 3070 채점요청 → T2 게이트 리포트
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -88,6 +88,8 @@
   - ✅ **7/17 14:01 사이즈이슈 원인 규명**: `[source|output] 콘캣` 가설 아니었음 — pipeline.py에 concat/paste 로직 없음(코드 확인), 원인은 단순히 `pipe()` 호출 시 height/width 미지정. 명시적으로 height=1024/width=1024 지정 시 정확히 (1024,1024) 단일 이미지 출력 확인(steps=4 축소테스트)
   - ✅ **Leo 승인 → 본배치 착수(14:XX)**: `gen_edit_main_batch.py` 작성(height/width=1024 명시 반영) — Style Reference 6장(softwatercolor/rainywindow/vintagetarot × kr_woman/kr_man 프롬프트 2종, 소스=lora_out 9종스윕) + Identity Edit 8장(고정소스=A_characters_photoreal/kr_young_woman_casual_seed42.png, 축별 조명2·표정2·의상2·배경2). SYSTEM task(Krea2EditMainBatch) detach 실행, 정상 시작 확인(모델로드 5.7s)
   - 다음: 14장 완주 대기(~4~5h 예상, 장당 ~20min) → hf-playground 회신·회수
+  - ✅ **15:00 LEO 신규지시(hf경유) — 3기법 쌍비교 12장**: "플레인/앵커/앵커+락 다시 2개씩 비교, 인물은 락 걸리면 좋겠다". 구성: fashion_editorial(1024)+street_film(1344) × plain/anchor(기존 promptbank, Krea-2-Raw 32step guidance3.5)/anchor_lock(Krea2OstrisEdit+Identity Edit LoRA, 고정정체성=kr_young_woman_casual_seed42, 프롬프트접두 "Place this exact person...") × 시드42/123 = 12장
+  - `gen_3technique_comparison.py` 작성 완료, SYSTEM task(Krea23TechCompare) 등록(트리거는 본배치 완료 후로 대기) — 동시 GPU 로드 시 OOM위험 판단, 순차실행 결정하고 hf에 근거+우선순위 재확인 발송
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
   - ✅ 준비 100%: promptbank+corpus+gen provenance 배포 완료
   - **7/10 실측**: .incomplete 30파일, **25.26GB/33GB(76.5%)** — 07-08(58%)보다 진전
