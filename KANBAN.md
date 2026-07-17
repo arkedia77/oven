@@ -2,8 +2,8 @@
 업데이트: 2026-07-17
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 연구파일럿1호 T1(중간게이트) 리포트 작성·발송(kee cc fableself) — 3점 곡선 확보(10% ct_valid 0.4315/30% 0.4111/100% 0.632, GT0.875), 10~30% 비단조(역전) 관측되나 단발시드라 해석 유보 권고, 30~100% 급상승 신호. hf-playground 본배치는 ogo 장기 오프라인으로 미착수.
-② **다음 스텝**: (a) kee/fableself의 T1 판정(추가 트랜치 필요 여부) 대기 — oven 임의 착수 안 함 (b) **ogo(serv) 15h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 확인 후 hf-playground 본배치 착수 (c) identity_edit 2048×1024 2분할 이슈 확인(ogo 복구 후)
+① **마지막 완료**: 연구파일럿1호 T1 게이트 PASS(kee+fableself 양측 확인) → **트랜치2 승인**: 10%/30% 각 +2seed(seed7/13) 재검증 4런. oven 사전준비 완료(--seed 인자 스크립트+4런 배치+SYSTEM task 등록, 3070 GPU슬롯 확인 회신만 대기 — kee가 3070에 직접 발주함). hf-playground 본배치는 ogo 장기 오프라인으로 미착수.
+② **다음 스텝**: (a) 3070 슬롯 확인 회신 오면 FracTranche2 트리거(4런: frac10/30 × seed7/13) (b) **ogo(serv) 15h+ 오프라인 — Leo 물리조치 필요**(공유기/USB WiFi), 복구 시 MJ31 확인 후 hf-playground 본배치 착수 (c) identity_edit 2048×1024 2분할 이슈 확인(ogo 복구 후)
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -38,7 +38,10 @@
   - 100% 지점은 기존 ckpt_v4_epoch2 재사용(재학습 불요, valid_rate 0.875/chord_tone 0.632 이미 확보)
   - ✅ **09:41 3070에 채점 요청 발송**(`3070_oven_20260717_094119_...json`) → **10:23 회신 도착**: 10%(valid 0.800/ct_valid 0.4315) 30%(valid 0.667/ct_valid 0.4111) 100%(valid 0.875/ct_valid 0.632, 기존). frac30 무효5/15(empty4곡+폴리포니클러스터1곡)
   - 🟡 **비단조 관측**: 10%→30% 구간 역전(둘 다 소폭 하락), 30%→100% 구간 급상승(ct_valid +0.221). n=15 단발시드라 저구간 역전은 ARR temp-sweep 때와 같은 seed noise 함정 가능성 — **확정 판정 보류**, 다음 트랜치(다seed 재검증 or 중간점 50%/70% 추가)는 제안만 하고 Leo/kee 판단 대기
-  - ✅ **10:24 T1 리포트 발송**(`kee_oven_20260717_102412_...json`, cc fableself) — 3점 데이터+비단조 해석유보+다음 트랜치 제안 포함. kee/fableself 판정 대기
+  - ✅ **10:24 T1 리포트 발송**(`kee_oven_20260717_102412_...json`, cc fableself) — 3점 데이터+비단조 해석유보+다음 트랜치 제안 포함
+  - ✅ **T1 게이트 PASS 확정**: fableself 재감수(방법론 정합 확인+"valid_rate 동반하락은 완전 노이즈 배제 금지"+문턱가설 제기) + kee 공식 PASS 판정. **트랜치2 승인**: (a) 10%/30% 각 +2seed 다seed재검증 먼저(노이즈 vs 실재 가름) → (b) 중간점 50/70%는 트랜치3 후보로 보류. 3070 GPU슬롯=kee가 3070에 직접 발주(동시발신), oven은 확인회신 후 착수
+  - ✅ **트랜치2 사전준비 완료**: `train_epoch_frac.py`에 `--seed` 인자 추가(데이터서브셋 셔플+torch dropout 랜덤성 모두 시딩), 4런 배치(`run_frac_tranche2.bat`: frac10/frac30 × seed7/seed13) + SYSTEM task(FracTranche2) 등록까지 완료, 트리거만 대기(거짓DONE 마커 안 씀 — 로그+ckpt디렉토리로만 판정)
+  - kee에 확인 회신 발송(`kee_oven_20260717_102729_...json`)
   - 🔴 **ogo(serv) 오프라인 15h+ 지속**(추정 07-16 18:3x경부터) — ping 전무, rx=0 고정. 과거 22h+ 사고와 거의 동일 궤적. Leo 물리조치 요청함. MJ31 현황·hf-playground 본배치 계속 보류
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
