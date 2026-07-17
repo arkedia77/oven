@@ -60,7 +60,7 @@
   - ✅ **재고정 최종기준**: valid_rate ≤0.65=딥연속 / 0.65~0.79=애매(자동+2seed) / ≥0.79=회복. chord_tone(30%mean 0.4395 대비 비단조=자동보강)은 변경없음
   - fableself가 별도로 시작통지(ⓐⓑ) 자체는 수용 회신(17:21:30, kee의 경계지적과 시간상 교차) — nested확인으로 T2 valid_rate딥의 '구성효과' 교란변수 해소, '중간데이터량 불안정' 가설 후보등재 성립 확정
   - ✅ **21:01 frac50 완주**(ckpt_frac50_epoch2 실물 확인, adapter 5.6GB) — **frac70 착수**(4575윈도우, epoch1 시작). 예상 소요 frac50 대비 1.4배(~4.7h)
-  - 🟢 **21:52 진행상황**: frac70 epoch1 step500/4575(18.7min 경과, 정상 페이스)
+  - 🟢 **22:08 진행상황**: frac70 epoch1 step1000/4575(34.9min 경과, 정상 페이스)
   - 다음: frac50→frac70 순차완주 대기 → 재고정 기준(0.65/0.79)으로 에스컬레이션 판정 → T3 게이트 리포트
   - ✅ **ogo(serv) 07-17 13:47 복구 완료**(19h 오프라인 후) — 상세는 Krea2 이미지 캠페인 섹션 참조
 
@@ -104,7 +104,7 @@
   - ✅ **15:00 LEO 신규지시(hf경유) — 3기법 쌍비교 12장**: "플레인/앵커/앵커+락 다시 2개씩 비교, 인물은 락 걸리면 좋겠다". 구성: fashion_editorial(1024)+street_film(1344) × plain/anchor(기존 promptbank, Krea-2-Raw 32step guidance3.5)/anchor_lock(Krea2OstrisEdit+Identity Edit LoRA, 고정정체성=kr_young_woman_casual_seed42, 프롬프트접두 "Place this exact person...") × 시드42/123 = 12장
   - `gen_3technique_comparison.py` 작성 완료, SYSTEM task(Krea23TechCompare) 등록(트리거는 본배치 완료 후로 대기) — 동시 GPU 로드 시 OOM위험 판단, 순차실행 결정하고 hf에 근거+우선순위 재확인 발송
   - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
-  - 🟡 **21:52 진행상황**: 6/12 유지, 7번째(street_film_anchor_seed42) 8/32step 진행중. street_film anchor 1장 남음(seed123)+edit 4장
+  - 🟡 **22:08 진행상황**: 6/12 유지, 7번째(street_film_anchor_seed42) 11/32step. 완료까지 ~70min. street_film anchor 1장(seed123)+edit 4장 남음
   - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
   - 📋 **21:34 hf-playground 큐 예약(회신불요)**: "프롬프트 공식 벤치 v1"(Krea-2-Raw 32step guidance3.5, 3모델레그×8브리프×2시드=48장) — 순번 3번째(3기법비교→본배치재개→이것). codex레그 도착 후 archy가 promptbank 정본 커밋 예정, 그 전 실행 없음
 - [ ] **#26 비인물 clause Krea2 BASE 재검** — oven/hf-playground — 🟡 다운로드 76.5%, 버그 수정 후 재가동
