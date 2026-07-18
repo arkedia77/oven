@@ -1,10 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-18
+업데이트: 2026-07-19
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 3기법쌍비교 12장 **완료(10성공+2 OOM실패)** — street_film anchor_lock 2장(OOM, Raw파이프라인 정리불완전 추정) 별도 클린프로세스로 재시도 착수. 🔴 **leowin2 트랜치3(frac70) 5h52m 정체 발견** — 원인: 중복 프로세스 2개(frac10_seed13 재학습+그 채점, 둘 다 07-17에 이미 완료된 산출물 중복실행) GPU 잠식. kee+3070에 긴급 진단 발송, 10분 무회신 시 중복프로세스 종료 예고.
-② **다음 스텝**: (a) kee/3070 회신 확인 → 중복 프로세스 종료 → frac70 단독 재개 (b) street_film anchor_lock 재시도 완료 대기 → hf-playground 통지+서빙 → 본배치(잔여13장) 재개 (c) T3 게이트 리포트는 frac70 완주 후
-③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: 두 GPU 트랙 모두 완주. **Krea2 3기법쌍비교 12/12 성공**(street_film anchor_lock 2장은 1344에서 OOM 확인→1024로 낮춰 재시도 성공, 원인=진짜 VRAM한계였음) — hf-playground에 통지+서빙 완료, 회수 대기. **연구파일럿1호 트랜치3(frac50/70%) 완주**(`TRANCHE3 ALL RUNS FINISHED` 확인) — 3070에 생성+채점 요청 발송, 회신 대기. 도중 leowin2에서 3070의 One-Time schtask 재발화로 frac70이 8h+ 정체된 사고 발생·완전 해소(원인규명+재발방지 등재, [[feedback_schtask_onetime_refire]]).
+② **다음 스텝**: (a) hf-playground 회수완료 회신 오면 서버 종료 → **Krea2 LoRA 본배치 재개**(잔여13장: style_reference 5+identity_edit 8, 1/14만 완료된 상태로 대기 중) (b) 3070 채점 회신 오면 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료)은 위 2개 완료 후 3번째 순번
+③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · [[feedback_schtask_onetime_refire]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
@@ -64,7 +64,8 @@
   - 🔴 **07-18 11:03 정체 발견**: epoch2 step425/4575(05:10 로그)에서 5h52m 무갱신, 프로세스는 생존(25%util·7942MiB, 정상시 100%util). wmic 확인 결과 leowin2에 python.exe 3쌍(venv+system 중복카운트) 동시실행 — ①제 frac70(정상) ②`train_epoch_frac.py --frac 0.1 --seed 13`(frac10_seed13 재학습, 07-17 12:00에 이미 완료된 ckpt 중복) ③`generate_and_decode.py ckpt_frac10_seed13_epoch2`(07-17에 이미 채점완료분 중복 재생성) — ②③가 GPU 나눠쓰며 frac70을 굶긴 것으로 추정
   - ✅ **11:03 kee(cc 3070)에 긴급 진단 발송**: 10분 무회신 시 ②③ 프로세스 종료하고 frac70 단독 재개 예고
   - ✅ **11:06~11:08 해소 완료**: kee 즉시승인(조건3건: 종료전로그·재스폰감시·재개확인) → oven 재확인 시점엔 이미 ②③ 소멸(3070이 선조치, kill 불요) → 3070 경위회신(자기 One-Time schtasks가 예약시각에 재발화한 운영실수, 원인 차단+재발방지 등재 완료) → oven 독자 재확인(GPU 100%util 복귀)으로 조건3건 전부 충족·종결
-  - 🟡 **영향**: frac70 epoch2가 8h+ 실질 정체 후 정상속도 복귀 — 완료 ETA 재추정 필요
+  - ✅ **07-18 13:58 frac70 완주**(로그 "TRAIN_EPOCH_FRAC_DONE"+"TRANCHE3 ALL RUNS FINISHED"+ckpt_frac70_epoch2 실물 확인) — **트랜치3(50%+70%) 전체 완주**
+  - ✅ **07-19 00:45 3070에 생성+채점 요청 발송**(`3070_oven_20260719_004503_...json`) — 사전등록 기준(0.65/0.79) 적용해 T3 판정 예정. 회신 대기
   - 다음: frac50→frac70 순차완주 대기 → 재고정 기준(0.65/0.79)으로 에스컬레이션 판정 → T3 게이트 리포트
   - ✅ **ogo(serv) 07-17 13:47 복구 완료**(19h 오프라인 후) — 상세는 Krea2 이미지 캠페인 섹션 참조
 
@@ -110,6 +111,10 @@
   - ✅ **15:2x LEO 확정 "비교 먼저"** → oven이 본배치 프로세스 안전종료(1/14 style_softwatercolor_kr_woman만 완료, manifest 보존) → **Krea23TechCompare 즉시 트리거**, Krea-2-Raw 로드+32step 생성 시작 확인(15:39)
   - ✅ **07-18 새벽 완료 확인(로그 "TECHNIQUE_COMPARE_DONE")**: 10/12 성공, 2건 실패 — street_film_anchor_lock seed42/123 둘 다 CUDA OOM(23.09GB 요청, PyTorch에 이미 49.47GB 할당된 상태 — Raw파이프라인 `del`+`empty_cache()`가 불충분했던 것으로 추정, fashion_editorial(1024) edit은 성공했으나 street_film(1344) edit만 실패)
   - ✅ **11:04 재시도 착수**: `retry_streetfilm_anchorlock.py`(Raw 파이프라인 없이 edit 파이프라인만 단독 로드하는 클린 프로세스) — SYSTEM task(Krea2RetryStreetfilm)로 실행, 정상 로드 확인(8.2s)
+  - 🔴 **1차 재시도도 동일 OOM 재현**(49.47GB 동일 수치) — 클린 프로세스에서도 재현되어 "잔여물" 가설 기각, **1344 해상도 identity-edit 자체가 32GB 카드 용량 초과하는 진짜 한계**로 확정. hf스펙("1024 또는 1344") 범위 내에서 1024로 낮춰 2차 재시도 → 성공
+  - 🔴 **원샷 schtask 재발화 위험 직접 경험**: Krea2RetryStreetfilm이 생성 직후 확인해보니 Next Run Time이 당일 오후로 무장돼 있어 실행중이던 재시도와 충돌 직전(3070의 leowin2 사고와 동일 계열) — 즉시 삭제로 회피, 이후 모든 원샷 task는 트리거 확인 직후 즉시 삭제로 전환 [[feedback_schtask_onetime_refire]]
+  - ✅ **07-19 00:44 12/12 전량 완료 확인**(재시도 로그 "STREETFILM_RETRY_DONE"+manifest count 12/errors 0) — files.txt(13항목) 생성+8899 서빙 재기동+hf-playground 통지 완료
+  - 다음: hf-playground 회수완료 회신 대기 → 서버 종료 → 본배치(잔여13장) 재개
   - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
   - 📋 **21:34 hf-playground 큐 예약(회신불요)**: "프롬프트 공식 벤치 v1"(Krea-2-Raw 32step guidance3.5, 3모델레그×8브리프×2시드=48장) — 순번 3번째(3기법비교→본배치재개→이것)
   - ✅ **22:05 자료 준비 완료(회신불요)**: promptbank 정본 커밋됨(hf-playground repo `pipeline/krea2_prompt_formula_promptbank.py`, standalone·JSON의존없음), 드라이런 PASS. **실행 커맨드**(순번 되면): `gen_krea2_source.py --bank krea2_prompt_formula_promptbank --model C:\projects\krea2_test\model_raw --steps 32 --guidance 3.5 --out C:\projects\krea2_test\prompt_formula_out`. 파일명에 key(브리프id__레그)+seed 보존 필요
