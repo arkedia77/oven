@@ -2,8 +2,8 @@
 업데이트: 2026-07-19
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 두 GPU 트랙 모두 완주. **Krea2 3기법쌍비교 12/12 성공**(street_film anchor_lock 2장은 1344에서 OOM 확인→1024로 낮춰 재시도 성공, 원인=진짜 VRAM한계였음) — hf-playground에 통지+서빙 완료, 회수 대기. **연구파일럿1호 트랜치3(frac50/70%) 완주**(`TRANCHE3 ALL RUNS FINISHED` 확인) — 3070에 생성+채점 요청 발송, 회신 대기. 도중 leowin2에서 3070의 One-Time schtask 재발화로 frac70이 8h+ 정체된 사고 발생·완전 해소(원인규명+재발방지 등재, [[feedback_schtask_onetime_refire]]).
-② **다음 스텝**: (a) hf-playground 회수완료 회신 오면 서버 종료 → **Krea2 LoRA 본배치 재개**(잔여13장: style_reference 5+identity_edit 8, 1/14만 완료된 상태로 대기 중) (b) 3070 채점 회신 오면 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료)은 위 2개 완료 후 3번째 순번
+① **마지막 완료**: **Krea2 3기법쌍비교 12/12 완료→hf-playground 회수완료(13/13 바이트일치)**. **연구파일럿1호 트랜치3(frac50/70%) 완주**→3070에 생성+채점 착수 확인(ACK, ~3h 예상). ogo에서 **LoRA 본배치 재개**(잔여13장, resume 스크립트로 1/14 스킵 확인·정상 진행 재시작). 도중 leowin2 schtask 재발화 사고(8h+ 정체) 완전 해소, [[feedback_schtask_onetime_refire]] 등재.
+② **다음 세션 할 일**: (a) 본배치(잔여13장, ~4~5h) 완주 대기 → hf-playground 통지+서빙 (b) 3070 채점 회신(~3h 내) 대기 → 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료 `krea2_prompt_formula_promptbank.py`)은 (a)(b) 완료 후 3번째 순번
 ③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · [[feedback_schtask_onetime_refire]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -114,7 +114,8 @@
   - 🔴 **1차 재시도도 동일 OOM 재현**(49.47GB 동일 수치) — 클린 프로세스에서도 재현되어 "잔여물" 가설 기각, **1344 해상도 identity-edit 자체가 32GB 카드 용량 초과하는 진짜 한계**로 확정. hf스펙("1024 또는 1344") 범위 내에서 1024로 낮춰 2차 재시도 → 성공
   - 🔴 **원샷 schtask 재발화 위험 직접 경험**: Krea2RetryStreetfilm이 생성 직후 확인해보니 Next Run Time이 당일 오후로 무장돼 있어 실행중이던 재시도와 충돌 직전(3070의 leowin2 사고와 동일 계열) — 즉시 삭제로 회피, 이후 모든 원샷 task는 트리거 확인 직후 즉시 삭제로 전환 [[feedback_schtask_onetime_refire]]
   - ✅ **07-19 00:44 12/12 전량 완료 확인**(재시도 로그 "STREETFILM_RETRY_DONE"+manifest count 12/errors 0) — files.txt(13항목) 생성+8899 서빙 재기동+hf-playground 통지 완료
-  - 다음: hf-playground 회수완료 회신 대기 → 서버 종료 → 본배치(잔여13장) 재개
+  - ✅ **00:55 hf-playground 회수완료**(13/13 바이트일치) + 본배치재개 GO → 서버 종료(PID 4164 kill, 재기동 위험한 스트레이 task도 정리) → **본배치 재개 착수**: `gen_edit_main_batch.py`에 resume 로직 추가(기존 manifest 로드해 완료된 tag 스킵) → 정상 재개 확인(style_softwatercolor_kr_woman 스킵, 다음 항목 진행)
+  - 다음: 잔여 13장(style_reference 5+identity_edit 8) 완주 대기 → hf-playground 통지+서빙
   - 다음: 3기법비교 12장 완주 대기(소요 재추정중) → 서빙+hf통지 → 본배치 재개(잔여 13장, style_reference 5장+identity_edit 8장)
   - 📋 **21:34 hf-playground 큐 예약(회신불요)**: "프롬프트 공식 벤치 v1"(Krea-2-Raw 32step guidance3.5, 3모델레그×8브리프×2시드=48장) — 순번 3번째(3기법비교→본배치재개→이것)
   - ✅ **22:05 자료 준비 완료(회신불요)**: promptbank 정본 커밋됨(hf-playground repo `pipeline/krea2_prompt_formula_promptbank.py`, standalone·JSON의존없음), 드라이런 PASS. **실행 커맨드**(순번 되면): `gen_krea2_source.py --bank krea2_prompt_formula_promptbank --model C:\projects\krea2_test\model_raw --steps 32 --guidance 3.5 --out C:\projects\krea2_test\prompt_formula_out`. 파일명에 key(브리프id__레그)+seed 보존 필요
