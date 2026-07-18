@@ -2,13 +2,23 @@
 업데이트: 2026-07-19
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **Krea2 3기법쌍비교 12/12 완료→hf-playground 회수완료(13/13 바이트일치)**. **연구파일럿1호 트랜치3(frac50/70%) 완주**→3070에 생성+채점 착수 확인(ACK, ~3h 예상). ogo에서 **LoRA 본배치 재개**(잔여13장, resume 스크립트로 1/14 스킵 확인·정상 진행 재시작). 도중 leowin2 schtask 재발화 사고(8h+ 정체) 완전 해소, [[feedback_schtask_onetime_refire]] 등재.
-② **다음 세션 할 일**: (a) 본배치(잔여13장, ~4~5h) 완주 대기 → hf-playground 통지+서빙 (b) 3070 채점 회신(~3h 내) 대기 → 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료 `krea2_prompt_formula_promptbank.py`)은 (a)(b) 완료 후 3번째 순번
-③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · [[feedback_schtask_onetime_refire]] · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: **Krea2 3기법쌍비교 12/12 완료→hf-playground 회수완료(13/13 바이트일치)**. **연구파일럿1호 트랜치3(frac50/70%) 완주**→3070에 생성+채점 착수 확인(ACK, ~3h 예상). ogo에서 **LoRA 본배치 재개**(잔여13장, resume 스크립트로 1/14 스킵 확인·정상 진행 재시작). 도중 leowin2 schtask 재발화 사고(8h+ 정체) 완전 해소, [[feedback_schtask_onetime_refire]] 등재. **(7/19 추가) Leo 지시로 Krea2 이미지 캠페인 중단→하모니시티 재가동 + rep_floor(0.15) 오버라이드 배포 완료**, Day 457/Tick 10961+ 정상 진행 확인.
+② **다음 세션 할 일**: (a) 본배치(잔여13장, ~4~5h) 완주 대기 → hf-playground 통지+서빙 (b) 3070 채점 회신(~3h 내) 대기 → 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료 `krea2_prompt_formula_promptbank.py`)은 (a)(b) 완료 후 3번째 순번 (d) **하모니시티 3일 가동 관찰**(rep_floor 효과) → 종료 시 Krea2 배치 재개
+③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · [[feedback_schtask_onetime_refire]] · [[project_harmonicity]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
 ## IN PROGRESS
+
+- [ ] **하모니시티 재가동 + rep_floor 오버라이드** — oven/ogo — 2026-07-19 착수
+  - Leo 지시(7/19): Krea2 이미지 캠페인(gen_edit_main_batch.py, PID 3228, GPU 32GB 점유) 중단 → 하모니시티 3일 재가동 + rep_floor 오버라이드 완성
+  - `homeostasis.py`에 `HARMONICITY_CONFIG_OVERRIDES`(env JSON) 파라미터화 추가: WARMTH/TRUST_SOFT_CEILING·WARMTH/TRUST_DECAY_RATE·REP_EROSION_MULT·REP_WARMTH_FLOOR. 로컬 mock 스모크+floor 유닛테스트 PASS, 라이브 미설정 시 기존값과 완전 동일(무영향) 확인
+  - **API_URL도 `HARMONICITY_API_URL` env override로 전환**(config.py) → "config.py 머신별 분기·동기화 예외" 문제 해소, `launch_p11.bat`에서 `localhost` 지정(ogo 네트워크 불안정 tailnet 의존 제거)
+  - 배포: config.py/run_village.py(mutex dir-scoped)/llm.py(profiling 연동)/homeostasis.py 4파일 ogo 배포(백업 `code_backup/20260719_010706_rep_floor_deploy`, 해시검증+import무결성 PASS)
+  - **REP_WARMTH_FLOOR=0.15 적용**(메모리 권장범위 0.15~0.20 중 하한값 우선 적용, Leo 조정 가능)
+  - Krea2 배치 중단(resume 매니페스트 있어 재개 가능) → llama-server(LlamaHarmonicity) 재기동 → HarmonicityP11 재기동(stale lock 자동탈취 정상) → HarmonicityHealthCheck watchdog 재활성화. Day 457/Tick 10959→10961+ 정상 진행 확인, 신규 crash 없음
+  - ⚠️ SSH known_hosts 이슈 발견+해결: ogo 호스트키가 `serv` 별칭으로만 등록돼 `ogo`/IP 접속이 거부됨 — 동일 키 확인 후 재등록(보안이슈 아님, alias 누락)
+  - 다음: 3일 가동 관찰(rep_floor 효과=warmth/trust 하한 유지 여부) → 필요시 Leo와 floor값 조정 → 종료 시 Krea2 배치 재개(run_main_batch.bat, resume 확인됨)
 
 - [x] **Krea2 비인물+MJ 재시도 배치** — oven/hf-playground — 2026-07-13~17 ✅ 완주 확인
   - 7/11~13 ogo 22h+ 오프라인(원인불명) → 복구 후 젬마 수동기동 상태 발견(watchdog 5개 전부 무죄, 원인미확정) → Leo결정으로 젬마종료+실패분 60장 재발사

@@ -12,17 +12,26 @@ base_dir = Path(__file__).parent
 log_path = base_dir / "sim.log"
 crash_path = base_dir / "sim_crash.log"
 
-# --- 단일 인스턴스 가드 (Windows named mutex) ---
-# 좀비/중복 프로세스가 같은 data/를 동시에 덮어쓰는 race 방지 (2026-06-06 사고 대응).
+# data dir 결정 (config import 전에 필요 — mutex를 dir-scoped로 만들기 위함).
+# config.py와 동일 로직: HARMONICITY_DATA_DIR 미설정 시 기본 data/.
+import hashlib
+_data_dir = os.environ.get("HARMONICITY_DATA_DIR", str(base_dir / "data"))
+_data_dir_key = hashlib.sha256(os.path.normcase(os.path.abspath(_data_dir)).encode("utf-8")).hexdigest()[:12]
+
+# --- 단일 인스턴스 가드 (Windows named mutex, data dir별 스코프) ---
+# 좀비/중복 프로세스가 *같은 data dir*을 동시에 덮어쓰는 race 방지 (2026-06-06 사고 대응).
+# mutex 이름에 data dir 해시를 포함 → 같은 dir 중복 기동은 거부하되, 다른 dir(동시 N세계·
+# 멀티테넌트·동시성 실측)은 허용. 라이브 data/는 여전히 단일 인스턴스 보호.
 # 로그 오픈보다 먼저 검사 → 중복 기동이 sim.log 잠금 충돌(PermissionError)로 크래시하지 않고
 # 깔끔히 종료. 프로세스 종료 시 OS가 mutex를 자동 해제하므로 stale lock 문제 없음.
 _mutex_handle = None
 try:
     if os.name == "nt":
         import ctypes
-        _mutex_handle = ctypes.windll.kernel32.CreateMutexW(None, False, "Global\\HarmonicityVillageSim")
+        _mutex_handle = ctypes.windll.kernel32.CreateMutexW(
+            None, False, f"Global\\HarmonicityVillageSim_{_data_dir_key}")
         if ctypes.windll.kernel32.GetLastError() == 183:  # ERROR_ALREADY_EXISTS
-            sys.exit(0)  # 이미 실행 중 — 중복 기동 조용히 거부
+            sys.exit(0)  # 같은 data dir 이미 실행 중 — 중복 기동 조용히 거부
 except Exception:
     pass  # mutex 설정 실패 시 가드 없이 진행 (기존 동작 유지)
 

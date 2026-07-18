@@ -1,8 +1,13 @@
 """항상성 컨트롤러 — 마을 전체 tension 자기조절"""
+import json
+import os
 
 TARGET_TENSION = 0.4
 HIGH_THRESHOLD = 0.5
 LOW_THRESHOLD = 0.3
+
+_overrides = json.loads(os.environ.get("HARMONICITY_CONFIG_OVERRIDES", "{}"))
+
 
 
 def compute_village_tension(relationships: dict) -> float:
@@ -31,9 +36,9 @@ def apply_warmth_tension_constraint(rel: dict):
         rel["tension"] = min(rel["tension"], max_tension)
 
 
-WARMTH_SOFT_CEILING = 0.85   # P2: 특별 이벤트 없이 도달 가능한 상한
-TRUST_SOFT_CEILING = 0.85
-AFFECTION_SOFT_CAP = 0.9     # P2.2: 어팩션 래칫 방지 — 캡 초과분 압축
+WARMTH_SOFT_CEILING = _overrides.get("WARMTH_SOFT_CEILING", 0.85)
+TRUST_SOFT_CEILING = _overrides.get("TRUST_SOFT_CEILING", 0.85)
+AFFECTION_SOFT_CAP = 0.9
 
 
 def decay_relationships(relationships: dict):
@@ -42,17 +47,15 @@ def decay_relationships(relationships: dict):
         rel["tension"] = max(0.0, rel["tension"] - 0.002)
         rel["salience"] = max(0.0, rel.get("salience", 0.3) - 0.01)
 
-        # P2: warmth 자연 감쇠 — 0.5(기준선) 이상일수록 강하게 끌어내림
         warmth = rel.get("warmth", 0.5)
         if warmth > 0.5:
             excess = warmth - 0.5
-            rel["warmth"] = max(0.5, warmth - excess * 0.008)
+            rel["warmth"] = max(0.5, warmth - excess * _overrides.get("WARMTH_DECAY_RATE", 0.008))
 
-        # P2: trust 자연 감쇠 — warmth와 동일 로직, 약간 느리게
         trust = rel.get("trust", 0.5)
         if trust > 0.5:
             excess = trust - 0.5
-            rel["trust"] = max(0.5, trust - excess * 0.006)
+            rel["trust"] = max(0.5, trust - excess * _overrides.get("TRUST_DECAY_RATE", 0.006))
 
         # P2.2: affection 자연 감쇠 — decay/캡 없던 한방향 래칫 차단.
         # 0.5 기준선 이상 excess를 매 틱 0.4%씩 끌어내려 1.0 영구 고착 방지.
@@ -127,12 +130,14 @@ def apply_reputation_to_relationships(relationships: dict, reputation_matrix: di
         if worst_integrity >= 0.5:
             continue
 
+        rep_mult = _overrides.get("REP_EROSION_MULT", 1.0)
+        rep_floor = _overrides.get("REP_WARMTH_FLOOR", 0.0)
         if worst_integrity < 0.1:
-            erosion_w, erosion_t = 0.003, 0.004
+            erosion_w, erosion_t = 0.003 * rep_mult, 0.004 * rep_mult
         elif worst_integrity < 0.3:
-            erosion_w, erosion_t = 0.002, 0.003
+            erosion_w, erosion_t = 0.002 * rep_mult, 0.003 * rep_mult
         else:
-            erosion_w, erosion_t = 0.001, 0.001
+            erosion_w, erosion_t = 0.001 * rep_mult, 0.001 * rep_mult
 
-        rel["warmth"] = max(0.0, rel["warmth"] - erosion_w)
-        rel["trust"] = max(0.0, rel["trust"] - erosion_t)
+        rel["warmth"] = max(rep_floor, rel["warmth"] - erosion_w)
+        rel["trust"] = max(rep_floor, rel["trust"] - erosion_t)

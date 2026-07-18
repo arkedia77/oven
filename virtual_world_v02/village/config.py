@@ -6,8 +6,10 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = Path(os.environ.get("HARMONICITY_DATA_DIR", str(BASE_DIR / "data")))
 VILLAGE_DIR = Path(__file__).parent
 
-API_URL = "http://100.107.229.5:8080/v1/chat/completions"
-MODEL_NAME = "google_gemma-4-26B-A4B-it-Q8_0.gguf"
+# API_URL: 머신별 분기(ogo=localhost / 로컬=100.107.229.5). 동시성 실측·멀티엔드포인트용으로
+# HARMONICITY_API_URL 환경변수 override 지원. 미설정 시 기존 기본값 보존(라이브/ogo 무영향).
+API_URL = os.environ.get("HARMONICITY_API_URL", "http://100.107.229.5:8080/v1/chat/completions")
+MODEL_NAME = os.environ.get("HARMONICITY_MODEL_NAME", "google_gemma-4-26B-A4B-it-Q8_0.gguf")
 
 TICK_SECONDS = 200  # 3.3 real minutes per tick (reduced from 150, ~25% compute saving)
 TICKS_PER_DAY = 24  # 24 ticks = 1 village day (matches 24-hour cycle)

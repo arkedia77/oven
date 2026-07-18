@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import time
 import requests
 from village import config  # 모듈 참조 — seed_everything의 런타임 변경 즉시 반영
 
@@ -47,13 +48,27 @@ def chat(messages: list, max_tokens: int = 1024, temperature: float = None,
         }
         if seed is not None:
             req["seed"] = seed
+        # 동시성 실측용 timings 요청(llama.cpp가 prompt/gen ms 반환). 미지원 서버는 무시.
+        req["timings_per_token"] = True
+        _t0 = time.time()
         resp = requests.post(
             config.API_URL,
             json=req,
             timeout=120,
         )
         resp.raise_for_status()
-        msg = resp.json()["choices"][0]["message"]
+        _latency = time.time() - _t0
+        data = resp.json()
+        # 프로파일 기록(카운터는 항상 누적, 파일기록은 가드) — 동시성 실측
+        from village import profiling
+        _usage = data.get("usage") or {}
+        profiling.record_llm(
+            _latency,
+            prompt_tokens=_usage.get("prompt_tokens"),
+            gen_tokens=_usage.get("completion_tokens"),
+            timings=data.get("timings"),
+        )
+        msg = data["choices"][0]["message"]
         content = msg.get("content", "").strip()
         if not content:
             content = "(무응답)"
