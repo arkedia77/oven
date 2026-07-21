@@ -34,7 +34,7 @@
   - 정칙화 재학습 최종불요 확정. 102번곡=구조적hard-case 플래그(재학습금지)
   - fableself 프로젝트화 소견(도메인 무지 LLM 구조학습, 생체신호 2호도메인 제안) — ✅ LEO 승인(07-17, kee 경유) → 연구 파일럿 1호로 편입, 아래 신규 항목 참조
 
-- [ ] **연구 파일럿 1호 — 구조문법주입 도메인전이(데이터효율 한계곡선)** — oven/kee — 2026-07-16 착수 게이트 진행중
+- [x] **연구 파일럿 1호 — 구조문법주입 도메인전이(데이터효율 한계곡선)** — oven/kee — 2026-07-16~21 ✅ T3 최종 PASS로 완결
   - kee 발주(P1, LEO 07-17 승인) → oven이 측정설계 1p 작성·제출 완료(`kee_oven_20260716_193709_...json`)
   - 설계 요지: x축=학습데이터량(10%/30%/100%, 909곡 기준) y축=chord_tone_ratio(GT0.875, 100%지점 기존실측 0.632) — 3단게이트(착수/중간/판정), 3070 1기 재사용(신규 인프라 불요)
   - kee 접수평가 "상위" + 착수게이트=페블(=fableself) 1회 감수 경유, PASS 시 kee 착수판정 자동발효(왕복불요)+트랜치1(3런) 자동승인 예고
@@ -76,8 +76,13 @@
   - ✅ **11:06~11:08 해소 완료**: kee 즉시승인(조건3건: 종료전로그·재스폰감시·재개확인) → oven 재확인 시점엔 이미 ②③ 소멸(3070이 선조치, kill 불요) → 3070 경위회신(자기 One-Time schtasks가 예약시각에 재발화한 운영실수, 원인 차단+재발방지 등재 완료) → oven 독자 재확인(GPU 100%util 복귀)으로 조건3건 전부 충족·종결
   - ✅ **07-18 13:58 frac70 완주**(로그 "TRAIN_EPOCH_FRAC_DONE"+"TRANCHE3 ALL RUNS FINISHED"+ckpt_frac70_epoch2 실물 확인) — **트랜치3(50%+70%) 전체 완주**
   - ✅ **07-19 00:45 3070에 생성+채점 요청 발송**(`3070_oven_20260719_004503_...json`) — 사전등록 기준(0.65/0.79) 적용해 T3 판정 예정. 회신 대기
-  - 다음: frac50→frac70 순차완주 대기 → 재고정 기준(0.65/0.79)으로 에스컬레이션 판정 → T3 게이트 리포트
   - ✅ **ogo(serv) 07-17 13:47 복구 완료**(19h 오프라인 후) — 상세는 Krea2 이미지 캠페인 섹션 참조
+  - 🟡 **07-19 01:34 T3 1차판정**: frac70 1seed 0.667=애매밴드(자동+2seed 트리거) / frac50 1seed 0.467=딥연속 후보. oven이 frac70(자동트리거)+frac50(딥형태 확인용, oven 재량) 둘다 +2seed GO
+  - ✅ **07-19 10:35 frac70 3seed 회복 확정**: pooled 0.800(≥0.79)="회복" — 어제 1seed 0.667은 저운 draw로 판명, 다seed 원칙이 오판 실제로 방지
+  - 🔴 **07-19 14:38 디스크풀 인시던트**: leowin2 C: 여유 4.3GB로 frac50 재실행 ckpt 저장 실패(os112, 파일럿 누적 164GB). oven 안A(구세대 smoke ckpt 삭제, 31.8GB확보) GO → 3070 즉시 집행(여유 35.6GB)+재실행, 재발방지로 사전 여유공간체크 추가
+  - ✅ **07-19 21:29 frac50 3seed 최종**: s7/s13 둘다 0.933 — '딥=50' 가설 기각, 딥은 **30%에 잔존**(pooled 0.622) 확정
+  - ✅✅ **07-21 11:24 T3 최종 게이트 PASS**(`kee_oven_20260721_112400_...json`, cc fableself/3070) — **데이터효율 한계곡선 완성**: valid_rate 10%0.822→30%0.622(딥)→50%0.778→70%0.800(회복)→100%0.875 / ct_valid 0.4333→0.4395→0.4672→0.526→0.632(30%이후 단조상승, 급개선 50~70%구간). 핵심소견: ①다seed 원칙이 딥위치 오판(50→30 정정) 실제로 방지 ②구조습득(ct)과 표면유효성(valid_rate)이 분리되는 현상 발견(30%에서 ct는 이미 상승중인데 valid만 일시하락) ③급개선 임계점 ≈50~70% 데이터량
+  - 다음(Leo/kee 판단 대기): fableself 최종종합/논문화, Leo결재용 1p 요약 필요시 작성, 3070 GPU 유휴 — 후속라운드(시드확대 CI축소, 타도메인 확장) 여부
 
 - [ ] **하모니시티 확대 — Phase A 구현 완료** — oven — 2026-07-08 A-1~A-7 mock 검증 PASS
   - 설계: `HARMONICITY_EXPANSION_DESIGN.md`(6축) + `HARMONICITY_DETAILED_DESIGN_PHASE_A.md`(상세)
@@ -93,11 +98,11 @@
 - [ ] **ogo GPU 독점 관리 체계** — oven — 2026-06-24 LEO 확정
   - ✅ 정책 확정 + admin/ari ACK
   - TODO: 예약 대시보드/로그 시스템 (필요 시)
-- [ ] **하모니시티 라이브 시뮬 운용** — oven/ogo — ⏸ **정지 (Leo 지시: 젬마 신호 줄 때까지 down)**
-  - **Leo 결정(7/4)**: ~2일간 GPU 이미지 생성 전념 → 젬마 down 유지, **Leo 신호 시에만 재기동**
-  - 비활성화 task: `Gemma-AutoStart`, `Gemma-HealthCheck`, `HarmonicityHealthCheck` (리붓돼도 안 올라옴). 시뮬 `HarmonicityP11` End
-  - 🔴 **재기동(Leo 신호 후)**: task 3개 `/ENABLE` + `schtasks /Run /TN Gemma-AutoStart` + `schtasks /Run /TN HarmonicityP11`(stale락 있으면 [[feedback_harmonicity_stale_lock]] 절차)
-  - 참조 [[reference_ogo_autorestart]]. 7/4 stale락 복구 완료했었음 / T2 수정 적용 / rep_floor 검토 대기
+- [x] **하모니시티 라이브 시뮬 운용 — 재가동+rep_floor** — oven/ogo — 2026-07-19 재기동, 관찰중
+  - **Leo 결정(7/19)**: Krea2 이미지 캠페인(gen_edit_main_batch.py) 중단 → 하모니시티 3일 재가동 + rep_floor 오버라이드 완성. 상세는 위쪽 하모니시티 섹션/[[project_harmonicity]] 참조
+  - REP_WARMTH_FLOOR=0.15 적용, LlamaHarmonicity+HarmonicityP11+HarmonicityHealthCheck 전부 재기동, Day 457/Tick 10961+ 정상 확인
+  - 다음: 3일 관찰(7/22 전후) 종료 후 Krea2 배치 재개 여부 Leo와 조율
+  - 🆕 **07-21 kee 요청**: LEO 지시(7/20)로 페블(fableself) '세계문법·자율' 개념을 하모니시티에 처음부터 주입 검토 — oven이 M1~M5 현황 스냅샷 회신 완료(`kee_oven_20260721_113000_...json`). 핵심 갭: **에이전트 판단을 decider+근거로 구조화 로깅하는 체계 부재** — 주입 diff의 핵심 손볼 지점으로 소견 전달. 페블 트랙B 산출 대기
 - [ ] **하모니시티 재현성 트랙** — oven/ogo — ✅✅ 완전 완결
 - [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 대기
   - **블로커**: leowin2 Tailscale 미접속
