@@ -105,6 +105,10 @@
   - REP_WARMTH_FLOOR=0.15 적용, LlamaHarmonicity+HarmonicityP11+HarmonicityHealthCheck 전부 재기동, Day 457/Tick 10961+ 정상 확인
   - 다음: 3일 관찰(7/22 전후) 종료 후 Krea2 배치 재개 여부 Leo와 조율
   - 🆕 **07-21 kee 요청**: LEO 지시(7/20)로 페블(fableself) '세계문법·자율' 개념을 하모니시티에 처음부터 주입 검토 — oven이 M1~M5 현황 스냅샷 회신 완료(`kee_oven_20260721_113000_...json`). 핵심 갭: **에이전트 판단을 decider+근거로 구조화 로깅하는 체계 부재** — 주입 diff의 핵심 손볼 지점으로 소견 전달. 페블 트랙B 산출 대기
+  - ✅ **07-22 페블 트랙B diff 수령+D-L1 T0게이트 PASS**: 5축 판정(발생기SET/복리SET/자율PARTIAL/판단포획최대갭/안전레일부분), 주입순서 D-L1→D-S1→D-A1→D-C1/G2→계측기 확정. D-L1(판단포획) decision_record 스펙 v0 작성→페블감수 조건부PASS→kee T0게이트 PASS(조건3건: status≠outcome 분리/judgment_type 분석고정/gate_passed·interpretation_status 오버로드분리)
+  - ✅ **07-22 D-L1 MVP 로컬구현+검증 완료**: `village/decision_log.py` 신규(profiling/replay 동일 옵트인 패턴), conversation.py appraisal분기 연동. mock무영향회귀PASS+mock필드검증PASS+격리world 실LLM검증PASS. 라이브 배포는 다음 재기동시점까지 보류(직후 사고 복구라 신중)
+  - 🔴 **07-22 llama-server 14h 무인지 정지 사고 발견+복구**: D-L1 실LLM검증 중 ogo llama-server(:8080) 사망 발견 — sim.log가 당일 01:04부터 약 14시간 정지. 원인: HarmonicityHealthCheck watchdog이 python.exe(run_village) 프로세스 개수만 감시해 llama 자체 사망을 못 잡음(launch_p11.bat이 헬스체크 대기루프에서 정상 대기 중이라 watchdog 관점에선 안 죽은 것처럼 보임). 로그부재로 llama 사망 원인 자체는 불명. LlamaHarmonicity 수동재기동으로 즉시 복구(Day 511/Tick 12255+ 재개, 데이터손실 0)
+  - ✅ **재발방지**: `LlamaHealthCheck` watchdog 신설(ogo, 5분 간격 SYSTEM, `llama_healthcheck.ps1` — localhost:8080/health 실패 시 LlamaHarmonicity 자동재기동). 기존 watchdog과 상보적. D-S1(안전레일) 설계에 실측 입력으로 kee에 전달
 - [ ] **하모니시티 재현성 트랙** — oven/ogo — ✅✅ 완전 완결
 - [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 대기
   - **블로커**: leowin2 Tailscale 미접속
