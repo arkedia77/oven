@@ -134,6 +134,7 @@ def process_reflection(
 
     village_avg = compute_village_tension(relationships)
 
+    rel_before = dict(rel)  # D-L1: outcome 산출용 스냅샷(가드 무관, 얕은 dict라 비용 무시)
     appraisal = run_appraisal(char, other, conv_text, reflection, rel)
 
     gossip_result = None
@@ -160,6 +161,24 @@ def process_reflection(
         if _detected_belief_shift(reflection):
             char.shift_belief_toward(other)
         _update_goal_progress(char, reflection)
+
+    # D-L1 판단포획 (옵트인, 가드 미설정 시 decision_log.record 즉시 반환·무영향)
+    from village import decision_log
+    decision_log.record(
+        tick=conv_record.get("day"),  # process_reflection엔 tick 미전달 — day로 근사(MVP)
+        decider_id=char.id,
+        basis=f"{other.id}와의 대화 반영: {reflection[:200]}",
+        choice=appraisal.get("emotional_valence") if appraisal else "keyword_fallback",
+        outcome={
+            "relationships_delta": {
+                k: round(rel.get(k, 0.0) - rel_before.get(k, 0.0), 4)
+                for k in ("warmth", "trust", "tension", "affection")
+            },
+            "realized": True,
+        },
+        interpretation_status="parsed" if appraisal else "fallback",
+        cap_bound="WARMTH_SOFT_CEILING" if appraisal else None,
+    )
 
     rel["salience"] = min(1.0, rel.get("salience", 0.3) + 0.1)
     rel["interaction_count"] = rel.get("interaction_count", 0) + 1
