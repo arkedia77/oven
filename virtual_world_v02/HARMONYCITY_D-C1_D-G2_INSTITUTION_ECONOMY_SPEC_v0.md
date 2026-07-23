@@ -52,3 +52,20 @@ M2(발생기) 진단상 하모니시티 엔진은 이미 "규칙·인센티브 �
 - D-G2 자원명("favor")·밴드값(3/일)이 합리적인지, 아니면 §E 예산 밴드와 스케일 정합이 필요한지.
 - D-C1 MEDIATOR 보류(2차 라운드) 판단 동의 여부.
 - decision_record의 judgment_type=null(규칙기반) 처리가 §2 canonical과 정합인지 페블 확인.
+
+## 8. 구현+검증 결과 (2026-07-23, kee 게이트 GO 후)
+
+### 구현
+- `village/systems/economy.py`/`village/systems/institution.py` 신설. `save_load.py`에 save/load_economy·save/load_institutions 추가(기존 persistence 컨벤션 준수).
+- `decision_log.py`에 `decider_role` 파라미터 추가(기본값 "위임에이전트" 유지, institution은 "정책"으로 호출) — 기존 D-L1/D-A1 호출부 무영향.
+- `conversation.py`: warmth 실개선 관측 시 `economy.grant_favor(other.id, day)` 호출. `main.py`: 매 틱 `institution.recompute_roles()` 호출(24틱 주기 내부 처리).
+
+### 검증 결과
+| 항목 | 결과 |
+|---|---|
+| 무영향 회귀(가드 미설정) | PASS — mock 6틱 해시 완전 동일 |
+| economy 일일상한(§E-①) | PASS — 동일 캐릭터 5회 시도 중 **3회만 성공**(4·5번째 차단), 다음날 카운터 리셋 확인 |
+| institution 역할배정+비처벌 복귀(§E-②) | PASS — CONNECTOR 조건 충족 시 배정, 조건 미달 시 **"강등" 아니라 조용히 role=None**(decision_record에 페널티 필드 전혀 없음, `previous`만 기록) |
+| 통합(main.py, 26틱 mock, 전 옵트인 동시 활성화) | 크래시 없음. economy.json은 이번 mock런에서 미생성됐는데, mock 응답 고정텍스트에 긍정 키워드가 없어 warmth가 애초에 안 올라가는 구조적 이유(appraisal도 fallback도 둘 다 mock고정텍스트론 positive 안 됨) — 버그 아님, grant_favor 자체는 단위테스트로 별도 검증 완료 |
+
+MEDIATOR는 스펙대로 미구현(2차 라운드 보류, kee 동의 반영).
