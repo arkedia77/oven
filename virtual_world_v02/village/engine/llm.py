@@ -75,6 +75,10 @@ def chat(messages: list, max_tokens: int = 1024, temperature: float = None,
         # record 모드: 실제 출력을 기록 → 이후 replay로 완전 재현
         if replay.is_recording():
             replay.record_call(messages, content, seed)
+        from village import safety_rail
+        safety_rail.record_llm_result(is_error=False)
         return content
     except Exception as e:
+        from village import safety_rail
+        safety_rail.record_llm_result(is_error=True)
         return f"[오류: {e}]"

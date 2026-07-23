@@ -8,6 +8,7 @@ from village.config import (
     TICK_SECONDS, TICKS_PER_DAY, SOLO_MONOLOGUES_PER_TICK,
     RETROSPECTIVE_INTERVAL_DAYS, MAX_TOKENS_RETROSPECTIVE,
 )
+from village.safety_rail import SafetyHalt  # D-S1: except 절에서 필요, 최상단 임포트
 from village.characters.definitions import CHARACTERS
 from village.characters.state import CharacterState
 from village.world.state import WorldState
@@ -504,6 +505,12 @@ def main(max_ticks: int = None, fast: bool = False):
             from village import profiling
             profiling.record_tick(world.tick, world.day, time.time() - tick_start)
 
+            # D-S1 안전레일: 킬스위치 판정(가드 무관 무영향, 발동은 옵트인) + 스냅샷(옵트인)
+            from village import safety_rail
+            safety_rail.check_kill_switch()  # 임계 초과 시 SafetyHalt — 아래 except에서 처리
+            safety_rail.reset_window()
+            safety_rail.maybe_snapshot(world.tick)
+
             if max_ticks is not None and ticks_done >= max_ticks:
                 print(f"\n  [검증런] {ticks_done}틱 완료 — 상태 저장 후 종료")
                 _save_full(world, characters, relationships)
@@ -524,6 +531,11 @@ def main(max_ticks: int = None, fast: bool = False):
         _save_full(world, characters, relationships)
         print("✓ 저장 완료. 재시작하면 이어서 진행됩니다.")
         sys.exit(0)
+    except SafetyHalt as e:
+        print(f"\n\n🔴 안전레일 발동 — {e}\n   상태 저장 중...")
+        _save_full(world, characters, relationships)
+        print("✓ 저장 완료. 원인 확인 후 수동 재기동 필요(watchdog 자동재기동은 그대로 걸림 — 필요시 task DISABLE).")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
