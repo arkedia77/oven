@@ -180,6 +180,12 @@ def process_reflection(
         cap_bound="WARMTH_SOFT_CEILING" if appraisal else None,
     )
 
+    # D-G2 경제슬롯 (옵트인, 가드 미설정 시 economy.grant_favor 즉시 반환·무영향)
+    # warmth가 실제로 개선됐으면(char의 other에 대한 호감 상승) other가 호의를 준 것으로 관측
+    if rel.get("warmth", 0.0) > rel_before.get("warmth", 0.0):
+        from village.systems import economy
+        economy.grant_favor(other.id, conv_record.get("day", 0))
+
     rel["salience"] = min(1.0, rel.get("salience", 0.3) + 0.1)
     rel["interaction_count"] = rel.get("interaction_count", 0) + 1
     rel["last_interaction_day"] = conv_record["day"]

@@ -511,6 +511,10 @@ def main(max_ticks: int = None, fast: bool = False):
             safety_rail.reset_window()
             safety_rail.maybe_snapshot(world.tick)
 
+            # D-C1 제도슬롯 (옵트인, 가드 미설정 시 즉시 반환·무영향) — 24틱(1일)마다 재계산
+            from village.systems import institution
+            institution.recompute_roles(characters, relationships, world.tick)
+
             if max_ticks is not None and ticks_done >= max_ticks:
                 print(f"\n  [검증런] {ticks_done}틱 완료 — 상태 저장 후 종료")
                 _save_full(world, characters, relationships)

@@ -164,6 +164,30 @@ def load_knowledge_base() -> tuple[dict, dict] | None:
     return kb, registry
 
 
+def save_economy(data: dict):
+    path = DATA_DIR / "economy.json"
+    _atomic_write(path, json.dumps(data, ensure_ascii=False, indent=2))
+
+
+def load_economy() -> dict:
+    path = DATA_DIR / "economy.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    return {}
+
+
+def save_institutions(data: dict):
+    path = DATA_DIR / "institutions.json"
+    _atomic_write(path, json.dumps(data, ensure_ascii=False, indent=2))
+
+
+def load_institutions() -> dict:
+    path = DATA_DIR / "institutions.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    return {}
+
+
 def save_all(world: WorldState, characters: dict[str, CharacterState], relationships: dict):
     save_world_state(world)
     for char in characters.values():

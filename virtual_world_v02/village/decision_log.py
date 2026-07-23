@@ -39,7 +39,8 @@ def record(
     basis: str,
     choice,
     outcome: dict,
-    judgment_type: str = "분석",
+    judgment_type: str | None = "분석",
+    decider_role: str = "위임에이전트",
     alternatives_considered=None,
     reversible: bool = True,
     cap_bound: str | None = None,
@@ -49,7 +50,12 @@ def record(
     provenance: dict | None = None,
     sim_log_line: int | None = None,
 ):
-    """decision_record 1건 기록. 가드 미설정 시 즉시 반환(무영향)."""
+    """decision_record 1건 기록. 가드 미설정 시 즉시 반환(무영향).
+
+    decider_role: canonical §2 enum(LEO|위임에이전트|정책|게이트) — 규칙기반 결정(D-C1 등)은
+    "정책"으로 호출. judgment_type=None은 규칙도출(rule derivation)이라 판단유형 다이얼
+    미해당(D-C1/D-G2, 페블 canonical 확인 대기 — kee 165359).
+    """
     if not is_enabled():
         return
     from village import config
@@ -57,7 +63,7 @@ def record(
         "tick": tick,
         "world_id": str(config.DATA_DIR),
         "judgment_type": judgment_type,
-        "decider": {"role": "위임에이전트", "id": decider_id},
+        "decider": {"role": decider_role, "id": decider_id},
         "basis": basis,
         "alternatives_considered": alternatives_considered,
         "choice": choice,
