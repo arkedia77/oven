@@ -2,8 +2,8 @@
 업데이트: 2026-07-23
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **하모니시티 세계문법·자율 주입 — 1차 사이클(D-L1~D-A3) 전부 완료+kee 게이트 통과**. D-L1(판단포획 `village/decision_log.py`)→D-S1(안전레일 `safety_rail.py`, 킬스위치+스냅샷/복원+halt-loop가드)→D-A1(자율경계확장 `autonomy.py`, 위치선택 LLM화)→D-A2(형식이탈46%가 모델한계 아닌 토큰예산 문제였음을 실증, max_tokens 512→1536으로 완주율 100% 해소)→D-A3(판단분산 "개별 법의 존재" 판정선 통과). 전부 옵트인·격리world 검증·라이브 불가침 유지, 로컬 배포는 다음 자연 재기동 시. 부수로 ogo llama-server 14h 정지사고 발견+복구+`LlamaHealthCheck` watchdog 신설.
-② **다음 세션 할 일**: **홀드 상태** — 다음 페이즈(D-C1/D-G2 제도·경제 슬롯)는 **A-058 §E 원칙 LEO 결재가 선행 게이트**, 주입순서 최종안은 fableself 설계 확정 대기. 새 지시 없으면 이 상태 유지, 신호 오면 이어감. **세션 재개 시 `HALT_LOOP_GUARD_TRIGGERED.json`(하모니시티 data dir 상위) 확인을 루틴으로**(kee 지시, 완전자동통지는 YAGNI로 보류돼 수동 점검 필요). hf-playground GPU PoC 3건(SeedVR2/CharForge/RIFE)도 큐 대기 중(D-A1류 작업 뒤 순번, llama-server가 VRAM 28GB 점유 중이라 시간슬롯 조율 필요).
+① **마지막 완료**: **하모니시티 세계문법·자율 주입 트랙 — D-L1~D-A3+D-C1/D-G2 전부 완료, kee 게이트 전건 통과(정지점 도달)**. D-L1(판단포획)→D-S1(안전레일: 킬스위치+스냅샷/복원+halt-loop가드)→D-A1(자율경계확장: 위치선택 LLM화)→D-A2(형식이탈46%=모델한계 아닌 토큰예산 문제 실증, max_tokens 1536으로 완주율100%)→D-A3(판단분산 "개별 법의 존재" 판정선 통과)→**D-C1/D-G2(제도·경제 슬롯, A-058 §E 3원칙 첫 실증 — economy.py 일일상한 enforce, institution.py 조건미달시 비처벌 role=None 복귀, 페널티이벤트 0건 실측확인)**. 전부 옵트인·격리world 검증·라이브 불가침, 로컬 코드는 커밋 완료(라이브 배포는 다음 자연 재기동 시). 부수로 ogo llama-server 14h 정지사고 발견+복구+`LlamaHealthCheck` watchdog 신설.
+② **다음 세션 할 일**: **정지점(홀드)** — 다음 페이즈(자율지점 추가확대 or 계측기 슬롯)는 페블 주입순서 설계 확정 후 kee 게이트 대기, 새 지시 없으면 유지. **세션 재개 시 `HALT_LOOP_GUARD_TRIGGERED.json`(하모니시티 data dir 상위) 확인을 루틴으로**(kee 지시, 완전자동통지는 YAGNI 보류). hf-playground GPU PoC 3건(SeedVR2/CharForge/RIFE)도 큐 대기 중(llama-server가 VRAM 28GB 점유 중이라 시간슬롯 조율 필요, oven이 예약).
 ③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 전체 이력) · [[project_transfer_pilot_a042]] · [[feedback_llm_reasoning_token_budget]](짧은답 요청시 max_tokens 1000+ 필수) · [[reference_ogo_autorestart]] · 본 파일 IN PROGRESS 섹션
 
 ---
