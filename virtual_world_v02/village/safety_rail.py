@@ -94,3 +94,71 @@ def restore_snapshot(data_dir, tick_label):
             shutil.copytree(item, dst, dirs_exist_ok=True)
         else:
             shutil.copy2(item, dst)
+
+
+def record_halt_and_check_loop(
+    watchdog_task_name: str = "HarmonicityHealthCheck",
+    threshold: int = 3,
+    window_seconds: int = 3600,
+):
+    """kee 게이트 승인(halt-loop 가드, D-A1 선행 필수) — SafetyHalt 발생 시 main.py가 호출.
+
+    연속 halt가 threshold(기본 3)회를 window_seconds(기본 1h) 내 넘으면:
+    ①watchdog task를 자가 DISABLE(halt-restart 반복 차단, 원인 미해소 상태로 재기동 방지)
+    ②통지 마커 파일 기록 — admin §4-c 패턴과 동형(알림-only). Python 프로세스가 agent-comm에
+    직접 push할 수단이 없어, 이 마커를 oven(에이전트)이 주기 점검 시 읽고 kee(cc admin)에
+    수동 통지하는 구조. 정상 종료나 window 밖 재발이면 카운터 자연 리셋.
+    """
+    from village import config
+    import json
+    import subprocess
+    import time
+
+    state_path = config.DATA_DIR.parent / "halt_guard_state.json"
+    now = time.time()
+    state = {"halts": [], "guard_triggered": False}
+    if state_path.exists():
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    halts = [t for t in state.get("halts", []) if now - t < window_seconds]
+    halts.append(now)
+    state["halts"] = halts
+
+    if len(halts) >= threshold:
+        if not state.get("guard_triggered"):
+            state["guard_triggered"] = True
+            state["triggered_at"] = now
+            try:
+                subprocess.run(
+                    ["schtasks", "/Change", "/TN", watchdog_task_name, "/DISABLE"],
+                    capture_output=True, timeout=10,
+                )
+            except Exception:
+                pass
+            marker_path = config.DATA_DIR.parent / "HALT_LOOP_GUARD_TRIGGERED.json"
+            marker_path.write_text(json.dumps({
+                "triggered_at": now,
+                "halt_count": len(halts),
+                "window_seconds": window_seconds,
+                "watchdog_disabled": watchdog_task_name,
+                "action_needed": "kee(cc admin) 통지 + 원인조사 + 해소 후 watchdog /ENABLE + reset_halt_guard() 호출",
+            }, ensure_ascii=False, indent=2), encoding="utf-8")
+    else:
+        state["guard_triggered"] = False
+
+    state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+    return len(halts), state.get("guard_triggered", False)
+
+
+def reset_halt_guard(data_dir):
+    """수동 리셋 — 원인 해소 후 watchdog 재활성화와 함께 사람이 호출."""
+    import json
+    data_dir = Path(data_dir)
+    state_path = data_dir.parent / "halt_guard_state.json"
+    state_path.write_text(json.dumps({"halts": [], "guard_triggered": False}, ensure_ascii=False), encoding="utf-8")
+    marker_path = data_dir.parent / "HALT_LOOP_GUARD_TRIGGERED.json"
+    if marker_path.exists():
+        marker_path.unlink()

@@ -534,7 +534,14 @@ def main(max_ticks: int = None, fast: bool = False):
     except SafetyHalt as e:
         print(f"\n\n🔴 안전레일 발동 — {e}\n   상태 저장 중...")
         _save_full(world, characters, relationships)
-        print("✓ 저장 완료. 원인 확인 후 수동 재기동 필요(watchdog 자동재기동은 그대로 걸림 — 필요시 task DISABLE).")
+        from village import safety_rail
+        halt_count, guard_triggered = safety_rail.record_halt_and_check_loop()
+        if guard_triggered:
+            print(f"🔴🔴 halt-loop 가드 발동({halt_count}회/1h) — watchdog 자가 DISABLE, "
+                  f"HALT_LOOP_GUARD_TRIGGERED.json 확인 필요(kee/admin 통지 대상).")
+        else:
+            print(f"✓ 저장 완료(누적 halt {halt_count}회/1h). 원인 확인 후 수동 재기동 필요"
+                  f"(watchdog 자동재기동은 그대로 걸림 — 필요시 task DISABLE).")
         sys.exit(1)
 
 
