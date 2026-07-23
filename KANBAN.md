@@ -2,9 +2,9 @@
 업데이트: 2026-07-23
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **연구파일럿1호(정본코드 A-042 과제①) LEO 종결승인**(7/21) — 데이터효율곡선 완성(딥=30%, 급개선 50~70%), 코퍼스 승격범위 확정, [[project_transfer_pilot_a042]] 등재. **하모니시티 세계문법·자율 주입 트랙 착수**(LEO 7/20 지시, kee 라우팅·fableself 설계) — 5축 진단(발생기/복리 SET, 자율 PARTIAL, **판단포획 최대갭**, 안전레일 부분) 받아 **D-L1(판단포획) MVP 로컬구현+3종검증 전부 PASS, kee 게이트 PASS**(`village/decision_log.py`, 커밋 437181b, 라이브 배포는 보류). 도중 **ogo llama-server 14h 무인지 정지 사고 발견+복구**(watchdog이 프로세스개수만 감시해 llama 자체사망을 못 잡음) → `LlamaHealthCheck` watchdog 신설로 재발방지, kee가 이걸 admin과의 idle감시 SOP에 편입.
-② **다음 세션 할 일**: **D-S1(안전레일) 착수**(kee 승인 완료, 다음 게이트) — save_load.py 원자적쓰기 활용한 스냅샷+롤백, 개입시스템 재사용한 임계치 기반 정지(D-G1 창발계측기와 얽힘 인지, MVP=임계정지+스냅샷복원 먼저·포괄안전보장은 별도). 로컬 mock 검증 후 kee 게이트 → 이후 D-A1(자율경계확장, 격리world 파일럿만)으로 이어짐. 하모니시티 3일 관찰(rep_floor 0.15) 결과도 확인 필요.
-③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 최신 상태) · [[project_transfer_pilot_a042]] · [[reference_ogo_autorestart]](watchdog 2종 체계+명칭함정 정정) · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: **하모니시티 세계문법·자율 주입 — 1차 사이클(D-L1~D-A3) 전부 완료+kee 게이트 통과**. D-L1(판단포획 `village/decision_log.py`)→D-S1(안전레일 `safety_rail.py`, 킬스위치+스냅샷/복원+halt-loop가드)→D-A1(자율경계확장 `autonomy.py`, 위치선택 LLM화)→D-A2(형식이탈46%가 모델한계 아닌 토큰예산 문제였음을 실증, max_tokens 512→1536으로 완주율 100% 해소)→D-A3(판단분산 "개별 법의 존재" 판정선 통과). 전부 옵트인·격리world 검증·라이브 불가침 유지, 로컬 배포는 다음 자연 재기동 시. 부수로 ogo llama-server 14h 정지사고 발견+복구+`LlamaHealthCheck` watchdog 신설.
+② **다음 세션 할 일**: **홀드 상태** — 다음 페이즈(D-C1/D-G2 제도·경제 슬롯)는 **A-058 §E 원칙 LEO 결재가 선행 게이트**, 주입순서 최종안은 fableself 설계 확정 대기. 새 지시 없으면 이 상태 유지, 신호 오면 이어감. **세션 재개 시 `HALT_LOOP_GUARD_TRIGGERED.json`(하모니시티 data dir 상위) 확인을 루틴으로**(kee 지시, 완전자동통지는 YAGNI로 보류돼 수동 점검 필요). hf-playground GPU PoC 3건(SeedVR2/CharForge/RIFE)도 큐 대기 중(D-A1류 작업 뒤 순번, llama-server가 VRAM 28GB 점유 중이라 시간슬롯 조율 필요).
+③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 전체 이력) · [[project_transfer_pilot_a042]] · [[feedback_llm_reasoning_token_budget]](짧은답 요청시 max_tokens 1000+ 필수) · [[reference_ogo_autorestart]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
