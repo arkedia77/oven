@@ -17,7 +17,7 @@ def set_encounter_context(reputation_matrix: ReputationMatrix, knowledge_base: K
     _knowledge_base = knowledge_base
 
 
-def determine_locations(characters: dict[str, CharacterState], hour: int):
+def determine_locations(characters: dict[str, CharacterState], hour: int, tick: int = None):
     period = village_hour_to_period(hour)
     for char in characters.values():
         if not can_converse(char) and period not in ("late_night", "early_morning"):
@@ -28,13 +28,38 @@ def determine_locations(characters: dict[str, CharacterState], hour: int):
         if random.random() < 0.2 and char.top_goal():
             goal = char.top_goal()
             allies = goal.get("allies", [])
-            if allies:
+
+            def _scripted_ally_pick():
+                if not allies:
+                    return None
                 target_ally = random.choice(allies)
                 if target_ally in characters:
                     target_loc = characters[target_ally].get_location(period)
                     if target_loc != "residential":
-                        char.location = target_loc
-                        continue
+                        return target_loc
+                return None
+
+            # D-A1(자율경계 확장, 옵트인) — 미설정 시 기존 스크립트 그대로(무영향)
+            from village import autonomy
+            if autonomy.autonomy_enabled():
+                chosen_loc, decision_meta = autonomy.choose_location(
+                    char, characters, period, _scripted_ally_pick,
+                )
+                from village import decision_log
+                decision_log.record(
+                    tick=tick,
+                    decider_id=char.id,
+                    outcome={"assigned_location": chosen_loc, "realized": chosen_loc is not None},
+                    **decision_meta,
+                )
+                if chosen_loc:
+                    char.location = chosen_loc
+                    continue
+            else:
+                target_loc = _scripted_ally_pick()
+                if target_loc:
+                    char.location = target_loc
+                    continue
         char.location = base_location
 
 

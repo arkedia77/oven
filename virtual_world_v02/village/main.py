@@ -216,7 +216,7 @@ def run_tick(world: WorldState, characters: dict, relationships: dict):
     print(f"  Day {world.day} | {format_village_time(world.hour)} | Tick {world.tick}")
     print(f"{'='*60}")
 
-    determine_locations(characters, world.hour)
+    determine_locations(characters, world.hour, tick=world.tick)
     loc_summary = {}
     for cid, char in characters.items():
         loc_summary.setdefault(char.location, []).append(char.name)
