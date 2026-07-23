@@ -1,10 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-19
+업데이트: 2026-07-23
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **Krea2 3기법쌍비교 12/12 완료→hf-playground 회수완료(13/13 바이트일치)**. **연구파일럿1호 트랜치3(frac50/70%) 완주**→3070에 생성+채점 착수 확인(ACK, ~3h 예상). ogo에서 **LoRA 본배치 재개**(잔여13장, resume 스크립트로 1/14 스킵 확인·정상 진행 재시작). 도중 leowin2 schtask 재발화 사고(8h+ 정체) 완전 해소, [[feedback_schtask_onetime_refire]] 등재. **(7/19 추가) Leo 지시로 Krea2 이미지 캠페인 중단→하모니시티 재가동 + rep_floor(0.15) 오버라이드 배포 완료**, Day 457/Tick 10961+ 정상 진행 확인.
-② **다음 세션 할 일**: (a) 본배치(잔여13장, ~4~5h) 완주 대기 → hf-playground 통지+서빙 (b) 3070 채점 회신(~3h 내) 대기 → 사전등록 기준(valid_rate 0.65/0.79, chord_tone 비단조)으로 판정 → **T3 게이트 리포트**(kee cc fableself) 작성 (c) hf-playground 프롬프트벤치v1(48장, 정본 준비완료 `krea2_prompt_formula_promptbank.py`)은 (a)(b) 완료 후 3번째 순번 (d) **하모니시티 3일 가동 관찰**(rep_floor 효과) → 종료 시 Krea2 배치 재개
-③ **상세**: [[project_krea2_edit_loras]] · [[project_ogo_gpu_management]] · [[reference_ogo_network]] · [[feedback_schtask_onetime_refire]] · [[project_harmonicity]] · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: **연구파일럿1호(정본코드 A-042 과제①) LEO 종결승인**(7/21) — 데이터효율곡선 완성(딥=30%, 급개선 50~70%), 코퍼스 승격범위 확정, [[project_transfer_pilot_a042]] 등재. **하모니시티 세계문법·자율 주입 트랙 착수**(LEO 7/20 지시, kee 라우팅·fableself 설계) — 5축 진단(발생기/복리 SET, 자율 PARTIAL, **판단포획 최대갭**, 안전레일 부분) 받아 **D-L1(판단포획) MVP 로컬구현+3종검증 전부 PASS, kee 게이트 PASS**(`village/decision_log.py`, 커밋 437181b, 라이브 배포는 보류). 도중 **ogo llama-server 14h 무인지 정지 사고 발견+복구**(watchdog이 프로세스개수만 감시해 llama 자체사망을 못 잡음) → `LlamaHealthCheck` watchdog 신설로 재발방지, kee가 이걸 admin과의 idle감시 SOP에 편입.
+② **다음 세션 할 일**: **D-S1(안전레일) 착수**(kee 승인 완료, 다음 게이트) — save_load.py 원자적쓰기 활용한 스냅샷+롤백, 개입시스템 재사용한 임계치 기반 정지(D-G1 창발계측기와 얽힘 인지, MVP=임계정지+스냅샷복원 먼저·포괄안전보장은 별도). 로컬 mock 검증 후 kee 게이트 → 이후 D-A1(자율경계확장, 격리world 파일럿만)으로 이어짐. 하모니시티 3일 관찰(rep_floor 0.15) 결과도 확인 필요.
+③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 최신 상태) · [[project_transfer_pilot_a042]] · [[reference_ogo_autorestart]](watchdog 2종 체계+명칭함정 정정) · 본 파일 IN PROGRESS 섹션
 
 ---
 
