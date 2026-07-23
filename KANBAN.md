@@ -109,6 +109,7 @@
   - ✅ **07-22 D-L1 MVP 로컬구현+검증 완료**: `village/decision_log.py` 신규(profiling/replay 동일 옵트인 패턴), conversation.py appraisal분기 연동. mock무영향회귀PASS+mock필드검증PASS+격리world 실LLM검증PASS. 라이브 배포는 다음 재기동시점까지 보류(직후 사고 복구라 신중)
   - 🔴 **07-22 llama-server 14h 무인지 정지 사고 발견+복구**: D-L1 실LLM검증 중 ogo llama-server(:8080) 사망 발견 — sim.log가 당일 01:04부터 약 14시간 정지. 원인: HarmonicityHealthCheck watchdog이 python.exe(run_village) 프로세스 개수만 감시해 llama 자체 사망을 못 잡음(launch_p11.bat이 헬스체크 대기루프에서 정상 대기 중이라 watchdog 관점에선 안 죽은 것처럼 보임). 로그부재로 llama 사망 원인 자체는 불명. LlamaHarmonicity 수동재기동으로 즉시 복구(Day 511/Tick 12255+ 재개, 데이터손실 0)
   - ✅ **재발방지**: `LlamaHealthCheck` watchdog 신설(ogo, 5분 간격 SYSTEM, `llama_healthcheck.ps1` — localhost:8080/health 실패 시 LlamaHarmonicity 자동재기동). 기존 watchdog과 상보적. D-S1(안전레일) 설계에 실측 입력으로 kee에 전달
+  - ✅ **07-23 D-S1(안전레일) MVP 완료**: `village/safety_rail.py` 신규 — 킬스위치(LLM 오류율 임계50% 초과시 SafetyHalt로 그레이스풀 정지, appraisal파싱실패와 무관한 별개신호) + 스냅샷(24틱마다 회전보관 5개) + 수동복원. 검증 4종 전부 PASS(무영향회귀/스냅샷생성/킬스위치발동/복원). 스펙에 리스크 기록: 킬스위치 발동해도 기존 watchdog이 재기동시켜 halt-restart 반복 가능 — 후속과제로 명시. kee 게이트 판정 대기. 다음은 D-A1(자율경계확장, 격리world만)
 - [ ] **하모니시티 재현성 트랙** — oven/ogo — ✅✅ 완전 완결
 - [ ] **ACE-Step 1.5 LoKR 권PD 음원** — oven/leowin2 — 대기
   - **블로커**: leowin2 Tailscale 미접속
