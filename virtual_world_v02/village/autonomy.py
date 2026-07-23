@@ -58,10 +58,10 @@ def choose_location(char, characters, period, fallback_fn):
     valid_ids = set(LOCATIONS.keys())
 
     prompt = _build_prompt(char, characters, period)
-    # max_tokens=512: 이 모델은 "thinking 없이" 지시에도 reasoning_content를 먼저 채우는
-    # 경향이 있어(appraisal.py와 동일 현상), 짧은 예산은 finish_reason=length로 content
-    # 공백을 유발한다(실측: 20~1024 전부 실패, "thinking 없이" 문구+512 조합에서 성공).
-    response = chat([{"role": "user", "content": prompt}], max_tokens=512, temperature=0.7)
+    # max_tokens=1536: D-A2 원인규명 실측(2026-07-23, N=20/변형) 결과 — 512에서 완주율 45%였던
+    # 원인은 모델 판단두께 한계가 아니라 순수 토큰예산 부족(reasoning_content가 예산을 다 쓰고
+    # finish_reason=length로 content 공백). 1536으로 올리자 완주율 100%(20/20) 확인.
+    response = chat([{"role": "user", "content": prompt}], max_tokens=1536, temperature=0.7)
     candidate = re.sub(r"[^a-z_]", "", response.strip().lower())
 
     if candidate in valid_ids:
