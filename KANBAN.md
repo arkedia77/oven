@@ -1,10 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-23
+업데이트: 2026-07-24
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **하모니시티 세계문법·자율 주입 트랙 — D-L1~D-A3+D-C1/D-G2 전부 완료, kee 게이트 전건 통과(정지점 도달)**. D-L1(판단포획)→D-S1(안전레일: 킬스위치+스냅샷/복원+halt-loop가드)→D-A1(자율경계확장: 위치선택 LLM화)→D-A2(형식이탈46%=모델한계 아닌 토큰예산 문제 실증, max_tokens 1536으로 완주율100%)→D-A3(판단분산 "개별 법의 존재" 판정선 통과)→**D-C1/D-G2(제도·경제 슬롯, A-058 §E 3원칙 첫 실증 — economy.py 일일상한 enforce, institution.py 조건미달시 비처벌 role=None 복귀, 페널티이벤트 0건 실측확인)**. 전부 옵트인·격리world 검증·라이브 불가침, 로컬 코드는 커밋 완료(라이브 배포는 다음 자연 재기동 시). 부수로 ogo llama-server 14h 정지사고 발견+복구+`LlamaHealthCheck` watchdog 신설.
-② **다음 세션 할 일**: **정지점(홀드)** — 다음 페이즈(자율지점 추가확대 or 계측기 슬롯)는 페블 주입순서 설계 확정 후 kee 게이트 대기, 새 지시 없으면 유지. **세션 재개 시 `HALT_LOOP_GUARD_TRIGGERED.json`(하모니시티 data dir 상위) 확인을 루틴으로**(kee 지시, 완전자동통지는 YAGNI 보류). hf-playground GPU PoC 3건(SeedVR2/CharForge/RIFE)도 큐 대기 중(llama-server가 VRAM 28GB 점유 중이라 시간슬롯 조율 필요, oven이 예약).
-③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 전체 이력) · [[project_transfer_pilot_a042]] · [[feedback_llm_reasoning_token_budget]](짧은답 요청시 max_tokens 1000+ 필수) · [[reference_ogo_autorestart]] · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: 세계문법 트랙 D-L1~D-C1/G2(정지점) 후 07-24 kee 역할리셋(중앙PM 폐기) → **D-M1 계측기 슬롯 MVP 완료**(커밋 a21b4b1) + **GPU PoC 3건 중 2건 완료**: SeedVR2(완주+hf-playground 최종 유효판정) · RIFE(hzwer/Practical-RIFE, llama-server 한 번도 안 내리고 완전 라이브무영향 완료). CharForge는 유료API 2건(Together 캡셔닝+fal.ai 업스케일) 발견으로 실행 전 보류. **20:29 kee에 3시간 진행보고 발송 완료**(kee_oven_20260724_202900).
+② **다음 세션 할 일**: hf-playground CharForge 회신(①과금승인 ②로컬패치 2건 ③스킵) 대기 → 그에 따라 진행. D-M1은 라이브 미배포라 decision_records/institutions 지표 재검증 필요(다음 자연재기동 후). 특이사항 없음(HALT_LOOP_GUARD 미발생, watchdog 정상).
+③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 전체 이력) · [[project_ogo_gpu_management]](C드라이브 4.6GB 여유 경고 추가됨) · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
