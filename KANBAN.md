@@ -2,8 +2,8 @@
 업데이트: 2026-07-29
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio 의존확인 GO 수령 → durable 백업(data 15.5MB+코드 182KB, `/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`) → HarmonicityP11/LlamaHarmonicity 정지+watchdog 2종 DISABLE(재발화 차단). **Sana 실측 완료**: diffusers SanaPipeline로 SANA1.5_1.6B 설치, 5프롬프트×2해상도(1024/2048px) 10건 전부 성공 — 속도~1.2s/장, VRAM~10-11GB, 해상도 4배에도 속도·VRAM 거의 불변(효율성 실증), 프롬프트충실도·생성품질 양호. kimsecretary에 "조건부 가" 판정 회신 완료(kimsecretary_oven_20260729_112300). 그 전엔 D-M1 계측기 완료+GPU PoC(SeedVR2·RIFE) 완료(07-24 세션, 상세는 project_harmonicity.md).
-② **다음 세션 할 일**: Leo/kimsecretary 후속 지시 대기(Sana 실사 추가테스트 or 4.8B/Sprint 비교 여부). 하모니시티는 정지 상태 유지 중(재기동 필요시 절차는 project_harmonicity.md 참조, 데이터 보존됨). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
+① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio GO 수령, durable 백업 완료(`/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`), watchdog DISABLE. **Sana 1차 실측**(10건) 이후 hf-playground 설계 **2차 실측 48장(S1~S5) 완료** — 핵심발견 2건: ①🔴**T7 한국어 프롬프트 이해 완전 실패**(한국어로 지시하면 엉뚱한 그림, 반드시 영어 번역 필요로 확정) ②🟢**S4e 캐릭터 일관성=같은 사람 확인**(MV/스토리보드 파이프라인 즉시 적용 가능, 최대 실사용 가치). 부수: P2c는 2K에서 화질 저하(2K=공짜 결론에 단서), LoRA는 에러없이 로드되나 매칭키 0개(silent no-op, 주의 필요), 시드재현성 SHA256 완전동일 확인. hf-playground에 상세보고+샘플 URL 12개 발송 완료(hf-playground_oven_20260729_190000).
+② **다음 세션 할 일**: hf-playground/LEO 후속 반응 대기(S4 수량 재실행 여부, 추가 테스트). 하모니시티는 정지 상태 유지 중(재기동 절차는 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
