@@ -2,8 +2,8 @@
 업데이트: 2026-07-29
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio GO, durable 백업 완료(`/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`), watchdog DISABLE. **Sana 실측 3라운드 완료**: ①1차 10건 ②hf-playground 설계 48장(S1~S5) ③hf-playground 방법론 반론에 따른 재검 15장 — **T7(한국어 프롬프트 이해) 결론이 재검에서 오히려 강화**됨(한영 사과대조 3시드 전부 한국어=9/9틀림·영어=9/9정확, T7 자체도 3시드 100% 동일실패 → "한국어=반드시 영어 번역" 파이프라인 규칙 확정 근거 완성). 부수: 🟢캐릭터일관성=같은사람 확인(최대 실사용가치), 여백지시는 시드에 따라 깨질 수 있음(재검에서 새로 발견, 완전자동화엔 검증스텝 필요), P2c 2K화질저하, LoRA silent no-op, 시드재현성 SHA256완전동일.
-② **다음 세션 할 일**: hf-playground/LEO 후속 반응 대기. 하모니시티는 정지 상태 유지 중(재기동 절차는 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
+① **마지막 완료**: **🔴 하모니시티 정지 중**(LEO지시 07-29, ogo GPU를 Sana테스트로 회수, 백업+watchdog DISABLE 완료). **Sana 실측 4라운드 진행**: ①1차10건 ②S1~S5 48장 ③재검15장(T7 한국어이해실패 결론 강화 확정) ④**진행중: 캐릭터일관성 InsightFace 정량검증 27장**(hf-playground 설계, 예비수치가 이미 문턱0.40 미달 — 눈측 "같은사람"이 속성반복 착시일 가능성). LEO 지시(07-29 저녁): "오늘은 플레이그라운드하고 계속 테스트 진행" — 능동적으로 이어가는 중.
+② **다음 세션 할 일**: InsightFace 27장 생성+채점 완료 후 hf-playground 회신. 하모니시티는 정지 유지(재기동 절차 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email`) 반영 완료.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
