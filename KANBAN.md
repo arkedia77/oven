@@ -2,8 +2,8 @@
 업데이트: 2026-07-29
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **🔴 하모니시티 정지 중**(LEO지시 07-29, ogo GPU를 Sana테스트로 회수, 백업+watchdog DISABLE 완료). **Sana 실측 4라운드 진행**: ①1차10건 ②S1~S5 48장 ③재검15장(T7 한국어이해실패 결론 강화 확정) ④**진행중: 캐릭터일관성 InsightFace 정량검증 27장**(hf-playground 설계, 예비수치가 이미 문턱0.40 미달 — 눈측 "같은사람"이 속성반복 착시일 가능성). LEO 지시(07-29 저녁): "오늘은 플레이그라운드하고 계속 테스트 진행" — 능동적으로 이어가는 중.
-② **다음 세션 할 일**: InsightFace 27장 생성+채점 완료 후 hf-playground 회신. 하모니시티는 정지 유지(재기동 절차 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email`) 반영 완료.
+① **마지막 완료**: **✅ Sana 건 LEO 지시로 클로징**(07-29). 하루 총 90+장 실측(본편48+재검15+정체성27) — 최종판정: **캐릭터일관성 FAIL**(InsightFace B조건 중위0.3983<문턱0.40, 귀무 정상작동 확인 → MV파이프 직접접목 보류), 강점(속도1.2s/장·인종편향없음12/12·시드재현SHA256일치)과 제약(한국어불가·영문3단어붕괴·FLUX LoRA무효·여백비보장) 정본 등재 완료. 부수 대발견: **Krea2가 FLUX 아니라 자체 Krea2Pipeline**(Qwen3VL 텍스트인코더) — 이 발견으로 **Krea2 LoRA 무효점검**까지 이어짐: detail_slider 확정 무효(Sana류 silent no-op), realism-V2는 라이브러리 드리프트로 현재 로드 자체 실패(07-05엔 성공), 공식 krea LoRA는 정상. Krea2-Raw vs Sana 19장 비교는 예상외 초저속 발견(스텝당52초→9시간급) 즉시경보 후 LEO판단으로 중단. 하모니시티는 정지 유지(GPU 자유— hf-playground 오늘밤 추가요청 없음 확인).
+② **다음 세션 할 일**: hf-playground 후속 지시 대기(LoRA 재검증 여부 등). 하모니시티 재기동 여부는 Leo 판단 대기(재기동 절차 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email`) 반영 완료.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
