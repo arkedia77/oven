@@ -1,9 +1,9 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-29
+업데이트: 2026-07-30
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **✅ Sana 건 LEO 지시로 클로징**(07-29). 하루 총 90+장 실측(본편48+재검15+정체성27) — 최종판정: **캐릭터일관성 FAIL**(InsightFace B조건 중위0.3983<문턱0.40, 귀무 정상작동 확인 → MV파이프 직접접목 보류), 강점(속도1.2s/장·인종편향없음12/12·시드재현SHA256일치)과 제약(한국어불가·영문3단어붕괴·FLUX LoRA무효·여백비보장) 정본 등재 완료. 부수 대발견: **Krea2가 FLUX 아니라 자체 Krea2Pipeline**(Qwen3VL 텍스트인코더) — 이 발견으로 **Krea2 LoRA 무효점검**까지 이어짐: detail_slider 확정 무효(Sana류 silent no-op), realism-V2는 라이브러리 드리프트로 현재 로드 자체 실패(07-05엔 성공), 공식 krea LoRA는 정상. Krea2-Raw vs Sana 19장 비교는 예상외 초저속 발견(스텝당52초→9시간급) 즉시경보 후 LEO판단으로 중단. 하모니시티는 정지 유지(GPU 자유— hf-playground 오늘밤 추가요청 없음 확인).
-② **다음 세션 할 일**: hf-playground 후속 지시 대기(LoRA 재검증 여부 등). 하모니시티 재기동 여부는 Leo 판단 대기(재기동 절차 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email`) 반영 완료.
+① **마지막 완료**: **✅ Sana+Krea2 LoRA 조사 전건 클로징**(07-29→30, hf-playground가 자기쪽에서 닫음, 오븐 큐 빔). Sana: 캐릭터일관성 FAIL(InsightFace B조건0.3983<문턱0.40)로 MV파이프 접목 보류. **부수 대발견 파장**: Krea2가 FLUX 아니라 자체 Krea2Pipeline(Qwen3VL) → LoRA 무효점검 확대 → **4종 중 정상은 공식krea LoRA 1종뿐**: detail_slider=확정무효, realism-V2=07-05원본도 픽셀대조(평균차0.2~0.5/255)로 무효였을 가능성 매우높음(육안대조 불요로 hf 동의), gokaygokay=매핑 미검증. **결론: 06-28 이후 Krea2 LoRA 캠페인 상당수가 사실상 base Turbo 출력**(품질 자체는 무관, 귀속만 재해석 필요). `get_list_adapters()` attach확인이 hf 표준절차로 등재됨. ogo 부수: C드라이브 2.7GB→30.2GB 정리, Krea2Pipeline VAE 하드크래시는 sequential_offload+fp32로 우회(근본원인 미확정, 재발시 이 메모 우선참조). 하모니시티는 정지 유지, GPU 자유.
+② **다음 세션 할 일**: hf-playground/Leo 새 지시 대기(오늘 큐 없음 확인됨). 하모니시티 재기동 여부는 Leo 판단 대기(절차 project_harmonicity.md). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
