@@ -1,10 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-07-24
+업데이트: 2026-07-29
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: 세계문법 트랙 D-L1~D-C1/G2(정지점) 후 07-24 kee 역할리셋(중앙PM 폐기) → **D-M1 계측기 슬롯 MVP 완료**(커밋 a21b4b1) + **GPU PoC 3건 중 2건 완료**: SeedVR2(완주+hf-playground 최종 유효판정) · RIFE(hzwer/Practical-RIFE, llama-server 한 번도 안 내리고 완전 라이브무영향 완료). CharForge는 유료API 2건(Together 캡셔닝+fal.ai 업스케일) 발견으로 실행 전 보류. **20:29 kee에 3시간 진행보고 발송 완료**(kee_oven_20260724_202900).
-② **다음 세션 할 일**: hf-playground CharForge 회신(①과금승인 ②로컬패치 2건 ③스킵) 대기 → 그에 따라 진행. D-M1은 라이브 미배포라 decision_records/institutions 지표 재검증 필요(다음 자연재기동 후). 특이사항 없음(HALT_LOOP_GUARD 미발생, watchdog 정상).
-③ **상세**: [[project_harmonicity]](세계문법 주입 트랙 전체 이력) · [[project_ogo_gpu_management]](C드라이브 4.6GB 여유 경고 추가됨) · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
+① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio 의존확인 GO 수령 → durable 백업(data 15.5MB+코드 182KB, `/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`) → HarmonicityP11/LlamaHarmonicity 정지+watchdog 2종 DISABLE(재발화 차단). **Sana 실측 완료**: diffusers SanaPipeline로 SANA1.5_1.6B 설치, 5프롬프트×2해상도(1024/2048px) 10건 전부 성공 — 속도~1.2s/장, VRAM~10-11GB, 해상도 4배에도 속도·VRAM 거의 불변(효율성 실증), 프롬프트충실도·생성품질 양호. kimsecretary에 "조건부 가" 판정 회신 완료(kimsecretary_oven_20260729_112300). 그 전엔 D-M1 계측기 완료+GPU PoC(SeedVR2·RIFE) 완료(07-24 세션, 상세는 project_harmonicity.md).
+② **다음 세션 할 일**: Leo/kimsecretary 후속 지시 대기(Sana 실사 추가테스트 or 4.8B/Sprint 비교 여부). 하모니시티는 정지 상태 유지 중(재기동 필요시 절차는 project_harmonicity.md 참조, 데이터 보존됨). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
+③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
