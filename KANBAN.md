@@ -2,8 +2,8 @@
 업데이트: 2026-07-29
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio GO 수령, durable 백업 완료(`/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`), watchdog DISABLE. **Sana 1차 실측**(10건) 이후 hf-playground 설계 **2차 실측 48장(S1~S5) 완료** — 핵심발견 2건: ①🔴**T7 한국어 프롬프트 이해 완전 실패**(한국어로 지시하면 엉뚱한 그림, 반드시 영어 번역 필요로 확정) ②🟢**S4e 캐릭터 일관성=같은 사람 확인**(MV/스토리보드 파이프라인 즉시 적용 가능, 최대 실사용 가치). 부수: P2c는 2K에서 화질 저하(2K=공짜 결론에 단서), LoRA는 에러없이 로드되나 매칭키 0개(silent no-op, 주의 필요), 시드재현성 SHA256 완전동일 확인. hf-playground에 상세보고+샘플 URL 12개 발송 완료(hf-playground_oven_20260729_190000).
-② **다음 세션 할 일**: hf-playground/LEO 후속 반응 대기(S4 수량 재실행 여부, 추가 테스트). 하모니시티는 정지 상태 유지 중(재기동 절차는 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
+① **마지막 완료**: **🔴 LEO 직지시로 하모니시티 라이브 정지**(07-29, ogo GPU를 NVlabs/Sana 테스트로 회수) — venture-studio GO, durable 백업 완료(`/Volumes/data/harmonicity_backup/20260729_full_pre_sana/`), watchdog DISABLE. **Sana 실측 3라운드 완료**: ①1차 10건 ②hf-playground 설계 48장(S1~S5) ③hf-playground 방법론 반론에 따른 재검 15장 — **T7(한국어 프롬프트 이해) 결론이 재검에서 오히려 강화**됨(한영 사과대조 3시드 전부 한국어=9/9틀림·영어=9/9정확, T7 자체도 3시드 100% 동일실패 → "한국어=반드시 영어 번역" 파이프라인 규칙 확정 근거 완성). 부수: 🟢캐릭터일관성=같은사람 확인(최대 실사용가치), 여백지시는 시드에 따라 깨질 수 있음(재검에서 새로 발견, 완전자동화엔 검증스텝 필요), P2c 2K화질저하, LoRA silent no-op, 시드재현성 SHA256완전동일.
+② **다음 세션 할 일**: hf-playground/LEO 후속 반응 대기. 하모니시티는 정지 상태 유지 중(재기동 절차는 project_harmonicity.md). ari 커밋관례 정정(author=oven, `-c user.name/email` 오버라이드) 반영 완료 — 앞으로 이 관례로 커밋할 것.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
