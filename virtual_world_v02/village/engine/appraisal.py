@@ -169,10 +169,14 @@ def run_appraisal(
 ) -> dict | None:
     prompt = build_appraisal_prompt(char, other, conversation_text, reflection_text, rel)
     messages = [{"role": "user", "content": prompt}]
-    # max_tokens 1536: 512에서는 reasoning_content가 예산을 다 써 JSON 본문이 잘려나가
-    # 파싱 실패율 98%(163/166 실측, 2026-07-30)였다. D-A2 실측(512=45% / 1536=100%)의
-    # 판례 적용 — kee 전결 승인(2026-07-30). 512로 되돌리면 keyword_fallback 회귀.
-    response = chat(messages, max_tokens=1536, temperature=0.3)
+    # max_tokens 2560 (kee 승인 2026-07-30). 제약이 2단으로 쌓여 있었다:
+    #   ① llama-server 슬롯 컨텍스트(= ctx-size/parallel)가 2048이라 애초에 도달 불가
+    #      → --parallel 4→2 로 슬롯 4096 확보(선행 조치)
+    #   ② 그 위에서도 max_tokens 1536은 부족 — reasoning이 예산을 먹고 JSON이 중도 절단
+    # 실측: mt=1536 → completion 1536 소진·PARSE FAIL / mt=3072 → finish=stop·completion 1363·PARSE OK
+    # 2560 근거: 필요치 1363 + reasoning 변동폭(3,429~4,982자) 여유. 슬롯 예산 980+2560=3,540 < 4,096.
+    # ※ 이 값을 올릴 때는 반드시 `프롬프트 + max_tokens < 슬롯 n_ctx`를 먼저 확인할 것(3072는 4,052로 밀착).
+    response = chat(messages, max_tokens=2560, temperature=0.3)
 
     appraisal = parse_appraisal_response(response)
     if appraisal:
