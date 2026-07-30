@@ -169,7 +169,10 @@ def run_appraisal(
 ) -> dict | None:
     prompt = build_appraisal_prompt(char, other, conversation_text, reflection_text, rel)
     messages = [{"role": "user", "content": prompt}]
-    response = chat(messages, max_tokens=512, temperature=0.3)
+    # max_tokens 1536: 512에서는 reasoning_content가 예산을 다 써 JSON 본문이 잘려나가
+    # 파싱 실패율 98%(163/166 실측, 2026-07-30)였다. D-A2 실측(512=45% / 1536=100%)의
+    # 판례 적용 — kee 전결 승인(2026-07-30). 512로 되돌리면 keyword_fallback 회귀.
+    response = chat(messages, max_tokens=1536, temperature=0.3)
 
     appraisal = parse_appraisal_response(response)
     if appraisal:
