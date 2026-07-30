@@ -2,9 +2,9 @@
 업데이트: 2026-07-30
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **✅ 하모니시티 라이브 재기동 + D-트랙 코드 배포**(07-30, LEO 승인). Sana 테스트 종료로 GPU 해제됨 → Day 565/Tick 13551에서 **무손실 재개**(정지=일시멈춤 확인). 재기동 전 **미배포 D-트랙 11파일 일괄 배포**(신규6: decision_log/safety_rail/autonomy/intervention/systems.economy/systems.institution + 수정5: main/conversation/encounter/llm/save_load) — 로컬 mock 3틱 PASS→ogo 백업(`code_backup/20260730_dtrack_deploy`)→scp→**해시 11/11 일치**+import PASS. **신규 기능 게이트는 전부 OFF 유지**(env 옵트인 9종 전수확인, 미설정 시 기존동작과 동일 = 정지점 "새 지시 없으면 홀드" 규칙 준수) → 활성화는 kee 게이트 대기. **harmonicity.arkedia.work 복구 200**(cloudflared 터널은 이 맥에서 계속 살아있었고, 죽어있던 건 ogo:8765 대시보드 → `HarmonicityDashboard` 태스크 기동으로 해결). watchdog 2종(HarmonicityHealthCheck/LlamaHealthCheck) ENABLE 복원. 대조교훈: ogo PowerShell 파일목록은 **CRLF** 때문에 join/diff가 통째로 깨짐 — `tr -d '\r'` 필수.
+① **마지막 완료**: **✅ 하모니시티 라이브 재기동 + D-트랙 코드 배포**(07-30, LEO 승인). Sana 테스트 종료로 GPU 해제됨 → Day 565/Tick 13551에서 **무손실 재개**(정지=일시멈춤 확인). 재기동 전 **미배포 D-트랙 11파일 일괄 배포**(신규6: decision_log/safety_rail/autonomy/intervention/systems.economy/systems.institution + 수정5: main/conversation/encounter/llm/save_load) — 로컬 mock 3틱 PASS→ogo 백업(`code_backup/20260730_dtrack_deploy`)→scp→**해시 11/11 일치**+import PASS. **신규 기능 게이트는 전부 OFF 유지**(env 옵트인 9종 전수확인, 미설정 시 기존동작과 동일 = 정지점 "새 지시 없으면 홀드" 규칙 준수) → 활성화는 kee 게이트 대기. **harmonicity.arkedia.work 복구 200**(cloudflared 터널은 이 맥에서 계속 살아있었고, 죽어있던 건 ogo:8765 대시보드 → `HarmonicityDashboard` 태스크 기동으로 해결). watchdog 2종(HarmonicityHealthCheck/LlamaHealthCheck) ENABLE 복원. **kee 처분으로 관측·안전 3종(DECISION_LOG/KILL_SWITCH/SAFETY_SNAPSHOT) ON, 거동변경 3종 홀드** → 켜자마자 **라이브 appraisal 파싱 98% 실패** 포착(원인가설 max_tokens 512, kee 회부). 대조교훈: ogo PowerShell 파일목록은 **CRLF** 때문에 join/diff가 통째로 깨짐 — `tr -d '\r'` 필수.
 ① **(이전) 마지막 완료**: **✅ Sana+Krea2 LoRA 조사 전건 클로징**(07-29→30, hf-playground가 자기쪽에서 닫음, 오븐 큐 빔). Sana: 캐릭터일관성 FAIL(InsightFace B조건0.3983<문턱0.40)로 MV파이프 접목 보류. **부수 대발견 파장**: Krea2가 FLUX 아니라 자체 Krea2Pipeline(Qwen3VL) → LoRA 무효점검 확대 → **4종 중 정상은 공식krea LoRA 1종뿐**: detail_slider=확정무효, realism-V2=07-05원본도 픽셀대조(평균차0.2~0.5/255)로 무효였을 가능성 매우높음(육안대조 불요로 hf 동의), gokaygokay=매핑 미검증. **결론: 06-28 이후 Krea2 LoRA 캠페인 상당수가 사실상 base Turbo 출력**(품질 자체는 무관, 귀속만 재해석 필요). `get_list_adapters()` attach확인이 hf 표준절차로 등재됨. ogo 부수: C드라이브 2.7GB→30.2GB 정리, Krea2Pipeline VAE 하드크래시는 sequential_offload+fp32로 우회(근본원인 미확정, 재발시 이 메모 우선참조). 하모니시티는 정지 유지, GPU 자유.
-② **다음 세션 할 일**: ①**하모니시티 3일 관찰(kee 지정, ~08-03)** — decision_records 적재율/틱당 오버헤드·KILL_SWITCH 오발동 0·스냅샷 회전·rep_floor 0.15 효과. 3일 후 kee 회신 필수 ②거동변경 게이트 3종(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지 ③hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
+② **다음 세션 할 일**: ⓪**kee 회신 확인 최우선 — appraisal max_tokens 512→1536 승인 여부**(승인 전까지 라이브는 키워드 fallback으로 도는 중, 관찰 데이터 품질 직결) ①**하모니시티 3일 관찰(kee 지정, ~08-03)** — decision_records 적재율/틱당 오버헤드·KILL_SWITCH 오발동 0·스냅샷 회전·rep_floor 0.15 효과. 3일 후 kee 회신 필수 ②거동변경 게이트 3종(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지 ③hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -23,6 +23,11 @@
     - **홀드 3종**(거동 변경): `HARMONICITY_ECONOMY`·`HARMONICITY_INSTITUTION`(LEO 여유 시 판단, 관측 3일 데이터 쌓인 뒤가 재료로도 나음) · `HARMONICITY_AUTONOMY_LOCATION`(최중량 — D-A2 max_tokens 1536 완주율 100% 전제 + 컴퓨트 여유 실측 동반 조건)
     - 반영: `launch_p11.bat`에 env 3줄 추가(홀드 3종은 주석으로 명시) → 백업 후 배포(해시 대조 fc82ebf) → HarmonicityP11 재기동, **Tick 13554 → 13555 무손실**
     - `launch_p11.bat`을 repo 정본으로 추적 시작(그동안 ogo에만 존재해 대조 불가였음 — 게이트 설정이 여기 있으니 추적 필요)
+  - 🔴 **D-L1 첫 포착(07-30, 켠 지 몇 틱 만에)**: **라이브 appraisal 파싱 98% 실패** — sim.log 2000줄 창 `appraisal 파싱 실패` 163건 vs 대화 83건(기대 166회), decision_records 초기 4건 전부 `interpretation_status=fallback`/`choice=keyword_fallback`
+    - 원인가설: `village/engine/appraisal.py:172` `chat(..., max_tokens=512)` — **D-A2가 45%로 실측한 바로 그 값**(reasoning_content가 예산 소진). 1536이면 100% 실증됨
+    - 파장: 세션60(05-30) 도입 시 "파싱 100%"였으므로 **회귀**. 현 라이브는 appraisal이 아니라 **키워드 fallback으로 감정판정 중** → appraisal이 없애려던 '키워드 긍정편향 → 관계 포화 58%'가 되살아났을 개연성. **rep_floor/Ceiling 관찰 해석 시 교란요인으로 반드시 감안**
+    - 512→1536 수정은 거동+컴퓨트 동시 변경이라 oven 단독처리 금지 → **kee 회부**(3일 기다리지 말고 선판단 권고 첨부). 상세 [[feedback_llm_reasoning_token_budget]]
+    - 부수: decision_record `tick` 필드에 실제로는 **day**가 들어감(코드 주석에 MVP 근사 명시) — 적재율 정밀분석엔 tick 스레딩 필요
   - **관찰 3일(kee 지정 지표)**: ①decision_records.jsonl 적재율·틱당 오버헤드 ②KILL_SWITCH 오발동 0(발동 시 즉시 kee 통지) ③스냅샷 회전 정상·디스크 증가율 ④rep_floor 0.15 재개분(warmth/trust 하한·Ceiling 포화). 3일 후 kee 회신 → 거동변경 3종 상정 여부 판단
 
 - [x] **하모니시티 재가동 + rep_floor 오버라이드(1차)** — oven/ogo — 2026-07-19 착수, 07-29 Sana건으로 관찰 중단
