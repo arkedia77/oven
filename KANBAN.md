@@ -2,15 +2,25 @@
 업데이트: 2026-07-30
 
 ## 📦 캡슐 (세션 재개용 3줄)
-① **마지막 완료**: **✅ Sana+Krea2 LoRA 조사 전건 클로징**(07-29→30, hf-playground가 자기쪽에서 닫음, 오븐 큐 빔). Sana: 캐릭터일관성 FAIL(InsightFace B조건0.3983<문턱0.40)로 MV파이프 접목 보류. **부수 대발견 파장**: Krea2가 FLUX 아니라 자체 Krea2Pipeline(Qwen3VL) → LoRA 무효점검 확대 → **4종 중 정상은 공식krea LoRA 1종뿐**: detail_slider=확정무효, realism-V2=07-05원본도 픽셀대조(평균차0.2~0.5/255)로 무효였을 가능성 매우높음(육안대조 불요로 hf 동의), gokaygokay=매핑 미검증. **결론: 06-28 이후 Krea2 LoRA 캠페인 상당수가 사실상 base Turbo 출력**(품질 자체는 무관, 귀속만 재해석 필요). `get_list_adapters()` attach확인이 hf 표준절차로 등재됨. ogo 부수: C드라이브 2.7GB→30.2GB 정리, Krea2Pipeline VAE 하드크래시는 sequential_offload+fp32로 우회(근본원인 미확정, 재발시 이 메모 우선참조). 하모니시티는 정지 유지, GPU 자유.
-② **다음 세션 할 일**: hf-playground/Leo 새 지시 대기(오늘 큐 없음 확인됨). 하모니시티 재기동 여부는 Leo 판단 대기(절차 project_harmonicity.md). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
+① **마지막 완료**: **✅ 하모니시티 라이브 재기동 + D-트랙 코드 배포**(07-30, LEO 승인). Sana 테스트 종료로 GPU 해제됨 → Day 565/Tick 13551에서 **무손실 재개**(정지=일시멈춤 확인). 재기동 전 **미배포 D-트랙 11파일 일괄 배포**(신규6: decision_log/safety_rail/autonomy/intervention/systems.economy/systems.institution + 수정5: main/conversation/encounter/llm/save_load) — 로컬 mock 3틱 PASS→ogo 백업(`code_backup/20260730_dtrack_deploy`)→scp→**해시 11/11 일치**+import PASS. **신규 기능 게이트는 전부 OFF 유지**(env 옵트인 9종 전수확인, 미설정 시 기존동작과 동일 = 정지점 "새 지시 없으면 홀드" 규칙 준수) → 활성화는 kee 게이트 대기. **harmonicity.arkedia.work 복구 200**(cloudflared 터널은 이 맥에서 계속 살아있었고, 죽어있던 건 ogo:8765 대시보드 → `HarmonicityDashboard` 태스크 기동으로 해결). watchdog 2종(HarmonicityHealthCheck/LlamaHealthCheck) ENABLE 복원. 대조교훈: ogo PowerShell 파일목록은 **CRLF** 때문에 join/diff가 통째로 깨짐 — `tr -d '\r'` 필수.
+① **(이전) 마지막 완료**: **✅ Sana+Krea2 LoRA 조사 전건 클로징**(07-29→30, hf-playground가 자기쪽에서 닫음, 오븐 큐 빔). Sana: 캐릭터일관성 FAIL(InsightFace B조건0.3983<문턱0.40)로 MV파이프 접목 보류. **부수 대발견 파장**: Krea2가 FLUX 아니라 자체 Krea2Pipeline(Qwen3VL) → LoRA 무효점검 확대 → **4종 중 정상은 공식krea LoRA 1종뿐**: detail_slider=확정무효, realism-V2=07-05원본도 픽셀대조(평균차0.2~0.5/255)로 무효였을 가능성 매우높음(육안대조 불요로 hf 동의), gokaygokay=매핑 미검증. **결론: 06-28 이후 Krea2 LoRA 캠페인 상당수가 사실상 base Turbo 출력**(품질 자체는 무관, 귀속만 재해석 필요). `get_list_adapters()` attach확인이 hf 표준절차로 등재됨. ogo 부수: C드라이브 2.7GB→30.2GB 정리, Krea2Pipeline VAE 하드크래시는 sequential_offload+fp32로 우회(근본원인 미확정, 재발시 이 메모 우선참조). 하모니시티는 정지 유지, GPU 자유.
+② **다음 세션 할 일**: ①하모니시티 가동 관찰(Day 565~, rep_floor 0.15 효과 재확인 — 정지 전 관찰 미완료분) ②**D-트랙 게이트 활성화 여부 kee 회부**(배포는 끝났고 env만 켜면 됨: HARMONICITY_DECISION_LOG/AUTONOMY_LOCATION/KILL_SWITCH/SAFETY_SNAPSHOT/ECONOMY/INSTITUTION — 켜는 순간 라이브 세계에 영향, 정지점 규칙상 kee 게이트 필요) ③hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
 
 ## IN PROGRESS
 
-- [ ] **하모니시티 재가동 + rep_floor 오버라이드** — oven/ogo — 2026-07-19 착수
+- [ ] **하모니시티 라이브 재기동(2차) + D-트랙 배포** — oven/ogo — 2026-07-30 ✅ 기동완료, 관찰 진행중
+  - LEO 승인(07-30) → 07-29 Sana건으로 내렸던 라이브 시뮬 재개. **Day 565 / Tick 13551에서 무손실 이어받음**(정지=일시멈춤 실증, 백업 `20260729_full_pre_sana` 사용 불요)
+  - **선행 배포**: D-L1/S1/A1/C1/G2 + Phase A(intervention) 코드가 로컬 커밋만 되고 미배포 상태였음 → "다음 자연 재기동 시 배포" 계획대로 이번에 일괄 반영. 의존폐포 계산해 11파일 확정(main.py가 `intervention`을 무조건 import하므로 Phase A도 폐포에 포함됨)
+  - 절차: 로컬 mock 3틱(`REPRO_MOCK_LLM=1`+격리 DATA_DIR, decision_records.jsonl 생성확인) → ogo 백업 → scp → **해시 11/11 일치 대조** → ogo import 무결성 PASS
+  - **게이트 전량 OFF 유지**: 신규기능 9종 전부 env 옵트인(`HARMONICITY_DECISION_LOG`/`AUTONOMY_LOCATION`/`KILL_SWITCH`/`SAFETY_SNAPSHOT`/`ECONOMY`/`INSTITUTION` 등) 확인 → 미설정 = 기존 동작과 동일. 정지점 규칙("새 지시 없으면 홀드") 준수해 활성화는 **kee 게이트 회부 예정**
+  - 기동 순서: LlamaHarmonicity(모델 로드 ~2분, GPU 26.1GB, health 200) → HarmonicityP11 → HarmonicityDashboard → watchdog 2종 ENABLE 복원
+  - **harmonicity.arkedia.work 200 복구**(LEO 지시). 원인은 터널이 아니라 오리진: cloudflared(이 맥 launchd `com.cloudflared.harmonicity`, PID 1365)는 계속 살아있었고 ogo:8765 대시보드만 죽어 있었음. ⚠️ 호스트명은 harmoni**ci**ty(harmonycity는 미존재, 000)
+  - 다음: rep_floor 0.15 효과 관찰(07-19 착수 후 3일 관찰이 Sana건 정지로 중단됐던 것 재개) → kee에 D-트랙 게이트 활성화 회부
+
+- [x] **하모니시티 재가동 + rep_floor 오버라이드(1차)** — oven/ogo — 2026-07-19 착수, 07-29 Sana건으로 관찰 중단
   - Leo 지시(7/19): Krea2 이미지 캠페인(gen_edit_main_batch.py, PID 3228, GPU 32GB 점유) 중단 → 하모니시티 3일 재가동 + rep_floor 오버라이드 완성
   - `homeostasis.py`에 `HARMONICITY_CONFIG_OVERRIDES`(env JSON) 파라미터화 추가: WARMTH/TRUST_SOFT_CEILING·WARMTH/TRUST_DECAY_RATE·REP_EROSION_MULT·REP_WARMTH_FLOOR. 로컬 mock 스모크+floor 유닛테스트 PASS, 라이브 미설정 시 기존값과 완전 동일(무영향) 확인
   - **API_URL도 `HARMONICITY_API_URL` env override로 전환**(config.py) → "config.py 머신별 분기·동기화 예외" 문제 해소, `launch_p11.bat`에서 `localhost` 지정(ogo 네트워크 불안정 tailnet 의존 제거)
