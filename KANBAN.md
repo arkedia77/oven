@@ -4,7 +4,7 @@
 ## 📦 캡슐 (세션 재개용 3줄)
 ① **마지막 완료**: **✅ 하모니시티 라이브 재기동 + D-트랙 코드 배포**(07-30, LEO 승인). Sana 테스트 종료로 GPU 해제됨 → Day 565/Tick 13551에서 **무손실 재개**(정지=일시멈춤 확인). 재기동 전 **미배포 D-트랙 11파일 일괄 배포**(신규6: decision_log/safety_rail/autonomy/intervention/systems.economy/systems.institution + 수정5: main/conversation/encounter/llm/save_load) — 로컬 mock 3틱 PASS→ogo 백업(`code_backup/20260730_dtrack_deploy`)→scp→**해시 11/11 일치**+import PASS. **신규 기능 게이트는 전부 OFF 유지**(env 옵트인 9종 전수확인, 미설정 시 기존동작과 동일 = 정지점 "새 지시 없으면 홀드" 규칙 준수) → 활성화는 kee 게이트 대기. **harmonicity.arkedia.work 복구 200**(cloudflared 터널은 이 맥에서 계속 살아있었고, 죽어있던 건 ogo:8765 대시보드 → `HarmonicityDashboard` 태스크 기동으로 해결). watchdog 2종(HarmonicityHealthCheck/LlamaHealthCheck) ENABLE 복원. **kee 처분으로 관측·안전 3종(DECISION_LOG/KILL_SWITCH/SAFETY_SNAPSHOT) ON, 거동변경 3종 홀드** → 켜자마자 **라이브 appraisal 파싱 98% 실패** 포착(원인가설 max_tokens 512, kee 회부). 대조교훈: ogo PowerShell 파일목록은 **CRLF** 때문에 join/diff가 통째로 깨짐 — `tr -d '\r'` 필수.
 ① **(이전) 마지막 완료**: **✅ Sana+Krea2 LoRA 조사 전건 클로징**(07-29→30, hf-playground가 자기쪽에서 닫음, 오븐 큐 빔). Sana: 캐릭터일관성 FAIL(InsightFace B조건0.3983<문턱0.40)로 MV파이프 접목 보류. **부수 대발견 파장**: Krea2가 FLUX 아니라 자체 Krea2Pipeline(Qwen3VL) → LoRA 무효점검 확대 → **4종 중 정상은 공식krea LoRA 1종뿐**: detail_slider=확정무효, realism-V2=07-05원본도 픽셀대조(평균차0.2~0.5/255)로 무효였을 가능성 매우높음(육안대조 불요로 hf 동의), gokaygokay=매핑 미검증. **결론: 06-28 이후 Krea2 LoRA 캠페인 상당수가 사실상 base Turbo 출력**(품질 자체는 무관, 귀속만 재해석 필요). `get_list_adapters()` attach확인이 hf 표준절차로 등재됨. ogo 부수: C드라이브 2.7GB→30.2GB 정리, Krea2Pipeline VAE 하드크래시는 sequential_offload+fp32로 우회(근본원인 미확정, 재발시 이 메모 우선참조). 하모니시티는 정지 유지, GPU 자유.
-② **다음 세션 할 일**: ⓪**kee 회신 확인 최우선 — appraisal max_tokens 512→1536 승인 여부**(승인 전까지 라이브는 키워드 fallback으로 도는 중, 관찰 데이터 품질 직결) ①**하모니시티 3일 관찰(kee 지정, ~08-03)** — decision_records 적재율/틱당 오버헤드·KILL_SWITCH 오발동 0·스냅샷 회전·rep_floor 0.15 효과. 3일 후 kee 회신 필수 ②거동변경 게이트 3종(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지 ③hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
+② **다음 세션 할 일**: ⓪**kee 회신 확인 — appraisal 회복조치 3안 중 택일**(A:ctx상향 / B:parallel 4→2(권고) / C:프롬프트축소. 전부 llama-server 재기동 필요. 승인 전까지 라이브는 keyword_fallback 상태) ①**하모니시티 3일 관찰(kee 지정, ~08-03)** — 전환 tick 13564 기준 전/후로 ①파싱 성공률 ②관계지표(rep_floor·포화율) 분리 보고(자연 A/B) — decision_records 적재율/틱당 오버헤드·KILL_SWITCH 오발동 0·스냅샷 회전·rep_floor 0.15 효과. 3일 후 kee 회신 필수 ②거동변경 게이트 3종(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지 ③hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용.
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
@@ -27,6 +27,15 @@
     - 원인가설: `village/engine/appraisal.py:172` `chat(..., max_tokens=512)` — **D-A2가 45%로 실측한 바로 그 값**(reasoning_content가 예산 소진). 1536이면 100% 실증됨
     - 파장: 세션60(05-30) 도입 시 "파싱 100%"였으므로 **회귀**. 현 라이브는 appraisal이 아니라 **키워드 fallback으로 감정판정 중** → appraisal이 없애려던 '키워드 긍정편향 → 관계 포화 58%'가 되살아났을 개연성. **rep_floor/Ceiling 관찰 해석 시 교란요인으로 반드시 감안**
     - 512→1536 수정은 거동+컴퓨트 동시 변경이라 oven 단독처리 금지 → **kee 회부**(3일 기다리지 말고 선판단 권고 첨부). 상세 [[feedback_llm_reasoning_token_budget]]
+    - ✅ **kee 전결 승인·즉시 집행(07-30 23:35)**: 성격이 "거동 신설"이 아니라 **회귀 수복**(세션60 파싱100%가 기준선, keyword_fallback이 고장상태)이라 경상 결재 범위로 판정. 정식 A/B는 **불요** — 현행 512 실측(98% fallback)과 세션60 100%가 이미 양끝을 잡아주므로 **전환 tick 마커 방식(자연 A/B)**으로 갈음
+    - 집행: `appraisal.py` max_tokens 1536(커밋 **e4da25f**, ogo 해시 a70a817 대조 일치, 구버전 `*.bak512` 백업) → 재기동. **전환 마커: 저장상태 Tick 13563에서 재개 → 1536 첫 틱 13564**(중단 시점에 13564가 진행중이라 재실행됨, 데이터 손실 아님)
+    - kee 조건 3건: ①집행실증(커밋해시+무손실+24h 내 파싱률 재실측 ≥95% 기대) 1회 보고 ②홀드 3종 합승 금지(불변) ③1536에서도 미회복이면 가설 기각 → 임의 추가상향 금지·재회부
+  - 🔴🔴 **1536에서도 미회복(0%) → max_tokens 가설 기각. 진짜 원인 확정 = 슬롯당 n_ctx 2048** (07-30 재회부)
+    - 읽기전용 진단(같은 프롬프트, max_tokens만 변경): mt=512→completion 512 / mt=1536→**1068** / mt=3072→**1068**(2배를 더 줘도 같은 자리에서 절단, content_len 전부 0)
+    - 확정: llama-server `--ctx-size 8192 --parallel 4` → **슬롯당 n_ctx = 2048**(`/props` 실측 n_ctx=2048·total_slots=4). appraisal 프롬프트 1,926자(≈980토큰) + 생성 1068 ≈ 2048로 산술 일치
+    - **정확한 규칙: `프롬프트토큰 + 필요생성토큰 < ctx-size/parallel`**. D-A2가 1536으로 풀린 건 그 프롬프트가 짧았기 때문일 뿐 — 판례 정정해 [[feedback_llm_reasoning_token_budget]]에 등재
+    - 조치 후보 3안 회부(서버 재기동 필요): A)ctx 8192→16384/32768(VRAM 여유 4.3GB뿐이라 단계적) B)**parallel 4→2**(VRAM 증가 0, 동시성 절반 — oven 권고) C)프롬프트 축소. max_tokens 1536은 유지 권고(ctx 넓히면 필요해짐)
+    - ⚠️ **관찰 영향**: 조치 전까지 라이브는 keyword_fallback으로 감정판정 → 3일 관찰의 관계지표는 "appraisal 고장 상태" 데이터임을 리포트에 명기할 것. 자연 A/B 마커도 13564가 아니라 **실제 회복조치 tick**으로 재설정 필요
     - 부수: decision_record `tick` 필드에 실제로는 **day**가 들어감(코드 주석에 MVP 근사 명시) — 적재율 정밀분석엔 tick 스레딩 필요
   - **관찰 3일(kee 지정 지표)**: ①decision_records.jsonl 적재율·틱당 오버헤드 ②KILL_SWITCH 오발동 0(발동 시 즉시 kee 통지) ③스냅샷 회전 정상·디스크 증가율 ④rep_floor 0.15 재개분(warmth/trust 하한·Ceiling 포화). 3일 후 kee 회신 → 거동변경 3종 상정 여부 판단
 
