@@ -169,14 +169,17 @@ def run_appraisal(
 ) -> dict | None:
     prompt = build_appraisal_prompt(char, other, conversation_text, reflection_text, rel)
     messages = [{"role": "user", "content": prompt}]
-    # max_tokens 2560 (kee 승인 2026-07-30). 제약이 2단으로 쌓여 있었다:
+    # max_tokens 3072 — A단계(kee 조건부 사전승인, 24h 실측 87.62% < 95%로 발효 2026-07-31).
+    # 제약이 2단으로 쌓여 있었다:
     #   ① llama-server 슬롯 컨텍스트(= ctx-size/parallel)가 2048이라 애초에 도달 불가
-    #      → --parallel 4→2 로 슬롯 4096 확보(선행 조치)
-    #   ② 그 위에서도 max_tokens 1536은 부족 — reasoning이 예산을 먹고 JSON이 중도 절단
+    #      → --parallel 4→2 로 슬롯 4096 확보
+    #   ② 그 위에서도 max_tokens이 부족 — reasoning이 예산을 먹고 JSON이 중도 절단
     # 실측: mt=1536 → completion 1536 소진·PARSE FAIL / mt=3072 → finish=stop·completion 1363·PARSE OK
-    # 2560 근거: 필요치 1363 + reasoning 변동폭(3,429~4,982자) 여유. 슬롯 예산 980+2560=3,540 < 4,096.
-    # ※ 이 값을 올릴 때는 반드시 `프롬프트 + max_tokens < 슬롯 n_ctx`를 먼저 확인할 것(3072는 4,052로 밀착).
-    response = chat(messages, max_tokens=2560, temperature=0.3)
+    # 2560(슬롯 4096)에서 24h 87.62%까지 회복했으나 reasoning 변동폭(3,429~4,982자) 상단 회차를
+    # 못 담아 경계에 걸침 → A단계로 --ctx-size 8192→16384(슬롯 8192) + 3072 동반 상향.
+    # ※ 이 값을 올릴 때는 반드시 `프롬프트 + max_tokens < 슬롯 n_ctx`를 먼저 확인할 것.
+    #    현재 예산: 프롬프트 약 980 + 3072 = 4,052 < 8,192 (여유 충분).
+    response = chat(messages, max_tokens=3072, temperature=0.3)
 
     appraisal = parse_appraisal_response(response)
     if appraisal:
