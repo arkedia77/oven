@@ -85,7 +85,10 @@
   - 🔴 **사고+복구**: manifest.json 인코딩버그(cp949가 em-dash 못씀) 크래시 → 직접 PowerShell 수정 시도가 파일 손상(oven 실수) → hf-playground 정본(commit 3411330, sha1 f8afa85d...) 재배포로 해결. 원칙 확립: ogo 파이썬 파일은 repo경유로만 수정 [[feedback_remote_file_edit_via_repo]]
   - 🔴 **7/16 18:3x~7/17 13:4x ogo 재차 19h 오프라인**(2번째 장기사고) — 원인 여전히 불명, 복구 경위도 불명(자동복구 추정, Leo 물리조치 요청은 해뒀으나 확인 못함)
   - ✅ **7/17 13:47 복귀 후 완주 확인**: MJ patterns 31/31(manifest+실물PNG32개 대조), nonhuman_retry28 28/28(실물 대조) — hf-playground에 회신, 재서빙 방식 문의 중
-  - 다음: hf-playground 회신 오면 일괄 재서빙
+  - ✅ **08-01 귀속 확정(kimsecretary 질의 회신)**: **LoRA 미적재 확정** — ①`gen_krea2_source.py`의 `--lora-repo` 기본값 빈문자열 + `if args.lora_repo:` 가드 ②러너 4종(`run_retry60`/`run_mj_guarded`/`run_retry_final`/`run_retry_final2`) **전부 `--lora-*` 인자 0건** ③런타임 manifest **`lora_repo: null`·`lora_weight: null`·`errors: {}`**. → **귀속 = base Krea2-Raw(model_raw, 비증류 BASE — ★Turbo 아님)**, steps 32/guidance 3.5. hf 제안 1장 판별 절차는 **불요**(LoRA 물렸을 때만 하는 절차)
+  - 🔴 **제 미발신 누락 확인**: 07-17 완주 후 hf-playground에만 회신하고 **kimsecretary에는 안 보냄** → LEO 보고가 지금껏 안 올라간 원인. 회신 유실 아님. 다행히 오귀속이 LEO 기록에 들어가기 전에 잡힘
+  - ⚠️ **manifest 장수 ≠ 실물**(nonhuman assets 12 / mj 31 vs 실물 PNG 28 / 32) — 마지막 재발사분만 덮어쓴 결과. **완주 판정·인용은 실물 PNG 개수로 할 것**
+  - 별건 이월: hf 요청 «같은 환경 재검으로 realism-V2를 확정 무효 승격»은 07-05 캠페인 설정으로 돌려야 하는 건(이 60장 배치 아님), GPU 슬롯 조율 필요
 
 - [x] **작곡·편곡 LoRA(ARR, Qwen2.5-1.5B) — 라운드 CLOSED** — oven/3070 — 2026-07-11~14 ✅ 프로덕션 설정 확정
   - Qwen2.5-1.5B + REMI vocab 542신규토큰(POP909 909곡) LoRA. **최종설정: ckpt_v4_epoch2+temp0.6+top_p0.95+rep_penalty1.2+min_new_tokens300** — valid_rate 0.875·valid-gated chord_tone 0.632(GT0.875), P3오염 0/15
