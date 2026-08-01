@@ -88,7 +88,9 @@
   - ✅ **08-01 귀속 확정(kimsecretary 질의 회신)**: **LoRA 미적재 확정** — ①`gen_krea2_source.py`의 `--lora-repo` 기본값 빈문자열 + `if args.lora_repo:` 가드 ②러너 4종(`run_retry60`/`run_mj_guarded`/`run_retry_final`/`run_retry_final2`) **전부 `--lora-*` 인자 0건** ③런타임 manifest **`lora_repo: null`·`lora_weight: null`·`errors: {}`**. → **귀속 = base Krea2-Raw(model_raw, 비증류 BASE — ★Turbo 아님)**, steps 32/guidance 3.5. hf 제안 1장 판별 절차는 **불요**(LoRA 물렸을 때만 하는 절차)
   - 🔴 **제 미발신 누락 확인**: 07-17 완주 후 hf-playground에만 회신하고 **kimsecretary에는 안 보냄** → LEO 보고가 지금껏 안 올라간 원인. 회신 유실 아님. 다행히 오귀속이 LEO 기록에 들어가기 전에 잡힘
   - ⚠️ **manifest 장수 ≠ 실물**(nonhuman assets 12 / mj 31 vs 실물 PNG 28 / 32) — 마지막 재발사분만 덮어쓴 결과. **완주 판정·인용은 실물 PNG 개수로 할 것**
-  - 별건 이월: hf 요청 «같은 환경 재검으로 realism-V2를 확정 무효 승격»은 07-05 캠페인 설정으로 돌려야 하는 건(이 60장 배치 아님), GPU 슬롯 조율 필요
+  - ✅ **08-01 kimsecretary 접수·종결**: base=Turbo 정정 수용(«base Krea2-Raw(비증류, model_raw)·LoRA 미적재·steps 32·guidance 3.5»로 기록), manifest 대신 **실물 PNG 28+32=60장** 기준 채택. LEO 보고는 «정정»이 아니라 **«사전 차단»**으로 올라감(오귀속이 애초에 생길 여지 없었음) + 60장 결과 자체도 함께 보고
+  - 🔴 **성문화된 규율(재발방지)**: **작업을 발주한 주체에게는 완료 회신을 반드시 1건, cc 아니라 to로** — 기술 협업 상대(hf)와 발주자(kimsecretary)가 다를 때 기술 쪽에만 회신하면 LEO 보고 라인이 통째로 끊김. 상세 [[reference_agent_comm]]
+  - 별건 **보류(kimsecretary 판단)**: realism-V2 «거의 확실 무효 → 확정 무효» 승격 재검은 **지금 발주 안 함** — 어느 등급이든 안 쓰므로 의사결정이 안 바뀌고 GPU 슬롯 비용이 실익보다 큼. **LoRA 재도입 검토 시점에 gokaygokay 매핑 미검증 해소와 묶어 1슬롯으로 처리** 예정. LEO가 이미지 라인 재개 지시 시 kimsecretary가 재발주 — **oven이 먼저 움직이지 말 것**
 
 - [x] **작곡·편곡 LoRA(ARR, Qwen2.5-1.5B) — 라운드 CLOSED** — oven/3070 — 2026-07-11~14 ✅ 프로덕션 설정 확정
   - Qwen2.5-1.5B + REMI vocab 542신규토큰(POP909 909곡) LoRA. **최종설정: ckpt_v4_epoch2+temp0.6+top_p0.95+rep_penalty1.2+min_new_tokens300** — valid_rate 0.875·valid-gated chord_tone 0.632(GT0.875), P3오염 0/15
