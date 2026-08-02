@@ -182,11 +182,16 @@ def run_appraisal(
     response = chat(messages, max_tokens=3072, temperature=0.3)
 
     appraisal = parse_appraisal_response(response)
+    # prompt= 필드: 회귀 조기경보(harmonicity_parse_watch.py)가 파싱률과 함께 읽는다.
+    # 2026-07/08 회귀의 원인 후보 중 「캐릭터 상태 누적으로 프롬프트가 자연 증가」를
+    # 다음 재발 시 그 자리에서 가르기 위한 계측(kee: ⓑ를 별건 신설 대신 ⓐ에 흡수).
+    # 출력 끝에 덧붙이기만 하므로 기존 로그 파서(부분일치)는 영향받지 않는다.
+    _p = f" prompt={len(prompt)}자"
     if appraisal:
         print(f"    🧠 appraisal [{char.name}]: {appraisal.get('emotional_valence', '?')} "
-              f"— {appraisal.get('reasoning', '')[:60]}")
+              f"— {appraisal.get('reasoning', '')[:60]}{_p}")
     else:
-        print(f"    ⚠️ appraisal 파싱 실패 [{char.name}], 키워드 fallback")
+        print(f"    ⚠️ appraisal 파싱 실패 [{char.name}], 키워드 fallback{_p}")
 
     return appraisal
 

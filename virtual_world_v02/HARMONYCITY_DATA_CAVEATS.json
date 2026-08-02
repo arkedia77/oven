@@ -1,0 +1,61 @@
+{
+  "spec_version": "v0",
+  "updated": "2026-08-02",
+  "owner": "oven",
+  "purpose": "구간별 데이터 판독 캐비엇의 기계 판독 정본. 문서를 읽지 않고 데이터를 직접 조회하는 소비자에게도 캐비엇이 닿도록 한다(kee 지시 2026-08-02: '캐비엇을 데이터 산출물 자체에 기계적으로 붙일 것').",
+  "day_from_tick": "Day = Tick // 24 + 1 (로그 실측 확인)",
+  "segments": [
+    {
+      "id": "regression",
+      "label": "① appraisal 회귀(고장) 구간",
+      "tick_from": 7700,
+      "tick_to": 13566,
+      "day_from": 322,
+      "day_to": 565,
+      "severity": "high",
+      "caveat": "지표의 부재는 상태의 부재가 아니다. 이 구간은 감정 판정이 LLM appraisal이 아니라 키워드 fallback으로 돌아 갈등이 계측되지 않은 구간이다. 관계지표를 '그 시기 마을이 평화로웠다'로 읽으면 안 된다.",
+      "evidence": {
+        "parse_success_rate": "약 0.5% (500틱 버킷 전수 집계: tick 7000까지 100% → 7500~ 83.9% → 8000~ 0.4%)",
+        "tension_nonzero_ratio": "5.1% (수복 후 구간은 22.2% / 14.8%)",
+        "fallback_tension_delta_mean": "+0.0001 (parsed는 +0.0181, 약 180배 차)"
+      },
+      "affected_fields": ["tension", "warmth", "trust", "affection", "interpretation_status", "choice"],
+      "source": "HARMONYCITY_3DAY_OBSERVATION_REPORT_20260802.md §1-1, §6-2 / HARMONYCITY_D-L1_FIRST_ANALYSIS_20260731.md",
+      "cause_status": "미규명 — 개시 시점의 원인은 확정되지 않았다(후보: 프롬프트 자연 증가 / llama-server 인자 변경). 확정된 것은 '프롬프트+생성이 슬롯 컨텍스트를 넘으면 실패'라는 메커니즘뿐."
+    },
+    {
+      "id": "slot4096_mt1536",
+      "label": "② 슬롯4096·mt1536 구간",
+      "tick_from": 13567,
+      "tick_to": 13568,
+      "day_from": 566,
+      "day_to": 566,
+      "severity": "high",
+      "caveat": "표본으로서 의미가 없다(2틱·appraisal 9회). 수치 비교에 쓰지 말고 '슬롯만 넓혀서는 안 됐다'는 정성적 근거로만 사용할 것.",
+      "evidence": {"parse_success_rate": "0% (n=9)"},
+      "affected_fields": ["*"],
+      "source": "HARMONYCITY_3DAY_OBSERVATION_REPORT_20260802.md §1"
+    },
+    {
+      "id": "mt2560_partial",
+      "label": "③ mt2560 부분 회복 구간",
+      "tick_from": 13569,
+      "tick_to": 14003,
+      "day_from": 566,
+      "day_to": 583,
+      "severity": "low",
+      "caveat": "부분 회복 구간(파싱 87.62%). 약 12%의 판정이 여전히 키워드 fallback이므로, 정밀 비교 시 구간④(97%대)와 동급으로 묶지 말 것.",
+      "evidence": {"parse_success_rate": "87.62% (729/832)"},
+      "affected_fields": ["interpretation_status", "choice", "tension"],
+      "source": "HARMONYCITY_3DAY_OBSERVATION_REPORT_20260802.md §1"
+    }
+  ],
+  "reading_rules": [
+    {
+      "field": "zero_relations",
+      "rule": "rep_floor의 '침식 경로 하한 한정' 규칙과 함께만 인용할 것. rep_floor는 평판침식 경로에만 적용되며(homeostasis.py:142-143) 감쇠·갈등 경로는 통과해 0.0까지 갈 수 있다. 0.0쌍의 존재는 rep_floor의 실패가 아니다.",
+      "floor_working_indicator": "floor 작동 여부의 지표는 별개로 '정확히 0.1500에 고정된 쌍 수'다.",
+      "source": "HARMONYCITY_REP_FLOOR_SPEC_v0.md §2, §4 (L2-003 확정)"
+    }
+  ]
+}

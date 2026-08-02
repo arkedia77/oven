@@ -5,6 +5,11 @@
 """
 import json
 import statistics as st
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from village import data_caveats  # noqa: E402  기계 캐비엇(kee 지시 2026-08-02)
 from collections import Counter, defaultdict
 
 import sys
@@ -21,7 +26,9 @@ with open(PATH, encoding="utf-8") as f:
 print(f"총 레코드: {len(recs)}")
 print(f"judgment_type: {Counter(r.get('judgment_type') for r in recs)}")
 print(f"interpretation_status: {Counter(r.get('interpretation_status') for r in recs)}")
-print(f"day 범위: {min(r['tick'] for r in recs)} ~ {max(r['tick'] for r in recs)} (tick 필드=day 근사)")
+_days = [r['tick'] for r in recs]
+print(f"day 범위: {min(_days)} ~ {max(_days)} (tick 필드=day 근사)")
+data_caveats.warn(days=_days, stream=sys.stdout)
 print()
 
 # choice 분포 (parsed면 emotional_valence, fallback이면 'keyword_fallback')

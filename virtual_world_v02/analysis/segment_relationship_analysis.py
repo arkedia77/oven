@@ -11,6 +11,11 @@ Day = Tick/24 + 1 (로그 실측 확인)
 """
 import json
 import statistics as st
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from village import data_caveats  # noqa: E402  기계 캐비엇(kee 지시 2026-08-02)
 
 MAXDAY = 615  # 로그 실측 maxDay
 H = json.load(open("rh3.json", encoding="utf-8"))
@@ -20,6 +25,11 @@ AX = ("warmth", "trust", "tension", "affection")
 n = len(next(iter(H.values()))["warmth"])
 days = list(range(MAXDAY - n + 1, MAXDAY + 1))
 print(f"history 창: Day {days[0]} ~ {days[-1]} ({n}일), 쌍 {len(H)}")
+data_caveats.warn(days=days, stream=sys.stdout)
+_zr = data_caveats.reading_rule("zero_relations")
+if _zr:
+    print("\n[판독 규칙] zero_relations: " + _zr["rule"])
+    print("[판독 규칙] " + _zr["floor_working_indicator"] + "  (출처: " + _zr["source"] + ")")
 
 SEGS = [
     ("① 고장(fallback)", [d for d in days if d <= 565]),
