@@ -4,9 +4,9 @@
 배경: appraisal 파싱이 tick ~7,700 ~ 13,568 동안 사실상 죽어 있었으나(성공률 ~0.5%)
       244 마을일 동안 아무도 몰랐다. 그 재발을 막는 것이 이 감시자의 목적이다.
 
-판정 기준(실측으로 확정 — 상세는 아래 THRESHOLD 주석):
-  롤링 WINDOW개 appraisal 창의 성공률이 THRESHOLD 미만인 창이
-  CONSEC회 연속으로 나오면 경보 마커를 남긴다.
+판정 기준(실측으로 확정 — 상세는 아래 THRESHOLD/PERSIST 주석):
+  롤링 WINDOW개 appraisal 창의 성공률이 THRESHOLD 미만인 상태가
+  새 이벤트 PERSIST개 동안 지속되면 경보 마커를 남긴다.
 
 라이브 무침범: sim.log를 읽기만 하며 시뮬레이션 프로세스를 건드리지 않는다.
 """
@@ -26,11 +26,17 @@ MARKER = BASE / "PARSE_DEGRADATION_ALERT.json"
 # --- 임계 근거(2026-08-02 실측, 구간④ n=1,428) ---------------------------------
 # 정상 운영 중에도 롤링 최저 성공률은: 창100 = 94.0% / 창200 = 94.5% / 창400 = 96.5%
 # → kee 권고 임계 95%는 창100·200에서는 **오탐**이다. 창400에서만 성립(여유 1.5%p).
-# → 창을 400으로 키워 임계 95%를 유지하고, 연속 2창 위반을 추가 조건으로 걸어
-#    일시적 흔들림을 걸러낸다. 붕괴(0.4%)나 부분회복 정체(87.6%)는 즉시 걸린다.
+# → 창을 400으로 키워 임계 95%를 유지한다(오탐을 결정한 변수는 임계값이 아니라 창 크기였다).
+#    붕괴(0.4%)나 부분회복 정체(87.6%)는 첫 창에서 즉시 걸린다.
 WINDOW = int(os.environ.get("PARSE_WATCH_WINDOW", 400))
 THRESHOLD = float(os.environ.get("PARSE_WATCH_THRESHOLD", 95.0))
-CONSEC = int(os.environ.get("PARSE_WATCH_CONSEC", 2))
+# --- 지속성 조건(PERSIST) ---------------------------------------------------
+# ★2026-08-02 정정: 롤링 창은 stride=1이라 인접한 두 창이 400개 중 399개를 공유한다.
+#   따라서 처음 설계했던 「연속 2창 위반」은 새 이벤트 1개 차이일 뿐이라
+#   노이즈 필터로 사실상 기능하지 않았다(kee 질의로 드러남).
+#   → 지속성을 '연속 위반 창 수'가 아니라 **위반이 지속된 새 이벤트 수**로 정의한다.
+#   기본 200 = 창의 절반이 갈릴 때까지 위반이 유지되어야 통지 → 실질 지속성 확인.
+PERSIST = int(os.environ.get("PARSE_WATCH_PERSIST", 200))
 # 관찰 시작 tick(그 이전 = 회귀·수복 구간이라 경보 대상 아님). A단계 마커.
 SINCE_TICK = int(os.environ.get("PARSE_WATCH_SINCE_TICK", 14004))
 
@@ -65,7 +71,11 @@ def scan(path: Path):
 
 
 def evaluate(events):
-    """연속 위반 창 수와 최근 창 성공률을 돌려준다."""
+    """(지속 이벤트 수, 최근 창 성공률, 최저 창 성공률).
+
+    run = 끝에서부터 임계 미만이 이어진 롤링 창 위치 수.
+    stride=1이므로 이 값은 곧 **위반이 지속된 새 appraisal 이벤트 수**와 같다.
+    """
     if len(events) < WINDOW:
         return 0, None, 0
     rates = []
@@ -75,7 +85,7 @@ def evaluate(events):
         r = 100.0 * sum(events[i:i + WINDOW]) / WINDOW
         rates.append(r)
         worst = min(worst, r)
-    # 끝에서부터 연속 위반 창 수
+    # 끝에서부터 위반이 이어진 창 위치 수 = 위반 지속 이벤트 수(stride=1)
     for r in reversed(rates):
         if r < THRESHOLD:
             run += 1
@@ -98,17 +108,19 @@ def main():
         "threshold": THRESHOLD,
         "latest_window_rate": round(latest, 2) if latest is not None else None,
         "worst_window_rate": round(worst, 2) if events else None,
-        "consecutive_violations": run,
+        "persist_events": run,
+        "persist_required": PERSIST,
         "prompt_chars_median": med,
         "prompt_chars_max": max(prompts) if prompts else None,
         "prompt_samples": len(prompts),
     }
     print("[watch] " + json.dumps(summary, ensure_ascii=False))
 
-    if run >= CONSEC:
+    if run >= PERSIST:
         summary["alert"] = (
-            f"appraisal 파싱 성공률이 롤링 {WINDOW}창 기준 {THRESHOLD}% 미만인 창이 "
-            f"{run}회 연속 관측됨 — 회귀 의심. 라이브 설정을 임의로 바꾸지 말고 kee에 회부할 것."
+            f"appraisal 파싱 성공률이 롤링 {WINDOW}창 기준 {THRESHOLD}% 미만인 상태로 "
+            f"새 이벤트 {run}개(요구 {PERSIST}개) 동안 지속됨 — 회귀 의심. "
+            f"라이브 설정을 임의로 바꾸지 말고 kee에 회부할 것."
         )
         summary["hint"] = (
             "prompt_chars_median 이 과거 대비 커졌으면 «프롬프트 자연 증가로 슬롯 컨텍스트 초과» "
