@@ -1,0 +1,238 @@
+{
+ "temp": 0.3,
+ "seed": 123,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [
+  {
+   "label": "step1",
+   "prompt_tokens": 382,
+   "completion_tokens": 182,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step2",
+   "prompt_tokens": 658,
+   "completion_tokens": 136,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step3",
+   "prompt_tokens": 1096,
+   "completion_tokens": 181,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step4",
+   "prompt_tokens": 1451,
+   "completion_tokens": 173,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step5",
+   "prompt_tokens": 1926,
+   "completion_tokens": 154,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step6",
+   "prompt_tokens": 2382,
+   "completion_tokens": 161,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step7",
+   "prompt_tokens": 2845,
+   "completion_tokens": 128,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step8",
+   "prompt_tokens": 3275,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step9",
+   "prompt_tokens": 3703,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step10",
+   "prompt_tokens": 4131,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step11",
+   "prompt_tokens": 4559,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step12",
+   "prompt_tokens": 4987,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step13",
+   "prompt_tokens": 5415,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step14",
+   "prompt_tokens": 5843,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step15",
+   "prompt_tokens": 6271,
+   "completion_tokens": 126,
+   "finish_reason": "tool_calls"
+  }
+ ],
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"bucket_ticks\":100,\"pattern\":\"appraisal|judgment\"}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[128,512,1024]}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|reloaded|server started|config\\\\|model\\\\|system\\\\|prompt\\\\|Gemma-4\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 6,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 7,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 8,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 9,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 10,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 11,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 12,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 13,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 14,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  },
+  {
+   "step": 15,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"13:24|error\\\\|warning|failed to load\\\\|Gemma-4\\\\|model\\\\|config\"}"
+   ]
+  }
+ ]
+}

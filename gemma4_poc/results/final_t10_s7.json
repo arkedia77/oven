@@ -1,0 +1,238 @@
+{
+ "temp": 1.0,
+ "seed": 7,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [
+  {
+   "label": "step1",
+   "prompt_tokens": 382,
+   "completion_tokens": 107,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step2",
+   "prompt_tokens": 584,
+   "completion_tokens": 127,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step3",
+   "prompt_tokens": 885,
+   "completion_tokens": 228,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step4",
+   "prompt_tokens": 1414,
+   "completion_tokens": 203,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step5",
+   "prompt_tokens": 1919,
+   "completion_tokens": 233,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step6",
+   "prompt_tokens": 2452,
+   "completion_tokens": 156,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step7",
+   "prompt_tokens": 2910,
+   "completion_tokens": 222,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step8",
+   "prompt_tokens": 3434,
+   "completion_tokens": 219,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step9",
+   "prompt_tokens": 3955,
+   "completion_tokens": 109,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step10",
+   "prompt_tokens": 4158,
+   "completion_tokens": 100,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step11",
+   "prompt_tokens": 4353,
+   "completion_tokens": 92,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step12",
+   "prompt_tokens": 4540,
+   "completion_tokens": 128,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step13",
+   "prompt_tokens": 4763,
+   "completion_tokens": 112,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step14",
+   "prompt_tokens": 4970,
+   "completion_tokens": 110,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step15",
+   "prompt_tokens": 5175,
+   "completion_tokens": 112,
+   "finish_reason": "tool_calls"
+  }
+ ],
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[30,128]}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"len>128 || len===128|3596}<tool_call|><|tool_call>call:grep_log{pattern:\",\"|finish_reason===\\\"length\\\"<|\\\"|>,bucket_ticks\":4068}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"model=|llama|llamacpp-server start\\\\|restarted\\\\|updated|128`}]\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"[']llm|21948\\\\|latest update\\\\]||edit=|changed|updated|added|removed\\\",6500}<tool_call|>Grepped around tick 7500 for the event that changed it.<|tool_call>call:grep_log{pattern:\"}"
+   ]
+  },
+  {
+   "step": 6,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"2008|941,966\\\\|deployment\\\\|updated\\\\|changed\\\\|server rebooted|7350,7450}<tool_call|>Two narrow probes around the failure boundary.<|tool_call>call:grep_log{pattern:\"}"
+   ]
+  },
+  {
+   "step": 7,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"8340,8500|updated\\\\|modified\\\\|new version\\\\|reverted|602}<tool_call|>Checked tick 8340–8500 for commit-style change event; nothing found. Then check the parse rate's downstream effect (appraisal_error) to see if any system caught it and logged a secondary error, giving us another angle on what broke at 8100.\"}"
+   ]
+  },
+  {
+   "step": 8,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"7511,7694|server reloaded\\\\|version updated\\\\|update|280}<tool_call|>Checked the server restart around tick 7500 and it's clear — no reload. So what broke? The error is a cut-off at ~128 tokens (n_ctx/4), yet n_ctx stayed constant; that means one request suddenly grew past its share. Inspect app metrics for any spike in output length or system load near 7500, which would reveal the overload I can't see in raw text.\"}"
+   ]
+  },
+  {
+   "step": 9,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 10,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 11,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 12,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 13,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 14,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 15,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  }
+ ]
+}
