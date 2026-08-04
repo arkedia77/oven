@@ -82,6 +82,7 @@ AP = argparse.ArgumentParser()
 AP.add_argument("--temp", type=float, required=True)
 AP.add_argument("--seed", type=int, default=-1)
 AP.add_argument("--out", required=True)
+AP.add_argument("--max-steps", type=int, default=5)   # 2안: 상한만 단독으로 움직인다
 ARGS = AP.parse_args()
 
 
@@ -95,15 +96,28 @@ def call(messages, label, max_tokens=700):
     r.raise_for_status()
     d = r.json()
     m = d["choices"][0]["message"]
-    print(f"\n--- [{label}] {time.time()-t0:.1f}s finish={d['choices'][0].get('finish_reason')}")
+    u = d.get("usage") or {}
+    USAGE.append({"label": label, "prompt_tokens": u.get("prompt_tokens"),
+                  "completion_tokens": u.get("completion_tokens"),
+                  "finish_reason": d["choices"][0].get("finish_reason")})
+    print(f"\n--- [{label}] {time.time()-t0:.1f}s finish={d['choices'][0].get('finish_reason')} "
+          f"prompt_tokens={u.get('prompt_tokens')}")
     return m
+
+
+USAGE = []
 
 
 hist = [{"role": "system", "content": SYS}, {"role": "user", "content": USER}]
 trace = []
 
-for step in range(1, 6):
-    m = call(hist, f"step{step}")
+for step in range(1, ARGS.max_steps + 1):
+    try:
+        m = call(hist, f"step{step}")
+    except Exception as e:                      # 컨텍스트 초과 등 — 부분 결과를 잃지 않는다
+        print(f"    ★중단: {type(e).__name__}: {e}")
+        trace.append({"step": step, "tools": None, "aborted": f"{type(e).__name__}: {e}"})
+        break
     tcs = m.get("tool_calls")
     txt = (m.get("content") or "").strip()
     if tcs:
@@ -129,6 +143,7 @@ print("\n" + "=" * 70)
 print("LOGDIAG_TRACE " + json.dumps(trace, ensure_ascii=False))
 with open(ARGS.out, "w", encoding="utf-8") as f:
     json.dump({"temp": ARGS.temp, "seed": ARGS.seed, "threads": 4,
-               "model": "gemma4-v2-Q4_K_M.gguf", "max_tokens": 700, "max_steps": 5,
-               "trace": trace}, f, ensure_ascii=False, indent=1)
+               "model": "gemma4-v2-Q4_K_M.gguf", "max_tokens": 700,
+               "max_steps": ARGS.max_steps, "ctx_size": 8192,
+               "usage": USAGE, "trace": trace}, f, ensure_ascii=False, indent=1)
 print("WROTE " + ARGS.out)
