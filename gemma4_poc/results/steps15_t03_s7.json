@@ -1,0 +1,17 @@
+{
+ "temp": 0.3,
+ "seed": 7,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [],
+ "trace": [
+  {
+   "step": 1,
+   "tools": null,
+   "aborted": "ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8090): Max retries exceeded with url: /v1/chat/completions (Caused by NewConnectionError(\"HTTPConnection(host='127.0.0.1', port=8090): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+  }
+ ]
+}

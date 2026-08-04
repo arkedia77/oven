@@ -1,0 +1,238 @@
+{
+ "temp": 0.3,
+ "seed": 42,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [
+  {
+   "label": "step1",
+   "prompt_tokens": 382,
+   "completion_tokens": 162,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step2",
+   "prompt_tokens": 845,
+   "completion_tokens": 127,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step3",
+   "prompt_tokens": 1067,
+   "completion_tokens": 134,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step4",
+   "prompt_tokens": 1375,
+   "completion_tokens": 205,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step5",
+   "prompt_tokens": 1881,
+   "completion_tokens": 95,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step6",
+   "prompt_tokens": 2278,
+   "completion_tokens": 138,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step7",
+   "prompt_tokens": 2718,
+   "completion_tokens": 102,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step8",
+   "prompt_tokens": 3122,
+   "completion_tokens": 93,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step9",
+   "prompt_tokens": 3517,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step10",
+   "prompt_tokens": 3909,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step11",
+   "prompt_tokens": 4301,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step12",
+   "prompt_tokens": 4693,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step13",
+   "prompt_tokens": 5085,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step14",
+   "prompt_tokens": 5477,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step15",
+   "prompt_tokens": 5869,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  }
+ ],
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"error|warn.*appraisal|sentiment|emotion\"}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[128,512,1024]}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 6,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 7,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파ising|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 8,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 9,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 10,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 11,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 12,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 13,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 14,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 15,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error.*json\\\\|\\\"end_of_text\\\"\\\\|finish_reason\"}"
+   ]
+  }
+ ]
+}

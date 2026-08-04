@@ -1,0 +1,238 @@
+{
+ "temp": 1.0,
+ "seed": 42,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [
+  {
+   "label": "step1",
+   "prompt_tokens": 382,
+   "completion_tokens": 249,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step2",
+   "prompt_tokens": 933,
+   "completion_tokens": 141,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step3",
+   "prompt_tokens": 1376,
+   "completion_tokens": 266,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step4",
+   "prompt_tokens": 1944,
+   "completion_tokens": 101,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step5",
+   "prompt_tokens": 2138,
+   "completion_tokens": 251,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step6",
+   "prompt_tokens": 2688,
+   "completion_tokens": 308,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step7",
+   "prompt_tokens": 3298,
+   "completion_tokens": 198,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step8",
+   "prompt_tokens": 3797,
+   "completion_tokens": 172,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step9",
+   "prompt_tokens": 4270,
+   "completion_tokens": 190,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step10",
+   "prompt_tokens": 4760,
+   "completion_tokens": 90,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step11",
+   "prompt_tokens": 4945,
+   "completion_tokens": 188,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step12",
+   "prompt_tokens": 5435,
+   "completion_tokens": 106,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step13",
+   "prompt_tokens": 5715,
+   "completion_tokens": 222,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step14",
+   "prompt_tokens": 6235,
+   "completion_tokens": 102,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step15",
+   "prompt_tokens": 6639,
+   "completion_tokens": 128,
+   "finish_reason": "tool_calls"
+  }
+ ],
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal: [1-9]\\\\d*[a-zA-Z0-9]*; 2\\\\|3\\\\|5s|finish_reason\"}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"edit /etc/llama.ini | re-launch llama server|loading model.*] .* [a-zA-Z]{2,}[ ]+(2|3)s (config changed|server stopped\\\\|restarted)|max_position=|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal .*[a-zA-Z0-9]+;| .*{.*} at t=85,360|Stop decoding line after 27.4ms\\\\|stop_sequence reached; finish _reason=[1-2] [^]|error in llama.cpp\\n```json\\n{\\n  \\\"results\\\": {},\\n  \\\"size\\\": 0,\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"total\\\": 0,\\n  \\\"user_id\\\":\\\"0\\\",\\\"user_agent\\\":\\\"Mozilla/5.0 (Windows NT 10.0; Win64x64)\\\"\\n}\\n\",\"search_type\":\"exact match or prefix and regex where applicable for exact lines I need\"}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\".*llama_model_parameters \\\\| model=gemma-4\\\\| llama_gpt_attention 0,258 .*ktx .*|n_ctx per slot (6397,14) = 2048 total slots 4 | n_tokens used \\\\d{1,}\\\\s?of\\\\s?\\\\d{3} [a-zA-Z]+\",\"search_type\":\"all of these strings in the file to find where a llama.cpp line was added and whether it's a static config or dynamic parameter that changed the 2k limit\"}"
+   ]
+  },
+  {
+   "step": 6,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"llamaclass Ggemma4Gemma2 \\\\| model=gemma-1 .\\\\|n_ctx .*|max_seqlen 65073 ,993 | n_ctx = \\\\d+, [a-z]+ total slots \\\\d+.*\\n\\nt0\\n<|channel>}<tool_call|>Grepping for the llama.ini/launcher config entries that control context size and per-request limits.<|tool_call>call:grep_llm_server{file_path:[\",\"/app/harmoni3125008b7a0c69f9e4cd5cfddfd7aef0e4bd7fdbafcb640ffbbdaaa7dfae0d20fa9b762eb1baeea3ab83de6d32edceeeeb7eae6ad978bcbe1c5444fd,llm_server.py<|\\\"|>],prefix\":true}"
+   ]
+  },
+  {
+   "step": 7,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"n_ctx | ktx= [a-z0-9]+|max_pos.*[23]\\\\s*[A-Z]|ktx size [1-8][Kk]\\\\|llama \\\\bktc\\\\w* (can't load|model not loaded)\\n\\nt0\\n\",\"search_type\":\"all of these strings in the file to find where n_ctx is set and whether it's a static config or dynamic parameter that changed the 2k limit\"}"
+   ]
+  },
+  {
+   "step": 8,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"n\\\\_ctx.*=|ktx= [1-8][Kk] | max\\\\_pos \\\\d+\\n\\nt0\",\"search_type\":\"all of these strings in the file to find where n_ctx is set and whether it's a static config or dynamic parameter that changed the 2k limit\"}"
+   ]
+  },
+  {
+   "step": 9,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"n_ct[a1]|max\\\\_pos\\\\|appraisal \\\\d+:[A-Z]+\\\\w*[ a-zA-Z0-9]*; 3\\\\r?\\\\25[\\\\s\\\\\\\\\\\"]*\\\\] [678][KkGGB]|ktx size (\\\\d+[MGT])[^,]+$\\n\\nt0\"}"
+   ]
+  },
+  {
+   "step": 10,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 11,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"Stop decoding line after \\\\d+\\\\.\\\\d+ms\\\\|stop_reason=[1-2] [^|]+ \\\\| finish\\\\_reason=([a-zA-Z0-9]+) .* 3548,6137']\\n\\nt0\\n\"}"
+   ]
+  },
+  {
+   "step": 12,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[512,768,1024]}"
+   ]
+  },
+  {
+   "step": 13,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"file_path\":[\"','app']]\",true,10745]}"
+   ]
+  },
+  {
+   "step": 14,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"file_path\":[\"','app']]\",true,10745]}"
+   ]
+  },
+  {
+   "step": 15,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens\":[3840]}"
+   ]
+  }
+ ]
+}
