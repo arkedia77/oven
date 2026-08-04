@@ -10,9 +10,10 @@
 ② **다음 세션 할 일**: ⓪**kimsecretary 회신 대기** — 3안 상신 완료(1안 보류 / ★2안 **스텝 상한 실험**(6판 모두 상한 5에서 끊겨 «상한이 구속력을 가졌는지» 자체가 미확인. GPU 불요·CPU·수십 분) / 3안 GPU 확보 후 상위 모델). **oven 권고=2안 선행**, 지시 오면 즉시 착수
     - ①**하모니시티 안정 관찰** — watchdog v2 가동(5분 주기, 네 경로 실증 완료). 킬스위치 조기경보 창(400 이벤트) 재축적 중. `HarmonicityParseWatch` 6h 주기 정상(최근창 96.25%)
     - ②**A-093 R4 트리거 감시** — TZ `Asia/Seoul` + NTP 동기는 **지금 하지 않음**(로컬 표시가 약 16h 점프 → 라이브 sim·예약작업·로그 연속성 영향). 발동 조건: ⓐ계획 정지창이 생길 때 ⓑ**로컬 오차 30분 초과**(현재 5분42초, 표류 약 +1초/시간 ⇒ 단순 외삽 시 수개월 여유). ★**ogo가 남긴 epoch/UTC 값은 −57,258초 보정 후 읽을 것, 단 간격 계산은 무보정 원본**(R2)
-    - ③**503의 llama 사망 원인**은 kee 요청대로 **열어 둠**(유발자=재기동 로딩창은 규명됐으나 «왜 죽었나»는 미확정). **08-03에 태스크가 왜 Running에 묶였는지**도 미확정 — `TaskScheduler/Operational` 로그를 켜 뒀으므로 **재발 시 확정**
-    - ④**거동변경 게이트 3종**(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지
-    - ⑤hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용. kee 고유 규율은 `KEE-*` 이름공간으로 표기
+    - ③🔴**[기한 있는 관측] 2026-08-06 23:54:06경 — llama 72h 실행제한 후보 판별**(kee watchlist 등재, **관측 책임=oven, 08-07까지 kee 앞 통지 필수·없으면 kee가 조회**). 판정법: ⒜Application 로그에 `llama-server` 크래시 기록 **없음** ⒝`llama_healthcheck.log`에 **DOWN 1건** ⒞8080 프로세스 **재생성**(WMI CreationDate 갱신) — **3건 동시 충족=후보 확정 / 아무 일 없음=반증**. ★그때까지 `LlamaHarmonicity`의 `Stop Task If Runs 72:00:00`을 **건드리지 말 것**(고치면 검증 불가). kee 승인은 **08-06 판별까지 한시**이며, 판별 후 제거 여부를 kee에 여쭐 것
+    - ④**503의 llama 사망 원인**은 kee 요청대로 **열어 둠**(유발자=재기동 로딩창은 규명됐으나 «왜 죽었나»는 미확정). **08-03에 태스크가 왜 Running에 묶였는지**도 미확정 — `TaskScheduler/Operational` 로그를 켜 뒀으므로 **재발 시 확정**
+    - ⑤**거동변경 게이트 3종**(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지
+    - ⑥hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용. kee 고유 규율은 `KEE-*` 이름공간으로 표기
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
