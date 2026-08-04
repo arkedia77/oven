@@ -1,0 +1,55 @@
+{
+ "temp": 0.3,
+ "seed": 7,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 5,
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"error|failure|failed|critical\"}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[128,512,1024]}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error at line \\\\d+\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|error at line \\\\d+\"}"
+   ]
+  }
+ ]
+}

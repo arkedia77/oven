@@ -40,14 +40,14 @@ $STALL_THRESHOLD_SEC = 900
 #   ⑵ 상태 저장 확인 후 실행(무손실 확인)  ⑶ 실증 1회는 kee 통지 후·감독 하에
 $ENABLE_END_ESCALATION = $true
 
-# ★★ 조건⑴에 대한 oven 소견 — 아직 승인 전이라 잠가 둔다(홀드).
-#   kee 사유 「DEAD_PROC엔 불요(이미 프로세스가 없음)」는 python 프로세스 기준으로는 맞으나,
-#   `/End`가 끝내는 것은 python이 아니라 **태스크**다. 2026-08-03 사고의 유력 기제는
-#   「python은 죽었는데(procs=0) 태스크는 Running에 묶여 `/Run`이 165회 거부」였고, 이는
-#   **DEAD_PROC 판정**이다. ⇒ 조건⑴을 그대로 두면 **에스컬레이션이 정작 그 사고를 못 덮는다.**
-#   제안: DEAD_PROC이면서 **태스크 상태가 Running일 때만** /End 허용(죽일 python이 없으므로
-#   손실 0, 목적은 묶인 태스크 해제 하나뿐). kee 승인 오면 $true로 전환.
-$END_ON_STUCK_TASK = $false
+# ★★ 조건⑴ 개정 — kee 승인(2026-08-04 16:29, A-089).
+#   kee 원 사유 「DEAD_PROC엔 불요(이미 프로세스가 없음)」는 python 기준으로는 맞으나,
+#   `/End`가 끝내는 것은 python이 아니라 **태스크**다. 2026-08-03 사고의 기제는
+#   「python은 죽었는데(procs=0) 태스크가 Running에 묶여 `/Run`이 165회 거부」였고 이는
+#   **DEAD_PROC 판정**이다 — 조건⑴을 그대로 두면 에스컬레이션이 정작 그 사고를 못 덮는다.
+#   ⇒ **DEAD_PROC이면서 태스크 상태가 Running일 때만** /End 허용. 그 조건에선 죽일 python이
+#   없으므로 손실 0이고, /End의 목적이 「묶인 태스크 해제」 하나로 좁혀진다.
+$END_ON_STUCK_TASK = $true
 
 $ts  = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 $now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()

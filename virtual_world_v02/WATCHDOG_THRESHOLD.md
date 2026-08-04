@@ -179,6 +179,38 @@ kee 지시: 「새 watchdog을 켜면 sim.log를 인위로 정지시켜 실제�
 ★ v1은 조치의 **결과**를 로그에 남기지 않았다(`| Out-Null`). v2는 `out=RUN[...]`으로
 schtasks의 실제 출력을, `RECOVERED ... after attempts=N`으로 **복구 확인**을 남긴다.
 
+### 3회차 — ★★08-03 기제 자체를 재현 (Test X, kee 승인 후)
+
+`/End` 에스컬레이션이 kee 조건부 승인된 뒤, **2026-08-03에 `/Run`이 165회 무효였던 상태를
+그대로 만들어** 검증했다. 재현 방법: **`launch_p11.bat`의 cmd.exe를 `NtSuspendProcess`로 정지시킨 채
+python을 종료** ⇒ `procs=0`(죽음)인데 **태스크는 `Running`에 묶여** `/Run`이 거부되는 상태.
+
+| 시각 | streak | 판정·조치 | 관측 |
+|---|---|---|---|
+| 16:32:30 | — | (재현 설정) | `procs=0` · `bat_cmd=1` · **task Running** |
+| 16:35:01 | 2 | `RUN(END_HELD_STUCKTASK)` | ★거부 포착: `out=RUN[INFO: ... is currently running. \| SUCCESS: ...]` |
+| 16:40:01 | 3 | 〃 | 〃 |
+| 16:45:01 | 4 | 〃 | ★**ALERT 파일 발화** |
+| *(16:46 스위치 ON 배포)* | | | |
+| 16:50:01 | 5 | **`END_THEN_RUN`** | `END[SUCCESS: ... terminated successfully.]` `RUN[SUCCESS: ...]` |
+| 16:55:01 | 0 | **`RECOVERED`** | `RECOVERED tick=15350 after attempts=5 stall=1200s` · ALERT 자동 해제 |
+
+**재현 → 복구 확인 22분 31초.** 손실 없음(`save_age` 최대 1054초 = 마지막 저장 이후 경과, 틱 1개분).
+
+★**이 표가 증명하는 것 셋**
+1. **v1이 감춘 실패가 v2에선 매 줄에 남는다** — `out=RUN[INFO: ... is currently running.]`.
+   v1은 같은 자리에서 `triggered`만 적었고, 그래서 165회를 몰랐다.
+2. **`RUN` 단독은 이 상태를 못 고친다** — 4회 연속 실패(16:30·16:35·16:40·16:45).
+   ⇒ ★kee 원 조건⑴(「`/End`는 STALLED에만, DEAD_PROC엔 불요」)을 그대로 뒀다면
+   **에스컬레이션이 정작 이 사고를 못 덮었다**는 것이 실측으로 확인됐다(조건 개정 근거).
+3. **잠금 상태가 관측 가능하다** — 승인 전 구간에서 `action=RUN(END_HELD_STUCKTASK)`가
+   남아, 「보류 중」이 **무통지로 지나가지 않았다**.
+
+### 4회차 — STALLED 경로 (Test Y)
+
+python 프로세스만 `NtSuspendProcess`로 정지 ⇒ `procs=1`(존재)인데 `sim.log`가 멈춘 상태.
+**존재 판정만 있던 v1이라면 영원히 통과**했을 조건이다. 결과는 §7에 기재.
+
 ### 아직 실증하지 못한 것 (명기)
 
 - **STALLED 경로**(프로세스는 살아 있고 진행만 멈춘 halt/행)는 **미실증**이다. 충실한 재현은

@@ -1,0 +1,55 @@
+{
+ "temp": 1.0,
+ "seed": 7,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 5,
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{\"max_tokens\":500}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal|Emotion Judgment\"}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"Harmo App Prompt\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"Harmo App Prompt in harmoni/app/\"}"
+   ]
+  }
+ ]
+}

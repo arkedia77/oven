@@ -1,0 +1,55 @@
+{
+ "temp": 0.3,
+ "seed": 123,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 5,
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal\"}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"system prompt\"}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"6894|213-215\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"7500|213-240\"}"
+   ]
+  }
+ ]
+}

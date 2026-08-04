@@ -1,0 +1,55 @@
+{
+ "temp": 1.0,
+ "seed": 123,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 5,
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[512,8000]}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"bucket_ticks\":1800,\"pattern\":\"finish_reason=length|context length exceeded\"}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|llm failed\"}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal 파싱 실패|llm failed; lines=10}<tool_call|>Aggregated fail counts are one thing but I want the traceback — pull the latest 10 failing calls at tick ~8000 to see what's actually broken.\\n\\n<|channel>thought\\nAggregation returned on a different grep because no bucket was specified - it aggregated over repeated matches instead of showing lines. Pull the raw error stack for failures around tick 8000; that reveals whether it's malformed JSON from truncation or an empty/aborted response before I blame any one config.\\n<channel|><|tool_call>call:grep_log{pattern:\"}"
+   ]
+  }
+ ]
+}

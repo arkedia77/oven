@@ -1,0 +1,57 @@
+{
+ "temp": 0.3,
+ "seed": 42,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 700,
+ "max_steps": 5,
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "grep_log",
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{\"pattern\":\"sim_appraisal.*(error|fail)\"}",
+    "{}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  }
+ ]
+}
