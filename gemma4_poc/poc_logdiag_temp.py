@@ -83,10 +83,13 @@ AP.add_argument("--temp", type=float, required=True)
 AP.add_argument("--seed", type=int, default=-1)
 AP.add_argument("--out", required=True)
 AP.add_argument("--max-steps", type=int, default=5)   # 2안: 상한만 단독으로 움직인다
+AP.add_argument("--max-tokens", type=int, default=700)  # ★결론 시도 스텝이 700에 잘린 것이 확인돼 인자화
 ARGS = AP.parse_args()
 
 
-def call(messages, label, max_tokens=700):
+def call(messages, label, max_tokens=None):
+    if max_tokens is None:
+        max_tokens = ARGS.max_tokens
     req = {"model": "gemma4", "messages": messages, "tools": TOOLS, "tool_choice": "auto",
            "max_tokens": max_tokens, "temperature": ARGS.temp, "repeat_penalty": 1.1}
     if ARGS.seed >= 0:
@@ -143,7 +146,7 @@ print("\n" + "=" * 70)
 print("LOGDIAG_TRACE " + json.dumps(trace, ensure_ascii=False))
 with open(ARGS.out, "w", encoding="utf-8") as f:
     json.dump({"temp": ARGS.temp, "seed": ARGS.seed, "threads": 4,
-               "model": "gemma4-v2-Q4_K_M.gguf", "max_tokens": 700,
+               "model": "gemma4-v2-Q4_K_M.gguf", "max_tokens": ARGS.max_tokens,
                "max_steps": ARGS.max_steps, "ctx_size": 8192,
                "usage": USAGE, "trace": trace}, f, ensure_ascii=False, indent=1)
 print("WROTE " + ARGS.out)

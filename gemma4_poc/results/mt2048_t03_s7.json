@@ -1,0 +1,234 @@
+{
+ "temp": 0.3,
+ "seed": 7,
+ "threads": 4,
+ "model": "gemma4-v2-Q4_K_M.gguf",
+ "max_tokens": 2048,
+ "max_steps": 15,
+ "ctx_size": 8192,
+ "usage": [
+  {
+   "label": "step1",
+   "prompt_tokens": 382,
+   "completion_tokens": 122,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step2",
+   "prompt_tokens": 805,
+   "completion_tokens": 103,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step3",
+   "prompt_tokens": 1210,
+   "completion_tokens": 111,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step4",
+   "prompt_tokens": 1416,
+   "completion_tokens": 136,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step5",
+   "prompt_tokens": 1726,
+   "completion_tokens": 118,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step6",
+   "prompt_tokens": 2146,
+   "completion_tokens": 103,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step7",
+   "prompt_tokens": 2551,
+   "completion_tokens": 110,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step8",
+   "prompt_tokens": 2963,
+   "completion_tokens": 89,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step9",
+   "prompt_tokens": 3354,
+   "completion_tokens": 89,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step10",
+   "prompt_tokens": 3745,
+   "completion_tokens": 89,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step11",
+   "prompt_tokens": 4136,
+   "completion_tokens": 89,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step12",
+   "prompt_tokens": 4527,
+   "completion_tokens": 155,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step13",
+   "prompt_tokens": 4984,
+   "completion_tokens": 155,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step14",
+   "prompt_tokens": 5441,
+   "completion_tokens": 155,
+   "finish_reason": "tool_calls"
+  },
+  {
+   "label": "step15",
+   "prompt_tokens": 5898,
+   "completion_tokens": 2048,
+   "finish_reason": "length"
+  }
+ ],
+ "trace": [
+  {
+   "step": 1,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"appraisal\"}"
+   ]
+  },
+  {
+   "step": 2,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"finish_reason: length\"}"
+   ]
+  },
+  {
+   "step": 3,
+   "tools": [
+    "get_llm_server_props"
+   ],
+   "args": [
+    "{}"
+   ]
+  },
+  {
+   "step": 4,
+   "tools": [
+    "probe_llm"
+   ],
+   "args": [
+    "{\"max_tokens_list\":[16,512,1024]}"
+   ]
+  },
+  {
+   "step": 5,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"n_ctx_per_slot=2048\"}"
+   ]
+  },
+  {
+   "step": 6,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 7,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 8,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 9,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 10,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 11,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 12,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 13,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 14,
+   "tools": [
+    "grep_log"
+   ],
+   "args": [
+    "{\"pattern\":\"max_tokens|n_ctx=\"}"
+   ]
+  },
+  {
+   "step": 15,
+   "tools": null,
+   "final": ""
+  }
+ ]
+}
