@@ -36,7 +36,7 @@ $LLAMA_URL  = 'http://localhost:8080/health'
 $STALL_THRESHOLD_SEC = 900
 
 # ★ /End 에스컬레이션 — kee 조건부 승인(2026-08-04, A-089 ⒝). 조건 3:
-#   ⑴ /End는 STALLED 판정에만(DEAD_PROC엔 불요 — kee 사유: 이미 프로세스가 없음)
+#   ⑴ /End는 STALLED 판정에만 → ★2026-08-04 16:29 kee 개정 승인으로 「DEAD_PROC ∧ 태스크 Running」 추가(아래)
 #   ⑵ 상태 저장 확인 후 실행(무손실 확인)  ⑶ 실증 1회는 kee 통지 후·감독 하에
 $ENABLE_END_ESCALATION = $true
 
