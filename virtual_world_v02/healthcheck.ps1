@@ -35,9 +35,19 @@ $LLAMA_URL  = 'http://localhost:8080/health'
 # --- 임계: tick 간격 실측 p95 x k (WATCHDOG_THRESHOLD.md) ---
 $STALL_THRESHOLD_SEC = 900
 
-# ★ /End 에스컬레이션은 kee 회신(A-089 요청 ⒝) 전까지 비활성 — 라이브 프로세스를 죽이는 조치라
-#   승인 범위 확인 전에는 켜지 않는다. 경로는 배선해 두고 스위치만 잠근다("새 지시 없으면 홀드").
-$ENABLE_END_ESCALATION = $false
+# ★ /End 에스컬레이션 — kee 조건부 승인(2026-08-04, A-089 ⒝). 조건 3:
+#   ⑴ /End는 STALLED 판정에만(DEAD_PROC엔 불요 — kee 사유: 이미 프로세스가 없음)
+#   ⑵ 상태 저장 확인 후 실행(무손실 확인)  ⑶ 실증 1회는 kee 통지 후·감독 하에
+$ENABLE_END_ESCALATION = $true
+
+# ★★ 조건⑴에 대한 oven 소견 — 아직 승인 전이라 잠가 둔다(홀드).
+#   kee 사유 「DEAD_PROC엔 불요(이미 프로세스가 없음)」는 python 프로세스 기준으로는 맞으나,
+#   `/End`가 끝내는 것은 python이 아니라 **태스크**다. 2026-08-03 사고의 유력 기제는
+#   「python은 죽었는데(procs=0) 태스크는 Running에 묶여 `/Run`이 165회 거부」였고, 이는
+#   **DEAD_PROC 판정**이다. ⇒ 조건⑴을 그대로 두면 **에스컬레이션이 정작 그 사고를 못 덮는다.**
+#   제안: DEAD_PROC이면서 **태스크 상태가 Running일 때만** /End 허용(죽일 python이 없으므로
+#   손실 0, 목적은 묶인 태스크 해제 하나뿐). kee 승인 오면 $true로 전환.
+$END_ON_STUCK_TASK = $false
 
 $ts  = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
 $now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
@@ -113,20 +123,30 @@ if ($verdict -eq 'DEAD_PROC' -or $verdict -eq 'STALLED') {
     $sLine  = schtasks /Query /TN $TASK /FO LIST 2>&1 | Select-String 'Status:' | Select-Object -First 1
     $before = if ($sLine) { ($sLine.ToString() -replace '\s+', ' ').Trim() } else { 'Status:UNKNOWN' }
 
-    if ($streak -ge 2 -and $llamaOk -and $ENABLE_END_ESCALATION) {
+    # 조건⑵ 상태 저장 확인 — run_tick이 매 틱 save_all()을 부르므로(village/main.py:266)
+    # world_state.json의 갱신 경과가 곧 「마지막 저장 이후 경과」다. /End 전에 반드시 로그에 남긴다.
+    $saveAge = -1
+    try { $saveAge = [int]((Get-Date) - (Get-Item "$ROOT\data\world_state.json").LastWriteTime).TotalSeconds } catch {}
+
+    $stuckTask = ($before -like '*Running*')
+    $mayEnd = $ENABLE_END_ESCALATION -and $llamaOk -and ($streak -ge 2) -and ($saveAge -ge 0) -and (
+                ($verdict -eq 'STALLED') -or ($verdict -eq 'DEAD_PROC' -and $stuckTask -and $END_ON_STUCK_TASK))
+
+    if ($mayEnd) {
         $act = 'END_THEN_RUN'
         $o1  = (schtasks /End /TN $TASK 2>&1) -join ' | '
         Start-Sleep -Seconds 5
         $o2  = (schtasks /Run /TN $TASK 2>&1) -join ' | '
         $out = "END[$o1] RUN[$o2]"
     } else {
-        $act = if ($streak -ge 2 -and $llamaOk) { 'RUN(END_HELD)' } else { 'RUN' }
+        $act = if ($streak -ge 2 -and $llamaOk -and $stuckTask -and -not $END_ON_STUCK_TASK) { 'RUN(END_HELD_STUCKTASK)' }
+               elseif ($streak -ge 2 -and $llamaOk) { 'RUN(END_HELD)' } else { 'RUN' }
         $out = "RUN[" + (((schtasks /Run /TN $TASK 2>&1) -join ' | ')) + "]"
     }
 
     $st.last_action = $act; $st.last_action_epoch = $now
-    Write-Log ("{0} tick={1} procs={2} stall={3}s streak={4} llama_ok={5} before=[{6}] action={7} out={8}" -f `
-               $verdict, $tick, $procs, $stall, $streak, $llamaOk, $before, $act, $out)
+    Write-Log ("{0} tick={1} procs={2} stall={3}s streak={4} llama_ok={5} save_age={6}s before=[{7}] action={8} out={9}" -f `
+               $verdict, $tick, $procs, $stall, $streak, $llamaOk, $saveAge, $before, $act, $out)
 
     if ($streak -ge 4) {
         $msg = "ALERT: $streak consecutive failed remediations. verdict=$verdict stall=${stall}s tick=$tick procs=$procs llama_ok=$llamaOk last_action=$act"
