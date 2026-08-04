@@ -1,0 +1,126 @@
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought
+Grep keeps returning the parse-failure buckets — no n_ctx or max_tokens anywhere in them, which is bizarre and suggests a hardcoded limit I can't find by searching these lines. Let me read the system prompt directly to see if any constraint lives there instead of as a config line.
+
+
+<|channel>thought

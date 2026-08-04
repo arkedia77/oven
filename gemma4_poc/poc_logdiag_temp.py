@@ -102,10 +102,13 @@ def call(messages, label, max_tokens=None):
     u = d.get("usage") or {}
     # ★응답 필드 로깅 — 「모델이 결론을 못 내는가」와 「내 하네스가 결론을 버리는가」를 가르기 위함.
     #   추론 동작은 바꾸지 않는다(요청 파라미터 무변경). 기록만 추가한다.
+    # ★전문 저장. 그리고 «계측이 재려는 것을 실제로 담았는지»를 산출물 안에서 검증 가능하게 한다:
+    #   len(실제 문자열)과 len(저장된 text)를 함께 적어 두면 잘림이 있으면 대조로 즉시 드러난다.
+    #   (2026-08-04 교훈 — 읽으려고 붙인 로깅을 400자로 잘라 정작 읽을 수 없게 만든 적이 있다)
     fields = {}
     for k, v in m.items():
         if isinstance(v, str):
-            fields[k] = {"len": len(v), "head": v[:400]}
+            fields[k] = {"len": len(v), "text": v, "stored_len": len(v)}
         elif v is None:
             fields[k] = None
         else:
