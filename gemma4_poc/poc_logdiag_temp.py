@@ -100,9 +100,20 @@ def call(messages, label, max_tokens=None):
     d = r.json()
     m = d["choices"][0]["message"]
     u = d.get("usage") or {}
+    # ★응답 필드 로깅 — 「모델이 결론을 못 내는가」와 「내 하네스가 결론을 버리는가」를 가르기 위함.
+    #   추론 동작은 바꾸지 않는다(요청 파라미터 무변경). 기록만 추가한다.
+    fields = {}
+    for k, v in m.items():
+        if isinstance(v, str):
+            fields[k] = {"len": len(v), "head": v[:400]}
+        elif v is None:
+            fields[k] = None
+        else:
+            fields[k] = {"type": type(v).__name__}
     USAGE.append({"label": label, "prompt_tokens": u.get("prompt_tokens"),
                   "completion_tokens": u.get("completion_tokens"),
-                  "finish_reason": d["choices"][0].get("finish_reason")})
+                  "finish_reason": d["choices"][0].get("finish_reason"),
+                  "message_keys": list(m.keys()), "fields": fields})
     print(f"\n--- [{label}] {time.time()-t0:.1f}s finish={d['choices'][0].get('finish_reason')} "
           f"prompt_tokens={u.get('prompt_tokens')}")
     return m
