@@ -23,7 +23,8 @@
     - ③🔴**[기한 있는 관측] 2026-08-07 18:04경 — llama 72h 실행제한 후보 판별**(kee watchlist 등재·시각 정정 반영됨. ★원래 08-06 23:54였으나 **08-04 18:04:05에 8080이 재기동돼 72시간 시계가 리셋**됨. **관측 책임=oven, 미통지 시 08-08에 kee가 조회**). 판정법: ⒜Application 로그에 `llama-server` 크래시 기록 **없음** ⒝`llama_healthcheck.log`에 **DOWN 1건** ⒞8080 프로세스 **재생성**(WMI CreationDate 갱신) — **3건 동시 충족=후보 확정 / 아무 일 없음=반증**. ★그때까지 `LlamaHarmonicity`의 `Stop Task If Runs 72:00:00`을 **건드리지 말 것**(고치면 검증 불가). kee 승인은 **08-06 판별까지 한시**이며, 판별 후 제거 여부를 kee에 여쭐 것
     - ④**503의 llama 사망 원인**은 kee 요청대로 **열어 둠**(유발자=재기동 로딩창은 규명됐으나 «왜 죽었나»는 미확정). **08-03에 태스크가 왜 Running에 묶였는지**도 미확정 — `TaskScheduler/Operational` 로그를 켜 뒀으므로 **재발 시 확정**
     - ⑤**거동변경 게이트 3종**(ECONOMY/INSTITUTION/AUTONOMY_LOCATION)은 **LEO 판단 대기** — 임의 활성화 금지
-    - ⑥hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용. kee 고유 규율은 `KEE-*` 이름공간으로 표기
+    - ⑥**메모리 갈무리 완료(08-05)** — ★**낡은 오류 2곳 적발·정정**: `reference_ogo_autorestart.md`와 `project_harmonicity.md`에 **「watchdog은 python.exe 개수만 감시」**가 남아 있었음(=오늘 반증된 그 문장). **다음 세션을 다시 오도했을 자리**라 정정 표기(취소선+정정문)로 고침 — 삭제가 아니라 **「완화가 아닌 오류 정정」** 형식 유지. 그 외: 병합 1건(하모니시티 자세 2→1), 고아 파일 1건 포인터 복구(`project_piano_lora`), frontmatter `metadata.type` 누락 7건 보정 ⇒ **포인터 33 = 파일 33·고아 0·규격 이탈 0**. ⚠**남은 이상치 1건**: `project_harmonicity.md` **69KB/459줄 단일 섹션 누적 로그** — 「한 파일=한 사실」 규격 이탈이나 **분할 시 이력 유실 위험**이 있어 이번엔 손대지 않음(세션마다 로드되는 것은 MEMORY.md뿐이라 상시 비용은 없음). **다음 세션 후보**
+    - ⑦hf-playground/Leo 새 지시 대기(큐 비어있음). ari 커밋관례(author=oven, `-c user.name/email`) 계속 적용. kee 고유 규율은 `KEE-*` 이름공간으로 표기
 ③ **상세**: [[project_harmonicity]](하모니시티 전체 이력+정지 상세) · [[project_ogo_gpu_management]] · [[feedback_llm_reasoning_token_budget]] · 본 파일 IN PROGRESS 섹션
 
 ---
