@@ -139,8 +139,11 @@ if ($verdict -eq 'DEAD_PROC' -or $verdict -eq 'STALLED') {
         $o2  = (schtasks /Run /TN $TASK 2>&1) -join ' | '
         $out = "END[$o1] RUN[$o2]"
     } else {
+        # ★라벨은 실제로 보류된 경우에만 «HELD»를 붙인다. 태스크가 Ready면 /End는 보류가 아니라
+        #   «해당 없음»이고(묶인 태스크가 없으므로), 거기에 HELD를 붙이면 이름이 사실을 왜곡한다.
         $act = if ($streak -ge 2 -and $llamaOk -and $stuckTask -and -not $END_ON_STUCK_TASK) { 'RUN(END_HELD_STUCKTASK)' }
-               elseif ($streak -ge 2 -and $llamaOk) { 'RUN(END_HELD)' } else { 'RUN' }
+               elseif ($streak -ge 2 -and $llamaOk -and -not $ENABLE_END_ESCALATION)         { 'RUN(END_DISABLED)' }
+               else                                                                          { 'RUN' }
         $out = "RUN[" + (((schtasks /Run /TN $TASK 2>&1) -join ' | ')) + "]"
     }
 
