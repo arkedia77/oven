@@ -7,6 +7,7 @@
 - 발신=**받는 쪽** `agent-comm:projects/{to}/messages/`, 파일명 `{to}_oven_YYYYMMDD_HHMMSS_{키워드}.json`, `from`=`oven`. 발신 후 `ls`로 생성 확인. `cc`는 실전달 아님.
 - 수신=`agent-comm:projects/oven/messages/`, 처리분 `processed/` 이관.
 - 커밋: `AGENT_ID=oven git -c user.name=oven -c user.email=oven@leomusic.os commit`(머신 전역 git config 변경 금지).
+- ★**`to` 5곳 이상 = 발신 전 「사전 반증 1회」**(반증자=그 수치를 데이터로 즉시 대조 가능한 슬롯 1명, 개정본엔 반증자 포함). 비가역 요구(「지금 집행」)는 판 확정 뒤에만. 정본=admin, 2026-08-09 발효.
 - 규칙 정본: `agent-comm:CHANNEL_RULES.md` · `CROSS_PROJECT_RULES.md` · `projects/oven/COMM_RULES.md`
 
 ## 추론 수칙 — 정본=킷 §2 (문면 복제 금지)
