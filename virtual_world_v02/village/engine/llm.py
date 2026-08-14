@@ -13,6 +13,36 @@ def _mock_response(messages: list) -> str:
     return f"[mock:{h[:12]}] 결정적 응답입니다."
 
 
+def _record_call_length(messages: list, max_tokens: int, ok: bool, err: str = ""):
+    """호출별 프롬프트 길이 계측(A-093, kee 승인 2026-08-15) — ★계측 전용·거동 무변경.
+
+    왜 넣는가: sim.log의 `prompt=N자`는 appraisal 호출에만 찍혀서, 08-04·08-11·08-12
+    abort 때 «실제로 죽인 요청의 길이»가 미상으로 남았다(=긴 프롬프트 가설이 미검정인 이유).
+    ★특히 오류 경로에서는 usage가 안 와서 길이를 사후에 복원할 방법이 아예 없다.
+
+    ⚠계측이 시뮬을 죽이면 안 되므로 전체를 except로 감싼다(로깅 실패는 조용히 버림).
+    ⚠hot path에 append I/O 1회가 늘어난다 — 무시할 만하나 abort 재발 시 제일 먼저
+      의심해야 할 변경분이다(kee 조건 ⒞).
+    """
+    try:
+        from village import config
+        chars = sum(len(str(m.get("content", ""))) for m in messages)
+        rec = {
+            "t": round(time.time(), 3),
+            "chars": chars,
+            "msgs": len(messages),
+            "mt": max_tokens,
+            "ok": 1 if ok else 0,
+        }
+        if err:
+            rec["err"] = err[:120]
+        path = config.DATA_DIR.parent / "llm_call_lengths.jsonl"
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
+    except Exception:
+        pass
+
+
 def _derive_seed(messages: list, base: int) -> int:
     """메시지 내용으로 결정적 seed 도출 — 같은 입력→같은 seed→같은 출력(재현),
     입력이 다르면 다른 seed(캐릭터별 응답 다양성 유지). 호출 순서에 비의존."""
@@ -77,8 +107,10 @@ def chat(messages: list, max_tokens: int = 1024, temperature: float = None,
             replay.record_call(messages, content, seed)
         from village import safety_rail
         safety_rail.record_llm_result(is_error=False)
+        _record_call_length(messages, max_tokens, ok=True)
         return content
     except Exception as e:
         from village import safety_rail
         safety_rail.record_llm_result(is_error=True)
+        _record_call_length(messages, max_tokens, ok=False, err=f"{type(e).__name__}: {e}")
         return f"[오류: {e}]"
