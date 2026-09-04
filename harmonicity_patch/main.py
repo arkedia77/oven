@@ -1,0 +1,405 @@
+"""하모니 시티 #02 Ecosystem — 메인 루프"""
+import sys
+import time
+from datetime import datetime
+from collections import defaultdict
+
+from village.config import (
+    TICK_SECONDS, TICKS_PER_DAY, SOLO_MONOLOGUES_PER_TICK,
+    RETROSPECTIVE_INTERVAL_DAYS, MAX_TOKENS_RETROSPECTIVE,
+)
+from village.characters.definitions import CHARACTERS
+from village.characters.state import CharacterState
+from village.world.state import WorldState
+from village.world.time_system import format_village_time, village_hour_to_period
+from village.world.locations import LOCATIONS
+from village.interaction.encounter import (
+    determine_locations, select_encounters, select_solo_characters,
+    set_encounter_context,
+)
+from village.interaction.conversation import (
+    run_conversation, process_reflection, run_monologue,
+    set_conversation_reputation,
+)
+from village.interaction.prompts import set_social_context
+from village.persistence.save_load import (
+    save_all, load_world_state, load_character_state, load_relationships,
+    save_need_history, load_need_history,
+    save_belief_history, load_belief_history,
+    save_relationship_history, load_relationship_history,
+    save_atmosphere, load_atmosphere,
+    save_reputation, load_reputation,
+    save_knowledge_base, load_knowledge_base,
+)
+from village.systems.homeostasis import (
+    decay_relationships, apply_reputation_to_relationships,
+)
+from village.systems.social_energy import reset_daily_energy
+from village.systems.location_atmosphere import decay_all as decay_atmosphere, get_state as get_atm_state, load_state as load_atm_state
+from village.systems.events import check_events
+from village.systems.reputation import (
+    init_reputation_matrix, daily_decay as reputation_daily_decay,
+    update_from_direct_interaction, update_from_gossip, update_from_observation,
+    ReputationMatrix,
+)
+from village.systems.information import (
+    init_info_registry, init_knowledge_base,
+    propagate_info, try_observation, select_shareable_info,
+    create_dynamic_rumor,
+    KnowledgeBase, InfoRegistry,
+)
+from village.engine.llm import chat
+
+
+need_history: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+belief_history: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+relationship_history: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+
+reputation_matrix: ReputationMatrix = {}
+knowledge_base: KnowledgeBase = {}
+info_registry: InfoRegistry = {}
+
+
+def initialize_or_resume() -> tuple:
+    global need_history, reputation_matrix, knowledge_base, info_registry
+
+    world = load_world_state()
+    relationships = load_relationships()
+
+    characters = {}
+    for char_id in CHARACTERS:
+        loaded = load_character_state(char_id)
+        if loaded:
+            characters[char_id] = loaded
+        else:
+            characters[char_id] = CharacterState.from_definition(char_id)
+
+    for rel in relationships.values():
+        defaults = {
+            "affection": 0.0, "salience": 0.3, "interaction_count": 0,
+            "last_interaction_day": 0, "consecutive_conflicts": 0,
+            "fatigue_cooldown": 0,
+        }
+        for k, v in defaults.items():
+            if k not in rel:
+                rel[k] = v
+
+    saved_history = load_need_history()
+    if saved_history:
+        for char_id, needs_dict in saved_history.items():
+            for need_key, values in needs_dict.items():
+                need_history[char_id][need_key] = values
+
+    saved_belief_hist = load_belief_history()
+    if saved_belief_hist:
+        for char_id, beliefs_dict in saved_belief_hist.items():
+            for bkey, values in beliefs_dict.items():
+                belief_history[char_id][bkey] = values
+
+    saved_rel_hist = load_relationship_history()
+    if saved_rel_hist:
+        for pair_key, metrics_dict in saved_rel_hist.items():
+            for mkey, values in metrics_dict.items():
+                relationship_history[pair_key][mkey] = values
+
+    saved_atm = load_atmosphere()
+    if saved_atm:
+        load_atm_state(saved_atm)
+
+    # P1: 평판/정보 시스템 로드 또는 초기화
+    saved_rep = load_reputation()
+    if saved_rep:
+        reputation_matrix.update(saved_rep)
+    else:
+        reputation_matrix.update(init_reputation_matrix(list(CHARACTERS.keys())))
+
+    saved_kb = load_knowledge_base()
+    if saved_kb:
+        kb, reg = saved_kb
+        knowledge_base.update(kb)
+        info_registry.update(reg)
+    else:
+        info_registry.update(init_info_registry())
+        knowledge_base.update(init_knowledge_base(info_registry))
+
+    # 컨텍스트 주입
+    set_social_context(reputation_matrix, knowledge_base)
+    set_encounter_context(reputation_matrix, knowledge_base)
+    set_conversation_reputation(reputation_matrix)
+
+    return world, characters, relationships
+
+
+def run_tick(world: WorldState, characters: dict, relationships: dict):
+    period = village_hour_to_period(world.hour)
+    print(f"\n{'='*60}")
+    print(f"  Day {world.day} | {format_village_time(world.hour)} | Tick {world.tick}")
+    print(f"{'='*60}")
+
+    determine_locations(characters, world.hour)
+    loc_summary = {}
+    for cid, char in characters.items():
+        loc_summary.setdefault(char.location, []).append(char.name)
+    for loc, names in loc_summary.items():
+        if loc != "residential" and names:
+            loc_name = LOCATIONS.get(loc, {}).get("name", loc)
+            print(f"  📍 {loc_name}: {', '.join(names)}")
+
+    # P1: 같은 장소에서 관찰 기회
+    _process_observations(characters, world)
+
+    encounters = select_encounters(characters, relationships, world.hour, world.day)
+    encounter_participants = set()
+
+    for char_a_id, char_b_id in encounters:
+        char_a = characters[char_a_id]
+        char_b = characters[char_b_id]
+        encounter_participants.update([char_a_id, char_b_id])
+
+        conv = run_conversation(char_a, char_b, relationships, world)
+        gossip_a = process_reflection(char_a, char_b, conv, relationships)
+        gossip_b = process_reflection(char_b, char_a, conv, relationships)
+
+        _process_post_conversation(
+            char_a_id, char_b_id, relationships, world.day,
+            gossip_a, gossip_b,
+        )
+
+    if period not in ("late_night",):
+        solo_ids = select_solo_characters(characters, encounter_participants, SOLO_MONOLOGUES_PER_TICK)
+        for solo_id in solo_ids:
+            run_monologue(characters[solo_id], world)
+
+    for char in characters.values():
+        char.decay_needs(0.005)
+        if char.location == "residential":
+            char.fulfill_needs_from_alone_time()
+        char.update_emotional_state()
+
+    decay_relationships(relationships)
+    # P1.2: 평판→관계 침식 (매 틱)
+    apply_reputation_to_relationships(relationships, reputation_matrix)
+    decay_atmosphere()
+
+    if world.is_end_of_day():
+        _end_of_day(world, characters, relationships)
+
+    save_all(world, characters, relationships)
+    save_atmosphere(get_atm_state())
+    save_reputation(reputation_matrix)
+    save_knowledge_base(knowledge_base, info_registry)
+
+
+def _process_observations(characters: dict, world: WorldState):
+    loc_groups: dict[str, list[str]] = {}
+    for cid, char in characters.items():
+        if char.location != "residential":
+            loc_groups.setdefault(char.location, []).append(cid)
+
+    for loc, char_ids in loc_groups.items():
+        if len(char_ids) < 2:
+            continue
+        for i in range(len(char_ids)):
+            for j in range(len(char_ids)):
+                if i == j:
+                    continue
+                observed = try_observation(
+                    knowledge_base, info_registry,
+                    char_ids[i], char_ids[j],
+                    same_location=True, day=world.day,
+                )
+                if observed:
+                    print(f"  👁️ {characters[char_ids[i]].name}이(가) "
+                          f"{characters[char_ids[j]].name}에 대해 무언가 발견!")
+                    update_from_observation(
+                        reputation_matrix, char_ids[i], char_ids[j],
+                        "secret_exposed", world.day,
+                    )
+
+
+def _process_post_conversation(
+    char_a_id: str, char_b_id: str,
+    relationships: dict, day: int,
+    gossip_a: dict | None = None,
+    gossip_b: dict | None = None,
+):
+    import random
+    from village.characters.definitions import CHARACTERS as CHAR_DEFS
+
+    rel_key = tuple(sorted([char_a_id, char_b_id]))
+    rel = relationships.get(rel_key, {})
+    trust_ab = rel.get("trust", 0.5)
+
+    # P1.1: 동적 소문 생성 (appraisal gossip 활용)
+    for gossip, speaker, listener in [
+        (gossip_a, char_a_id, char_b_id),
+        (gossip_b, char_b_id, char_a_id),
+    ]:
+        if not gossip or not gossip.get("shared") or not gossip.get("about"):
+            continue
+        about = gossip["about"]
+        valence = gossip.get("valence", "중립")
+        if about not in CHAR_DEFS:
+            continue
+        rumor = create_dynamic_rumor(
+            knowledge_base, info_registry,
+            speaker, listener, about, valence, day,
+        )
+        if rumor:
+            teller_entry = reputation_matrix.get(listener, {}).get(speaker, None)
+            teller_int = teller_entry.integrity if teller_entry else 0.5
+            update_from_gossip(
+                reputation_matrix, listener, about, valence, teller_int,
+            )
+            update_from_gossip(
+                reputation_matrix, speaker, about, valence, 0.7,
+            )
+            subject_name = CHAR_DEFS.get(about, {}).get("name", about)
+            print(f"  💬🗣️ 동적소문: {speaker}↔{listener}가 {subject_name}에 대해 {valence} 이야기")
+
+    # 기존 비밀/정보 전파 (A→B, B→A)
+    for sharer, receiver in [(char_a_id, char_b_id), (char_b_id, char_a_id)]:
+        shareable = select_shareable_info(knowledge_base, sharer, receiver, trust_ab)
+        if not shareable:
+            continue
+        share_chance = trust_ab * 0.3
+        if random.random() >= share_chance:
+            continue
+        info = random.choice(shareable)
+        propagated = propagate_info(
+            knowledge_base, info_registry,
+            sharer, receiver, info.id, day,
+        )
+        if not propagated:
+            continue
+        teller_entry = reputation_matrix.get(receiver, {}).get(sharer, None)
+        teller_int = teller_entry.integrity if teller_entry else 0.5
+        valence = info_registry.get(info.id, info)
+        gossip_valence = "부정" if info.sensitivity > 0.7 else "중립"
+        update_from_gossip(
+            reputation_matrix, receiver, info.subject,
+            gossip_valence, teller_int,
+        )
+        subject_name = CHAR_DEFS.get(info.subject, {}).get("name", info.subject)
+        print(f"  🗣️ 소문 전파: → {receiver}가 {subject_name}에 대해 들음")
+
+
+def _end_of_day(world: WorldState, characters: dict, relationships: dict):
+    print(f"\n  🌙 Day {world.day} 종료 — 기억 통합 중...")
+
+    for char_id, char in characters.items():
+        for key, val in char.needs.items():
+            need_history[char_id][key].append(val)
+            if len(need_history[char_id][key]) > 60:
+                need_history[char_id][key] = need_history[char_id][key][-60:]
+        if char.beliefs:
+            for bkey, bval in char.beliefs.items():
+                belief_history[char_id][bkey].append(bval)
+                if len(belief_history[char_id][bkey]) > 60:
+                    belief_history[char_id][bkey] = belief_history[char_id][bkey][-60:]
+
+    for pair_key, rel in relationships.items():
+        str_key = f"{pair_key[0]}|{pair_key[1]}" if isinstance(pair_key, tuple) else pair_key
+        for mkey in ("warmth", "trust", "tension", "affection"):
+            relationship_history[str_key][mkey].append(rel.get(mkey, 0.0))
+            if len(relationship_history[str_key][mkey]) > 60:
+                relationship_history[str_key][mkey] = relationship_history[str_key][mkey][-60:]
+
+    for char in characters.values():
+        char.today_interactions = []
+        defn = CHARACTERS[char.id]
+        for key in char.needs:
+            floor = defn["needs"].get(key, 0.5) * 0.4
+            char.needs[key] = max(char.needs[key], floor)
+            char.needs[key] = min(1.0, char.needs[key] + 0.08)
+        reset_daily_energy(char)
+
+    events = check_events(world, characters, relationships, need_history)
+
+    for event in events:
+        if event["type"] == "confrontation":
+            for pair_key, rel in relationships.items():
+                chars = event.get("characters", [])
+                if isinstance(pair_key, tuple):
+                    a, b = pair_key
+                else:
+                    a, b = pair_key.split("|")
+                if set([a, b]) == set(chars):
+                    rel["tension"] = max(0.0, rel["tension"] - event.get("tension_release", 0.25))
+
+    if world.day % RETROSPECTIVE_INTERVAL_DAYS == 0:
+        _run_retrospectives(characters, world)
+
+    if world.day % 10 == 0:
+        for char in characters.values():
+            char.adapt_need_importance(dict(need_history.get(char.id, {})))
+
+    # P1: 평판 일일 감쇠
+    reputation_daily_decay(reputation_matrix)
+
+    save_need_history(dict(need_history))
+    save_belief_history(dict(belief_history))
+    save_relationship_history(dict(relationship_history))
+
+    print(f"  ✓ Day {world.day + 1} 시작 준비 완료")
+
+
+def _run_retrospectives(characters: dict, world: WorldState):
+    print(f"\n  📝 {RETROSPECTIVE_INTERVAL_DAYS}일 회고 세션...")
+    for char in characters.values():
+        recent_memories = "\n".join(char.working_memory[-5:]) if char.working_memory else "(기억 없음)"
+        prompt = (
+            f"너는 '{char.name}'이다. {char.persona}\n\n"
+            f"지난 {RETROSPECTIVE_INTERVAL_DAYS}일을 돌아봐.\n"
+            f"최근 기억:\n{recent_memories}\n\n"
+            f"thinking 없이 한국어 2-3문장으로 답해:\n"
+            f"- 나는 어떻게 변했나?\n"
+            f"- 가장 인상적이었던 사람이나 사건은?\n"
+            f"- 앞으로의 나는 어떤 사람이 되고 싶은가?"
+        )
+        messages = [{"role": "user", "content": prompt}]
+        retrospective = chat(messages, MAX_TOKENS_RETROSPECTIVE)
+        char.persona_addendum = retrospective[:200]
+        print(f"    📖 {char.name}: {retrospective[:60]}...")
+
+
+def main():
+    print("=" * 60)
+    print("🏙️  하모니 시티 #02 Ecosystem + P1.2 (평판→관계/소문분산/콘텐츠다양성)")
+    print(f"   주민: {len(CHARACTERS)}명")
+    print(f"   시간 압축: 실시간 {TICK_SECONDS}초 = 마을 1시간")
+    print(f"   틱/일: {TICKS_PER_DAY}")
+    print(f"   시작: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("=" * 60)
+
+    world, characters, relationships = initialize_or_resume()
+    print(f"   상태: Day {world.day}, {format_village_time(world.hour)}, Tick {world.tick}")
+    print(f"   P1: 평판 매트릭스 {len(reputation_matrix)}명, "
+          f"정보 {sum(len(v) for v in knowledge_base.values())}건 로드")
+
+    try:
+        while True:
+            tick_start = time.time()
+            world.advance_tick()
+            run_tick(world, characters, relationships)
+
+            elapsed = time.time() - tick_start
+            wait = max(0, TICK_SECONDS - elapsed)
+            if wait > 0:
+                print(f"\n  ⏱️ 다음 틱까지 {wait:.0f}초 대기...", flush=True)
+                deadline = time.time() + wait
+                while time.time() < deadline:
+                    time.sleep(min(10, deadline - time.time()))
+    except KeyboardInterrupt:
+        print("\n\n🛑 시뮬레이션 중단 — 상태 저장 중...")
+        save_all(world, characters, relationships)
+        save_need_history(dict(need_history))
+        save_atmosphere(get_atm_state())
+        save_reputation(reputation_matrix)
+        save_knowledge_base(knowledge_base, info_registry)
+        print("✓ 저장 완료. 재시작하면 이어서 진행됩니다.")
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

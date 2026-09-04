@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liszt Engine Lab</title>
+<script src="https://cdn.jsdelivr.net/npm/@tonejs/midi@2.0.28/build/Midi.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+<style>
+:root {
+  --bg: #09090b; --card: #111114; --card2: #18181b;
+  --border: #27272a; --accent: #6366f1; --accent2: #8b5cf6;
+  --green: #22c55e; --yellow: #eab308; --red: #ef4444; --blue: #3b82f6;
+  --text: #fafafa; --muted: #71717a; --dim: #3f3f46;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',-apple-system,system-ui,sans-serif; }
+
+/* Header */
+.header { padding:2rem 2.5rem; border-bottom:1px solid var(--border); }
+.header h1 { font-size:1.6rem; font-weight:800; letter-spacing:-0.03em; }
+.header h1 span { background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.header p { color:var(--muted); font-size:0.85rem; margin-top:0.3rem; }
+
+/* SF2 Status */
+.sf2-status { padding:0.5rem 2.5rem; background:var(--card); border-bottom:1px solid var(--border); font-size:0.8rem; display:flex; align-items:center; gap:0.5rem; }
+.sf2-dot { width:8px; height:8px; border-radius:50%; }
+.sf2-dot.loading { background:var(--yellow); animation:pulse 1s infinite; }
+.sf2-dot.ready { background:var(--green); }
+.sf2-dot.error { background:var(--red); }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Version Tabs */
+.tabs { display:flex; padding:0 2.5rem; border-bottom:1px solid var(--border); overflow-x:auto; }
+.tab { background:none; border:none; color:var(--muted); padding:0.9rem 1.5rem; font-size:0.9rem; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+.tab:hover { color:var(--text); }
+.tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+/* Main */
+main { padding:2rem 2.5rem; max-width:1400px; margin:0 auto; }
+
+/* Version Section */
+.version-section { margin-bottom:3rem; }
+.version-header { display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+.version-info { flex:1; min-width:300px; }
+.version-info h2 { font-size:1.3rem; font-weight:700; margin-bottom:0.5rem; display:flex; align-items:center; gap:0.75rem; }
+.version-badge { font-size:0.7rem; padding:0.2rem 0.6rem; border-radius:999px; font-weight:600; }
+.version-badge.success { background:rgba(34,197,94,0.15); color:var(--green); }
+.version-badge.partial { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.version-badge.fail { background:rgba(239,68,68,0.15); color:var(--red); }
+
+.training-details { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem 1.25rem; font-size:0.82rem; line-height:1.7; }
+.training-details .label { color:var(--muted); display:inline-block; min-width:100px; }
+.training-details .highlight { color:var(--accent); font-weight:600; }
+.training-details .warn { color:var(--yellow); }
+.training-details .good { color:var(--green); }
+
+.version-stats { display:flex; gap:1rem; flex-wrap:wrap; }
+.stat-box { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.75rem 1rem; min-width:120px; text-align:center; }
+.stat-box .num { font-size:1.5rem; font-weight:800; }
+.stat-box .lbl { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.1rem; }
+
+/* Sample Grid */
+.sample-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1rem; }
+
+.sample-card { background:var(--card); border:1px solid var(--border); border-radius:10px; overflow:hidden; transition:all 0.2s; }
+.sample-card:hover { border-color:var(--dim); }
+.sample-card.playing { border-color:var(--green); box-shadow:0 0 24px rgba(34,197,94,0.1); }
+
+.sample-top { padding:0.75rem 1rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
+.sample-top h4 { font-size:0.85rem; font-weight:600; }
+.sample-tags { display:flex; gap:0.3rem; }
+.tag { font-size:0.6rem; padding:0.1rem 0.4rem; border-radius:3px; background:rgba(99,102,241,0.12); color:var(--accent); }
+
+.sample-metrics { display:grid; grid-template-columns:repeat(4,1fr); }
+.sm { padding:0.5rem 0.6rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); }
+.sm:nth-child(4n) { border-right:none; }
+.sm .sl { font-size:0.55rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em; }
+.sm .sv { font-size:0.95rem; font-weight:700; margin-top:0.1rem; }
+.sv.good { color:var(--green); } .sv.warn { color:var(--yellow); } .sv.bad { color:var(--red); }
+
+.piano-roll { height:64px; background:#07070a; position:relative; }
+.piano-roll canvas { width:100%; height:100%; }
+
+.player-bar { padding:0.6rem 1rem; display:flex; align-items:center; gap:0.6rem; }
+.pbtn { width:32px; height:32px; border-radius:50%; border:2px solid var(--accent); background:none; color:var(--accent); cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; }
+.pbtn:hover { background:var(--accent); color:white; }
+.pbtn.on { background:var(--green); border-color:var(--green); color:white; }
+.pbtn svg { width:12px; height:12px; }
+.pbar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; cursor:pointer; position:relative; }
+.pfill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:2px; width:0; }
+.ptime { font-size:0.7rem; color:var(--muted); min-width:60px; text-align:right; }
+
+/* Test suite sub-section */
+.sub-section { margin-top:1.5rem; }
+.sub-title { font-size:0.95rem; font-weight:600; color:var(--muted); margin-bottom:0.75rem; padding-left:0.25rem; border-left:3px solid var(--accent); padding-left:0.75rem; }
+
+/* Architecture section */
+.arch-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1.25rem; margin-bottom:2rem; }
+.arch-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; }
+.arch-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+.arch-card h3 .icon { font-size:1.2rem; }
+.token-list { list-style:none; padding:0; }
+.token-list li { padding:0.35rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; display:flex; justify-content:space-between; }
+.token-list li:last-child { border:none; }
+.token-list .tok-name { color:var(--accent); font-family:monospace; font-weight:600; }
+.token-list .tok-count { color:var(--muted); font-size:0.75rem; }
+.arch-flow { display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap; margin:0.5rem 0; }
+.arch-block { background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.8rem; font-size:0.8rem; text-align:center; }
+.arch-block.fixed { border-color:var(--blue); color:var(--blue); }
+.arch-block.trainable { border-color:var(--green); color:var(--green); }
+.arch-block.search { border-color:var(--yellow); color:var(--yellow); }
+.arch-block.cond { border-color:var(--accent); color:var(--accent); }
+.arch-arrow { color:var(--dim); font-size:1.2rem; }
+.arch-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; margin-top:0.75rem; }
+.arch-desc strong { color:var(--text); font-weight:600; }
+.arch-stat { display:inline-block; background:rgba(99,102,241,0.1); color:var(--accent); padding:0.15rem 0.5rem; border-radius:4px; font-size:0.75rem; margin:0.15rem 0.2rem; font-family:monospace; }
+.phase-tag { display:inline-block; padding:0.15rem 0.5rem; border-radius:4px; font-size:0.7rem; font-weight:600; margin-left:0.5rem; }
+.phase-tag.current { background:rgba(34,197,94,0.15); color:var(--green); }
+.phase-tag.next { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.phase-tag.planned { background:rgba(99,102,241,0.1); color:var(--accent); }
+
+/* Embedding section */
+.emb-summary { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.emb-stat { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:0.75rem 1rem; text-align:center; }
+.emb-stat .ev { font-size:1.6rem; font-weight:800; }
+.emb-stat .el { font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.15rem; }
+
+.tsne-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; position:relative; }
+.tsne-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.tsne-canvas { width:100%; height:500px; background:#07070a; border-radius:8px; cursor:crosshair; position:relative; }
+.tsne-canvas canvas { width:100%; height:100%; }
+.tsne-tooltip { position:absolute; background:var(--card2); border:1px solid var(--border); border-radius:6px; padding:0.5rem 0.7rem; font-size:0.75rem; pointer-events:none; display:none; z-index:10; max-width:250px; line-height:1.5; }
+.tsne-legend { display:flex; gap:1rem; flex-wrap:wrap; margin-top:0.75rem; }
+.tsne-legend-item { display:flex; align-items:center; gap:0.3rem; font-size:0.75rem; color:var(--muted); }
+.tsne-legend-dot { width:10px; height:10px; border-radius:50%; }
+
+.sim-section { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.sim-section h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.sim-pair { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.82rem; }
+.sim-pair:last-child { border:none; }
+.sim-score { background:rgba(34,197,94,0.15); color:var(--green); padding:0.2rem 0.5rem; border-radius:4px; font-weight:700; font-family:monospace; font-size:0.8rem; min-width:60px; text-align:center; }
+.sim-files { color:var(--muted); }
+.sim-files strong { color:var(--text); }
+
+.file-table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+.file-table th { text-align:left; padding:0.5rem 0.6rem; border-bottom:2px solid var(--border); color:var(--muted); text-transform:uppercase; font-size:0.65rem; letter-spacing:0.05em; }
+.file-table td { padding:0.45rem 0.6rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+.file-table tr:hover { background:rgba(99,102,241,0.05); }
+.file-table .fname { color:var(--accent); font-family:monospace; font-weight:600; }
+
+.dist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.dist-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.dist-card h4 { font-size:0.85rem; font-weight:600; margin-bottom:0.5rem; color:var(--muted); }
+.dist-bar-wrap { display:flex; align-items:center; gap:0.4rem; margin:0.2rem 0; }
+.dist-label { font-size:0.7rem; color:var(--muted); min-width:50px; text-align:right; }
+.dist-bar { height:14px; border-radius:3px; min-width:2px; }
+.dist-val { font-size:0.7rem; color:var(--muted); min-width:30px; }
+
+.analysis-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.analysis-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.analysis-text { font-size:0.82rem; color:var(--muted); line-height:1.7; }
+.analysis-text strong { color:var(--text); }
+.analysis-text .insight { color:var(--accent); font-weight:600; }
+
+/* Clustering section */
+.cluster-section-title { font-size:1.1rem; font-weight:700; margin:2rem 0 1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0.5rem; }
+.cluster-section-title .csub { font-size:0.75rem; color:var(--muted); font-weight:400; }
+
+.k-chart-wrap { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem; }
+.k-chart-wrap h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.k-chart-canvas { width:100%; height:220px; background:#07070a; border-radius:8px; }
+.k-chart-canvas canvas { width:100%; height:100%; }
+
+.cluster-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:0.75rem; margin-bottom:1.5rem; }
+.cluster-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; transition:border-color 0.2s; }
+.cluster-card:hover { border-color:var(--dim); }
+.cluster-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem; }
+.cluster-card-head h4 { font-size:0.85rem; font-weight:700; }
+.cluster-card-head .cl-size { font-size:0.75rem; color:var(--muted); }
+.cluster-tags { display:flex; gap:0.3rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+.cl-tag { font-size:0.6rem; padding:0.15rem 0.45rem; border-radius:3px; font-weight:600; }
+.cl-tag.reg-alto { background:rgba(99,102,241,0.15); color:var(--accent); }
+.cl-tag.reg-tenor { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.cl-tag.dyn-p { background:rgba(59,130,246,0.15); color:var(--blue); }
+.cl-tag.dyn-mp { background:rgba(34,197,94,0.15); color:var(--green); }
+.cl-tag.dyn-mf { background:rgba(234,179,8,0.15); color:var(--yellow); }
+.cl-tag.dyn-f { background:rgba(239,68,68,0.15); color:var(--red); }
+.cl-tag.tex { background:rgba(139,92,246,0.12); color:var(--accent2); }
+.cl-tag.span-tag { background:rgba(255,255,255,0.06); color:var(--muted); }
+.cluster-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:0.3rem; margin-bottom:0.5rem; }
+.cl-st { text-align:center; }
+.cl-st .cl-sv { font-size:0.9rem; font-weight:700; }
+.cl-st .cl-sl { font-size:0.55rem; color:var(--muted); text-transform:uppercase; }
+.cluster-sources { font-size:0.7rem; color:var(--muted); line-height:1.5; }
+.cluster-sources strong { color:var(--text); font-weight:500; }
+
+.style-dist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.style-dist-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.style-dist-card h4 { font-size:0.85rem; font-weight:600; margin-bottom:0.6rem; color:var(--muted); }
+.hbar-wrap { display:flex; align-items:center; gap:0.5rem; margin:0.3rem 0; }
+.hbar-label { font-size:0.75rem; min-width:80px; text-align:right; color:var(--text); }
+.hbar { height:16px; border-radius:3px; min-width:2px; transition:width 0.3s; }
+.hbar-val { font-size:0.7rem; color:var(--muted); min-width:30px; }
+
+/* Evaluation section */
+.eval-section { margin-top:1rem; padding:1rem; background:var(--card2); border-radius:8px; border:1px solid var(--border); }
+.eval-summary { font-size:0.9rem; color:var(--text); margin-bottom:0.75rem; line-height:1.5; font-weight:500; }
+.eval-cols { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.75rem; }
+.eval-col ul { margin:0; padding-left:1.2rem; font-size:0.8rem; color:var(--muted); line-height:1.6; }
+.eval-col li { margin-bottom:0.2rem; }
+.eval-col-title { font-size:0.8rem; font-weight:700; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.05em; }
+.good-text { color:var(--green); }
+.warn-text { color:var(--yellow); }
+.eval-verdict { font-size:0.85rem; color:var(--text); line-height:1.5; padding-top:0.5rem; border-top:1px solid var(--border); }
+.eval-lesson { font-size:0.8rem; color:var(--accent); margin-top:0.4rem; line-height:1.4; font-style:italic; }
+
+/* Interview section */
+.itv-header { margin-bottom:2rem; }
+.itv-header h2 { font-size:1.4rem; font-weight:800; margin-bottom:0.5rem; }
+.itv-header .itv-purpose { font-size:0.85rem; color:var(--muted); line-height:1.6; }
+.itv-principle { background:var(--card); border-left:3px solid var(--accent); border-radius:0 8px 8px 0; padding:1rem 1.25rem; margin-bottom:2rem; font-size:0.85rem; color:var(--muted); line-height:1.7; }
+.itv-principle strong { color:var(--accent); }
+
+.itv-axis { margin-bottom:2.5rem; }
+.itv-axis-head { display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
+.itv-axis-head h3 { font-size:1.1rem; font-weight:700; }
+.itv-axis-head .itv-icon { font-size:1.3rem; }
+.itv-axis-desc { font-size:0.8rem; color:var(--muted); margin-bottom:1rem; line-height:1.5; }
+
+.itv-q-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(380px,1fr)); gap:1rem; }
+.itv-q-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; transition:border-color 0.2s; }
+.itv-q-card:hover { border-color:var(--accent); }
+.itv-q-card .itv-q-num { font-size:0.65rem; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.3rem; }
+.itv-q-card .itv-q-main { font-size:0.95rem; font-weight:700; color:var(--text); line-height:1.4; margin-bottom:0.75rem; }
+.itv-q-card .itv-q-sub { font-size:0.8rem; color:var(--muted); line-height:1.6; }
+.itv-q-card .itv-q-sub li { margin-bottom:0.2rem; }
+.itv-q-card .itv-q-sub strong { color:var(--text); font-weight:600; }
+.itv-q-card .itv-q-midi { display:inline-block; font-size:0.65rem; background:rgba(99,102,241,0.12); color:var(--accent); padding:0.15rem 0.5rem; border-radius:3px; margin-top:0.5rem; font-family:monospace; }
+
+.itv-summary { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-bottom:2rem; }
+.itv-summary h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.itv-summary table { width:100%; border-collapse:collapse; font-size:0.8rem; }
+.itv-summary th { text-align:left; padding:0.5rem 0.6rem; border-bottom:2px solid var(--border); color:var(--muted); text-transform:uppercase; font-size:0.65rem; letter-spacing:0.05em; }
+.itv-summary td { padding:0.45rem 0.6rem; border-bottom:1px solid rgba(255,255,255,0.04); }
+.itv-summary .qs-num { color:var(--accent); font-weight:700; font-family:monospace; }
+
+.itv-collab { background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:1.25rem; margin-top:2rem; }
+.itv-collab h3 { font-size:1rem; font-weight:700; margin-bottom:0.75rem; }
+.itv-collab ul { font-size:0.82rem; color:var(--muted); line-height:1.7; padding-left:1.2rem; }
+.itv-collab li { margin-bottom:0.3rem; }
+.itv-collab strong { color:var(--text); }
+
+@media(max-width:768px) {
+  .eval-cols { grid-template-columns:1fr; }
+  .header,main,.tabs,.sf2-status { padding-left:1rem; padding-right:1rem; }
+  .sample-grid { grid-template-columns:1fr; }
+  .sample-metrics { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>Liszt</span> Engine Lab</h1>
+  <p>Piano AI Engine Training History & Generated Samples</p>
+</div>
+<div class="sf2-status">
+  <div class="sf2-dot loading" id="sf2dot"></div>
+  <span id="sf2text">Loading Salamander Grand Piano...</span>
+</div>
+<div class="tabs" id="tabs"></div>
+<main id="main"></main>
+
+<script>
+// === DATA ===
+const VERSIONS = {
+  baseline: {
+    title: 'Baseline (Aria)',
+    badge: 'reference', badgeClass: '',
+    training: {
+      model: 'aria-medium-base (원본)',
+      data: '사전학습 ~118만곡 (Aria-MIDI)',
+      epochs: '-',
+      val_loss: '-',
+      strategy: 'EleutherAI 공개 체크포인트 (파인튜닝 전)',
+      result: '기준선. 다양한 temp/토큰 수에서 생성 테스트',
+    },
+    evaluation: {
+      summary: '기본 화성학과 피아노 패턴은 학습되어 있으나, 음악적 구조와 다이나믹이 부족.',
+      strengths: ['MIDI 토큰 문법 이해', '기본적인 음 배치 가능', 'temp에 따른 다양성 변화 확인'],
+      weaknesses: ['낮은 temp(0.5~0.7)에서 극심한 반복 (rep 95~99%)', '음역이 좁음 (2~16 unique pitches)', '구조/전개 없이 패턴 반복', '다이나믹 표현 단조로움'],
+      verdict: '파인튜닝 없이는 음악적 결과물 생성 불가. 학습의 필요성을 명확히 보여주는 기준선.'
+    }
+  },
+  v1: {
+    title: 'Liszt v1',
+    badge: 'foundation', badgeClass: 'success',
+    training: {
+      model: 'aria-medium → fine-tune',
+      data: '1,433,433곡 전체 큐레이션 셋 (17.4GB)',
+      epochs: '3 epochs, bs=1, grad_acc=8, bf16, seq_len=8192',
+      val_loss: '3.33 → 1.94',
+      strategy: '전체 데이터로 기초 체력 확보',
+      result: '다이나믹/음역 개선. 반복 문제 + 구조 부재 + 에튀드 과다학습',
+      duration: '6시간',
+    },
+    evaluation: {
+      summary: '143만곡 학습으로 음악적 기초 체력 대폭 향상. 그러나 에튀드 데이터 과다로 기계적 반복 패턴 발생.',
+      strengths: ['음역 확대 (45 unique pitches)', '다이나믹 범위 개선 (vel_range 60~90)', 'val_loss 3.33→1.94 대폭 하락', '긴 시퀀스(2048+tok) 생성 안정적'],
+      weaknesses: ['반복률 35~71% — 에튀드 스케일 패턴 과다 학습', '구조적 전개 부재 (A-B-A 같은 형식 없음)', '일부 샘플에서 음역이 좁아지는 현상'],
+      verdict: '기초 모델로서 성공. 전체 데이터의 양이 화성학/연주 테크닉 기반을 만들어줌. 하지만 데이터 품질 필터링의 중요성을 보여줌.',
+      lesson: '대량 학습은 기초 체력에 좋지만, 데이터 내 에튀드/스케일 비중이 높으면 반복 패턴을 학습하게 됨.'
+    }
+  },
+  v2: {
+    title: 'Liszt v2',
+    badge: 'overfitting', badgeClass: 'fail',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습',
+      data: 'tier1 3,218곡 (ATEPP+MAESTRO+ASAP, train 3,057/val 161)',
+      epochs: '5 epochs, spc=500, LR=3e-4',
+      val_loss: '1.7419',
+      strategy: 'v1 위에 프로 연주 데이터로 2차 파인튜닝',
+      result: '과적합 — v1보다 다이나믹/다양성 퇴보. 3,218곡 5epochs는 과다',
+    },
+    evaluation: {
+      summary: '적은 데이터(3,218곡)에 5 epochs + 높은 LR(3e-4)은 과적합의 교과서적 사례.',
+      strengths: ['val_loss 1.7419로 수치상 최저', 'rep_8gram이 일부 샘플에서 낮음 (0~4.5%)'],
+      weaknesses: ['다이나믹 범위 v1 대비 퇴보 (vel_range 0~70 불안정)', 'unique pitches 감소 (16~40)', '일부 샘플 매우 짧게 끊김 (v2_sample_3: 12.9초)', '학습 데이터를 암기한 것에 가까움'],
+      verdict: '실패. val_loss가 낮아도 생성 품질은 하락할 수 있다는 교훈. 과적합 시 다양성이 사라짐.',
+      lesson: '소규모 고품질 데이터로 파인튜닝 시: epochs를 줄이고(1~2), LR을 낮춰야(1/5 이하) 과적합 방지.'
+    }
+  },
+  v3: {
+    title: 'Liszt v3',
+    badge: 'previous best', badgeClass: 'partial',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습',
+      data: 'tier1 3,218곡 (v2와 동일)',
+      epochs: '1 epoch, LR=6e-5 (v2의 1/5)',
+      val_loss: '1.7779',
+      strategy: '같은 tier1이지만 1 epoch + 낮은 LR → 과적합 방지',
+      result: 'unique pitches/다이나믹 v1 수준 복원. rep_penalty=1.2로 반복 해결',
+    },
+    evaluation: {
+      summary: 'v2의 교훈을 반영해 1 epoch + 낮은 LR로 과적합 방지 성공. rep_penalty=1.2 추가로 반복 문제까지 해결.',
+      strengths: ['unique pitches 54~60으로 v1 수준 복원', '다이나믹 범위 안정 (vel_range 50~60)', 'rep_penalty=1.2 적용 시 반복률 0~2%로 극적 개선', '좋은 샘플(0,1)은 음악적 완성도 높음'],
+      weaknesses: ['샘플 간 편차 큼 (sample_3: rep 87%, sample_4: rep 84% — penalty 미적용 시)', '구조적 전개는 여전히 부족', '프레이즈 단위 흐름보다 노트 단위 생성에 가까움'],
+      verdict: '현재 최선. 기초 체력(v1) + 프로 연주 감각(tier1 1epoch) + 반복 제어(rep_penalty)의 조합이 유효함.',
+      lesson: '생성 시 rep_penalty=1.2가 필수. 다음 단계는 프레이즈 단위 구조 학습 (RAG/LoRA 모듈화).'
+    }
+  },
+  v4: {
+    title: 'Liszt v4',
+    badge: 'style conditioning', badgeClass: 'success',
+    training: {
+      model: 'v1 epoch3 위에 추가 학습 (augmented)',
+      data: 'tier1 3,218곡 × 5 augmentation ≈ 16K songs',
+      epochs: '10,500/15,491 steps (67.8%), LR=2e-5',
+      val_loss: '2.52 → 1.84 (trailing 1.73)',
+      strategy: '5x data augmentation + style prefix conditioning (baseline/chopin/liszt/beethoven/jazz)',
+      result: 'unique pitches 54~74, rep 0~4.8%, 스타일별 생성 차이 확인. 다양성+반복제어 동시 달성',
+      duration: '진행중 (67.8%)',
+    },
+    evaluation: {
+      summary: '5배 데이터 증강 + 스타일 프리픽스 컨디셔닝으로 다양성과 반복 제어를 동시 달성. 5개 스타일 각 3샘플 생성.',
+      strengths: ['unique pitches 54~74 — v3 대비 상한 크게 향상', 'rep_pct 0~4.8% — 대부분 0~2% 수준으로 안정', '5개 스타일별 뚜렷한 NPS 차이 (liszt 5.6 vs baseline 9.9)', 'loss 2.52→1.84, trailing 1.73으로 안정적 수렴 중', 'vel_mean 분포 다양 (54.7~90.0) — 다이나믹 표현력 확보', '67.8% 진행 시점에서도 충분히 음악적'],
+      weaknesses: ['chopin_nocturne sample_2에서 rep 4.8% — 스타일 내 편차 존재', '일부 baseline 샘플의 NPS가 높음 (10.5~10.8) — 빠르게 달리는 경향', 'liszt_etude의 unique pitches 편차 (53~74) — 안정화 필요', '아직 67.8% 학습 — 완료 후 재평가 필요'],
+      verdict: 'v3 대비 확실한 진보. 데이터 증강과 스타일 프리픽스가 유효함을 실증. 학습 완료 후 v4가 새로운 current best가 될 가능성 높음.',
+      lesson: '5x augmentation이 과적합 방지에 효과적. 스타일 프리픽스로 NPS/다이나믹 분포가 실제로 달라지는 것을 확인.'
+    }
+  },
+  v5_pop: {
+    title: 'Liszt v5 Pop',
+    badge: 'current best', badgeClass: 'success',
+    training: {
+      model: 'v4 step10000 위에 POP909 파인튜닝 (resume 완료)',
+      data: 'POP909 2,898곡 (팝 피아노 전문 데이터셋)',
+      epochs: 'Epoch 2~5 완료 (resume from epoch2_step200, 총 6 epochs)',
+      val_loss: 'E2: 1.2211 → E3: 1.2115 → E4: 1.2016 → E5: 1.1929',
+      strategy: 'V4(클래식 augmented) 위에 POP909 팝 데이터로 장르 확장. LR=3e-5→3e-6, bs=1, grad_acc=8, spc=200',
+      result: 'val_loss 1.1929 (역대 최저). 매 epoch 꾸준히 하락, 과적합 없음. 7개 스타일 eval 완료.',
+      duration: 'Resume ~70분 (epoch 2~5)',
+    },
+    evaluation: {
+      summary: 'V4 위에 POP909로 장르 확장 후 resume 완주. val_loss 1.1929로 역대 최고. 7개 스타일(free/classical/chopin/debussy/nocturne/waltz/sonata) eval 생성 완료.',
+      strengths: ['val_loss 1.1929 — 역대 최저, 매 epoch 꾸준히 하락', 'chopin/debussy/nocturne rep% 0~1.5% — 반복 거의 없음', 'unique pitches 30~62 — 스타일별 다양성 확보', 'velocity range 80~110 — 풍부한 다이나믹 표현', 'composer/form prefix가 실제 스타일 차이 생성에 유효'],
+      weaknesses: ['waltz sample_0 rep 36.8% — 왈츠 반복 패턴 과도', 'classical sample_1 12음만 생성 (조기 종료)', 'sonata sample_0 rep 14.5% — 일부 스타일에서 반복 잔존', '샘플 간 notes 수 편차 큼 (131~1353)'],
+      verdict: '역대 최고 val_loss + 다양한 스타일 생성 가능. POP909 데이터가 클래식 모델 일반화에 크게 기여. waltz/sonata 일부 반복 문제는 V6에서 개선 필요.',
+      lesson: '팝 데이터 확장 + 충분한 epoch(6)가 꾸준한 val_loss 하락에 효과적. 왈츠 등 반복 구조가 강한 형식은 rep_penalty 강화 또는 전용 학습 필요.'
+    }
+  },
+  v5_lora: {
+    title: 'V5 LoRA',
+    badge: 'best quality', badgeClass: 'success',
+    training: {
+      model: 'V5 Pop epoch6 + PEFT LoRA (r=16, alpha=32, 2.36M params)',
+      data: 'tier1 3,720곡 (ATEPP+MAESTRO+ASAP)',
+      epochs: '3 epochs, LR=5e-5, bs=1, grad_acc=8',
+      val_loss: '1.0654 (10.7% improvement)',
+      strategy: 'V5 Pop 베이스 위에 LoRA 어댑터로 스타일 특화. target: mixed_qkv + att_proj_linear',
+      result: 'val_loss 1.0654 역대 최저. nocturne 최고, waltz 개선, free 일부 불안정',
+      duration: '~2시간',
+    },
+    evaluation: {
+      summary: 'V5 Pop 위에 LoRA로 프로 연주 감각 주입 성공. 0.36% 파라미터만으로 10.7% 성능 향상.',
+      strengths: ['val_loss 1.0654 — 역대 최저', 'nocturne rep 1.7% — 반복 거의 없음', 'waltz 개선 (rep 3.5%)', '전체 0.36% 파라미터만 학습 — 효율적'],
+      weaknesses: ['free 스타일 1/3 반복 발생', '멜로디-반주 동기화 이슈 잔존'],
+      verdict: '현재 최고 품질. LoRA의 효율성과 스타일 특화가 유효함을 실증.',
+      lesson: 'LoRA r=16 + 소량 파라미터로도 충분한 스타일 전이 가능.'
+    }
+  },
+  v6_tempo: {
+    title: 'V6 Tempo',
+    badge: 'experimental', badgeClass: 'partial',
+    training: {
+      model: 'V5 Pop epoch6 + LoRA (r=16, alpha=32)',
+      data: 'tier1 3,720곡 → 3,056 seqs (tempo prefix + onset quantization)',
+      epochs: '3 epochs, LR=3e-5',
+      val_loss: '1.6566',
+      strategy: 'tempo prefix 토큰 + onset quantization으로 템포 제어 실험',
+      result: '템포 prefix 인식하지만, 멜로디-반주 분리 문제 여전. V5 LoRA 대비 차이 미미.',
+      duration: '~2시간',
+    },
+    evaluation: {
+      summary: 'tempo prefix + onset quantization 실험. 템포 제어 가능하나 근본적 동기화 문제 미해결.',
+      strengths: ['10개 스타일×템포 조합 생성 완료', 'tempo prefix 토큰 인식 작동'],
+      weaknesses: ['멜로디-반주가 따로 노는 문제 여전', 'V5 LoRA와 차이 체감 어려움', 'val_loss 1.6566 — V5 LoRA 대비 높음'],
+      verdict: '실험적 가치. tempo prefix는 작동하지만 동기화 문제 해결에는 다른 접근 필요.',
+      lesson: 'tempo prefix만으로는 멜로디-반주 동기화 불가. grid alignment가 더 효과적일 수 있음.'
+    }
+  },
+  v7_grid: {
+    title: 'V7 Grid-Aligned',
+    badge: 'repetition solved', badgeClass: 'success',
+    training: {
+      model: 'V5 Pop epoch6 + LoRA (r=16, alpha=32)',
+      data: 'tier1 3,720곡 → grid-quantized JSONL (onset quantization only)',
+      epochs: '3 epochs, LR=3e-5, bs=1, grad_acc=8',
+      val_loss: '1.7322',
+      strategy: 'onset quantization only (no tempo prefix) — 멜로디-반주 동기화 집중',
+      result: 'rep% 0~1.3% (반복 사실상 해결), unique_pitches 60~73 안정',
+      duration: '~2.5시간',
+    },
+    evaluation: {
+      summary: 'onset quantization만 적용해 반복 문제를 사실상 해결. 7개 스타일 eval 완료.',
+      strengths: ['rep% 전 스타일 0~1.3% — 반복 사실상 해결', 'unique_pitches 60~73 — V5 LoRA 대비 안정적 상승', '7 스타일 × 3 = 21 MIDI 생성'],
+      weaknesses: ['val_loss 1.7322 — V5 LoRA 대비 높음', '멜로디-반주 동기화 개선은 추가 확인 필요'],
+      verdict: '반복 문제 해결의 결정적 실험. V5 LoRA 품질 + V7 반복 해결을 합치는 V8이 다음 목표.',
+      lesson: 'onset quantization이 반복 해결에 가장 효과적. tempo prefix 없이도 충분.'
+    }
+  },
+  v5_lora_q16: {
+    title: 'V5 LoRA Q16',
+    badge: 'quantized', badgeClass: 'partial',
+    training: {
+      model: 'V5 LoRA → onset quantization 적용',
+      data: 'V5 LoRA 생성물 + Q16 onset grid',
+      epochs: '-',
+      val_loss: '-',
+      strategy: 'V5 LoRA 체크포인트에 Q16 onset quantization 적용 실험',
+      result: 'LoRA 품질 + onset 정렬 효과 검증용',
+    },
+  },
+  v3_test: {
+    title: 'v3 Test Suite',
+    badge: '23 experiments', badgeClass: 'partial',
+    training: {
+      model: 'Liszt v3 체크포인트',
+      data: '프롬프트/파라미터/이어쓰기/길이 4개 카테고리',
+      epochs: '-',
+      val_loss: '-',
+      strategy: '종합 테스트: prefix 효과, 최적 파라미터, MIDI 이어쓰기, 8192토큰 대곡',
+      result: 'prefix 작동 확인, rep_penalty=1.2 최적, 8192tok(3.5분) 생성 가능',
+    },
+    evaluation: {
+      summary: '23개 실험으로 v3의 능력과 한계를 체계적으로 검증. 프롬프트/파라미터/이어쓰기/길이 4개 축 탐색 완료.',
+      strengths: ['composer prefix (bach, chopin, liszt 등) 실제 작동 확인', 'genre prefix (jazz, classical) 스타일 차이 생성', 'temp=0.95 + rep_penalty=1.2가 최적 조합으로 확정', '8192 토큰(약 3.5분 대곡) 안정적 생성 가능', 'MIDI 이어쓰기(continuation) 기능 정상 동작'],
+      weaknesses: ['prefix 효과가 미묘함 — 극적인 스타일 차이까진 아님', 'heavy_rep(1.5)는 오히려 음악성 저하', 'faithful continuation은 원곡 복제에 가까움', 'short(512tok)은 너무 짧아 음악적 전개 불가'],
+      verdict: '엔진의 현재 능력치를 정량화한 중요한 실험. prefix는 방향을 잡아주지만, 깊은 스타일 전이에는 LoRA/클러스터링이 필요함을 확인.',
+      lesson: '다음 단계: aria-medium-embedding으로 프레이즈 벡터화 → 클러스터링 → 새 conditioning 토큰 설계.'
+    }
+  }
+};
+
+let allSamples = {};
+let testSuiteReport = {};
+let embeddingData = null;
+let currentPlayer = null;
+let audioCtx = null;
+let piano = null;
+let sfReady = false;
+
+// === SOUNDFONT PIANO ===
+async function loadSF2() {
+  const dot = document.getElementById('sf2dot');
+  const txt = document.getElementById('sf2text');
+  try {
+    txt.textContent = 'Loading Grand Piano...';
+    const ctx = await ensureAudioCtx();
+    piano = await Soundfont.instrument(ctx, 'acoustic_grand_piano', {
+      soundfont: 'MusyngKite'
+    });
+    sfReady = true;
+    dot.className = 'sf2-dot ready';
+    txt.textContent = 'Grand Piano loaded (MusyngKite)';
+  } catch(e) {
+    console.error('Piano load error:', e);
+    sfReady = false;
+    dot.className = 'sf2-dot error';
+    txt.textContent = 'Fallback synth active (piano load failed)';
+  }
+}
+
+// === MIDI PLAYBACK ===
+let playbackTimer = null;
+let playbackStart = 0;
+let playbackDuration = 0;
+let scheduledNotes = [];
+
+async function ensureAudioCtx() {
+  if (!audioCtx) audioCtx = new AudioContext();
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  return audioCtx;
+}
+
+function synthNote(ctx, midi, when, duration, velocity) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const freq = 440 * Math.pow(2, (midi - 69) / 12);
+  osc.type = 'sine';
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(velocity * 0.3, when);
+  gain.gain.exponentialRampToValueAtTime(0.001, when + Math.min(duration, 2));
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(when);
+  osc.stop(when + Math.min(duration, 2));
+  return { osc, gain };
+}
+
+async function togglePlay(cardId, midiPath) {
+  const card = document.getElementById(cardId);
+  if (currentPlayer === cardId) { stopPlay(); return; }
+  if (currentPlayer) stopPlay();
+
+  const ctx = await ensureAudioCtx();
+
+  try {
+    const midiData = await Midi.fromUrl(midiPath);
+    const notes = midiData.tracks.flatMap(t => t.notes);
+    if (!notes.length) return;
+
+    playbackDuration = Math.max(...notes.map(n => n.time + n.duration));
+    currentPlayer = cardId;
+    card.classList.add('playing');
+    const btn = card.querySelector('.pbtn');
+    btn.classList.add('on');
+    btn.innerHTML = pauseIcon;
+
+    playbackStart = ctx.currentTime;
+    for (const note of notes) {
+      scheduledNotes.push(
+        setTimeout(() => {
+          try {
+            if (sfReady && piano) {
+              piano.play(note.midi, ctx.currentTime, {
+                gain: note.velocity * 2,
+                duration: note.duration
+              });
+            } else {
+              synthNote(ctx, note.midi, ctx.currentTime, note.duration, note.velocity);
+            }
+          } catch(e) {}
+        }, note.time * 1000)
+      );
+    }
+
+    const progEl = document.getElementById('prog-' + cardId);
+    const timeEl = document.getElementById('time-' + cardId);
+    const update = () => {
+      if (currentPlayer !== cardId) return;
+      const elapsed = ctx.currentTime - playbackStart;
+      const pct = Math.min(100, (elapsed / playbackDuration) * 100);
+      progEl.style.width = pct + '%';
+      timeEl.textContent = fmtTime(elapsed) + ' / ' + fmtTime(playbackDuration);
+      if (elapsed < playbackDuration + 1) playbackTimer = requestAnimationFrame(update);
+      else stopPlay();
+    };
+    playbackTimer = requestAnimationFrame(update);
+  } catch(e) { console.error('MIDI play error:', e); }
+}
+
+function stopPlay() {
+  if (playbackTimer) cancelAnimationFrame(playbackTimer);
+  scheduledNotes.forEach(t => clearTimeout(t));
+  scheduledNotes = [];
+  if (sfReady && piano) piano.stop();
+  if (currentPlayer) {
+    const card = document.getElementById(currentPlayer);
+    if (card) {
+      card.classList.remove('playing');
+      const btn = card.querySelector('.pbtn');
+      btn.classList.remove('on');
+      btn.innerHTML = playIcon;
+    }
+  }
+  currentPlayer = null;
+}
+
+const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>';
+const pauseIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+function fmtTime(s) { return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+function repClass(r) { return r <= 1 ? 'good' : r <= 5 ? 'warn' : 'bad'; }
+
+// === RENDERING ===
+function renderTrainingInfo(ver) {
+  const t = ver.training;
+  const e = ver.evaluation;
+  let html = `<div class="training-details">
+    <div><span class="label">Model:</span> ${t.model}</div>
+    <div><span class="label">Data:</span> ${t.data}</div>
+    <div><span class="label">Training:</span> ${t.epochs}</div>
+    <div><span class="label">Val Loss:</span> <span class="${t.val_loss.includes&&t.val_loss.includes('→') ? 'good' : 'highlight'}">${t.val_loss}</span></div>
+    <div><span class="label">Strategy:</span> ${t.strategy}</div>
+    <div><span class="label">Result:</span> <span class="${ver.badgeClass === 'fail' ? 'warn' : 'good'}">${t.result}</span></div>
+    ${t.duration ? `<div><span class="label">Duration:</span> ${t.duration}</div>` : ''}
+  </div>`;
+  if (e) {
+    html += `<div class="eval-section">
+      <div class="eval-summary">${e.summary}</div>
+      <div class="eval-cols">
+        <div class="eval-col">
+          <div class="eval-col-title good-text">Strengths</div>
+          <ul>${e.strengths.map(s=>'<li>'+s+'</li>').join('')}</ul>
+        </div>
+        <div class="eval-col">
+          <div class="eval-col-title warn-text">Weaknesses</div>
+          <ul>${e.weaknesses.map(s=>'<li>'+s+'</li>').join('')}</ul>
+        </div>
+      </div>
+      <div class="eval-verdict"><span class="label">Verdict:</span> ${e.verdict}</div>
+      ${e.lesson ? `<div class="eval-lesson"><span class="label">Lesson:</span> ${e.lesson}</div>` : ''}
+    </div>`;
+  }
+  return html;
+}
+
+function renderSampleCard(sample, midiPath, cardId) {
+  if (sample.error) return '';
+  return `
+    <div class="sample-card" id="${cardId}">
+      <div class="sample-top">
+        <h4>${sample.file}</h4>
+      </div>
+      <div class="sample-metrics">
+        <div class="sm"><div class="sl">Notes</div><div class="sv">${sample.notes}</div></div>
+        <div class="sm"><div class="sl">Unique</div><div class="sv">${sample.unique_pitches||'-'}</div></div>
+        <div class="sm"><div class="sl">Rep%</div><div class="sv ${repClass(sample.rep_8gram||0)}">${sample.rep_8gram||0}%</div></div>
+        <div class="sm"><div class="sl">Duration</div><div class="sv">${fmtTime(sample.duration_sec||0)}</div></div>
+        <div class="sm"><div class="sl">Pitch Rng</div><div class="sv">${sample.pitch_range||'-'}</div></div>
+        <div class="sm"><div class="sl">Vel Rng</div><div class="sv">${sample.vel_range||'-'}</div></div>
+        <div class="sm"><div class="sl">Vel Mean</div><div class="sv">${sample.vel_mean||'-'}</div></div>
+        <div class="sm"><div class="sl">Size</div><div class="sv">${sample.file_size ? (sample.file_size/1024).toFixed(1)+'K' : '-'}</div></div>
+      </div>
+      <div class="piano-roll"><canvas id="cvs-${cardId}"></canvas></div>
+      <div class="player-bar">
+        <button class="pbtn" onclick="togglePlay('${cardId}','${midiPath}')">${playIcon}</button>
+        <div class="pbar"><div class="pfill" id="prog-${cardId}"></div></div>
+        <div class="ptime" id="time-${cardId}">0:00 / ${fmtTime(sample.duration_sec||0)}</div>
+      </div>
+    </div>`;
+}
+
+async function drawPianoRoll(canvasId, midiPath) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * 2;
+  canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2,2);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  try {
+    const mid = await Midi.fromUrl(midiPath);
+    const notes = mid.tracks.flatMap(t => t.notes);
+    if (!notes.length) return;
+    const minP = Math.min(...notes.map(n=>n.midi));
+    const maxP = Math.max(...notes.map(n=>n.midi));
+    const maxT = Math.max(...notes.map(n=>n.time+n.duration));
+    const pr = maxP - minP + 1;
+    for (const n of notes) {
+      const x = (n.time/maxT)*w;
+      const nw = Math.max(1,(n.duration/maxT)*w);
+      const y = h - ((n.midi-minP+1)/pr)*h;
+      const nh = Math.max(1, h/pr);
+      const hue = 240 + n.velocity*60;
+      ctx.fillStyle = `hsla(${hue},80%,60%,${0.4+n.velocity*0.6})`;
+      ctx.fillRect(x,y,nw,nh);
+    }
+  } catch(e) {}
+}
+
+function renderVersion(vKey) {
+  const ver = VERSIONS[vKey];
+  const badgeCls = ver.badgeClass || '';
+  let html = `
+    <div class="version-section" id="sec-${vKey}">
+      <div class="version-header">
+        <div class="version-info">
+          <h2>${ver.title} <span class="version-badge ${badgeCls}">${ver.badge}</span></h2>
+          ${renderTrainingInfo(ver)}
+        </div>
+      </div>`;
+
+  if (vKey === 'v4') {
+    // V4: group samples by style prefix
+    const styles = {
+      'baseline': { label: 'Baseline (no style prefix)', avg: { notes: 677, unique_pitches: 58, nps: 9.9, rep_pct: 0.0 }},
+      'chopin': { label: 'Chopin Nocturne', avg: { notes: 677, unique_pitches: 68, nps: 9.2, rep_pct: 2.1 }},
+      'liszt': { label: 'Liszt Etude', avg: { notes: 674, unique_pitches: 60, nps: 5.6, rep_pct: 1.2 }},
+      'beethoven': { label: 'Beethoven Sonata', avg: { notes: 677, unique_pitches: 60, nps: 9.4, rep_pct: 0.5 }},
+      'jazz': { label: 'Jazz', avg: { notes: 675, unique_pitches: 61, nps: 7.1, rep_pct: 0.7 }},
+    };
+    // Summary stats row
+    html += `<div class="sub-section"><div class="sub-title">Style Comparison (Averages)</div>
+      <table class="file-table">
+        <tr><th>Style</th><th>Avg Notes</th><th>Avg Unique Pitches</th><th>Avg NPS</th><th>Avg Rep%</th></tr>
+        ${Object.entries(styles).map(([k,v]) => `<tr>
+          <td class="fname">${v.label}</td>
+          <td>${v.avg.notes}</td>
+          <td>${v.avg.unique_pitches}</td>
+          <td>${v.avg.nps}</td>
+          <td class="${repClass(v.avg.rep_pct)}">${v.avg.rep_pct}%</td>
+        </tr>`).join('')}
+      </table></div>`;
+    const samples = allSamples[vKey] || [];
+    for (const [styleKey, styleInfo] of Object.entries(styles)) {
+      const styleSamples = samples.filter(s => s.file.includes('_'+styleKey+'_'));
+      if (!styleSamples.length) continue;
+      html += `<div class="sub-section"><div class="sub-title">${styleInfo.label} (${styleSamples.length} samples)</div><div class="sample-grid">`;
+      for (const s of styleSamples) {
+        const cardId = ('v4-'+s.file).replace(/[\/\.]/g,'-');
+        const mpath = s.file;
+        html += renderSampleCard(s, mpath, cardId);
+      }
+      html += '</div></div>';
+    }
+  } else if (vKey === 'v5_pop') {
+    const v5styles = {
+      'free':      { label: 'Free (no style prefix)' },
+      'classical': { label: 'Classical' },
+      'chopin':    { label: 'Chopin' },
+      'debussy':   { label: 'Debussy' },
+      'nocturne':  { label: 'Nocturne' },
+      'waltz':     { label: 'Waltz' },
+      'sonata':    { label: 'Sonata' },
+      'pop':       { label: 'Pop (genre token N/A)' },
+    };
+    const v5samples = allSamples[vKey] || [];
+    // Summary table
+    const styleStats = {};
+    for (const s of v5samples) {
+      const st = (s.style||'').replace('piano_','') || s.file.replace('v5pop_','').replace(/_\d+\.mid$/,'');
+      if (!styleStats[st]) styleStats[st] = [];
+      styleStats[st].push(s);
+    }
+    html += `<div class="sub-section"><div class="sub-title">Style Comparison (Averages)</div>
+      <table class="file-table">
+        <tr><th>Style</th><th>Avg Notes</th><th>Avg Unique</th><th>Avg Rep%</th><th>Avg Vel Range</th></tr>
+        ${Object.entries(styleStats).map(([k,arr]) => {
+          const n = arr.length;
+          return `<tr>
+            <td class="fname">${(v5styles[k]||{}).label||k}</td>
+            <td>${(arr.reduce((a,s)=>a+s.notes,0)/n).toFixed(0)}</td>
+            <td>${(arr.reduce((a,s)=>a+s.unique_pitches,0)/n).toFixed(1)}</td>
+            <td class="${repClass(arr.reduce((a,s)=>a+s.rep_8gram,0)/n)}">${(arr.reduce((a,s)=>a+s.rep_8gram,0)/n).toFixed(1)}%</td>
+            <td>${(arr.reduce((a,s)=>a+s.vel_range,0)/n).toFixed(0)}</td>
+          </tr>`;
+        }).join('')}
+      </table></div>`;
+    // Samples grouped by style
+    for (const [styleKey, styleInfo] of Object.entries(v5styles)) {
+      const styleSamples = v5samples.filter(s => s.file.includes('_'+styleKey+'_') || s.file.startsWith('v5pop_'+styleKey+'_'));
+      if (!styleSamples.length) continue;
+      html += `<div class="sub-section"><div class="sub-title">${styleInfo.label} (${styleSamples.length} samples)</div><div class="sample-grid">`;
+      for (const s of styleSamples) {
+        const cardId = ('v5pop-'+s.file).replace(/[\/\.]/g,'-');
+        const mpath = s.file;
+        html += renderSampleCard(s, mpath, cardId);
+      }
+      html += '</div></div>';
+    }
+  } else if (vKey === 'v3_test') {
+    // Test suite organized by category
+    const cats = {
+      '1_prompt': 'Prompt Variations',
+      '2_params': 'Parameter Tuning',
+      '3_continuation': 'MIDI Continuation',
+      '4_length': 'Generation Length',
+    };
+    for (const [catKey, catTitle] of Object.entries(cats)) {
+      const exps = Object.entries(testSuiteReport.experiments||{}).filter(([k])=>k.startsWith(catKey));
+      if (!exps.length) continue;
+      html += `<div class="sub-section"><div class="sub-title">${catTitle} (${exps.length} experiments)</div><div class="sample-grid">`;
+      for (const [expKey, expData] of exps) {
+        for (let i = 0; i < expData.samples.length; i++) {
+          const s = expData.samples[i];
+          const name = expKey.split('/')[1];
+          const cardId = ('ts-'+expKey+'-'+i).replace(/[\/\.]/g,'-');
+          const mpath = 'midi_'+expKey.replace(/\//g,'_') + '_' + s.file;
+          html += `
+            <div class="sample-card" id="${cardId}">
+              <div class="sample-top">
+                <h4>${name} / ${s.file}</h4>
+                <div class="sample-tags">
+                  ${expData.gen_params ? `<span class="tag">t=${expData.gen_params.temp}</span><span class="tag">rep=${expData.gen_params.rep_penalty}</span>` : ''}
+                </div>
+              </div>
+              <div class="sample-metrics">
+                <div class="sm"><div class="sl">Notes</div><div class="sv">${s.notes}</div></div>
+                <div class="sm"><div class="sl">Unique</div><div class="sv">${s.unique_pitches||'-'}</div></div>
+                <div class="sm"><div class="sl">Rep%</div><div class="sv ${repClass(s.rep_8gram||0)}">${s.rep_8gram||0}%</div></div>
+                <div class="sm"><div class="sl">Duration</div><div class="sv">${fmtTime(s.duration_sec||0)}</div></div>
+                <div class="sm"><div class="sl">Pitch Rng</div><div class="sv">${s.pitch_range||'-'}</div></div>
+                <div class="sm"><div class="sl">Vel Rng</div><div class="sv">${s.vel_range||'-'}</div></div>
+                <div class="sm"><div class="sl">Vel Mean</div><div class="sv">${s.vel_mean||'-'}</div></div>
+                <div class="sm"><div class="sl">Size</div><div class="sv">${s.file_size?(s.file_size/1024).toFixed(1)+'K':'-'}</div></div>
+              </div>
+              <div class="piano-roll"><canvas id="cvs-${cardId}"></canvas></div>
+              <div class="player-bar">
+                <button class="pbtn" onclick="togglePlay('${cardId}','${mpath}')">${playIcon}</button>
+                <div class="pbar"><div class="pfill" id="prog-${cardId}"></div></div>
+                <div class="ptime" id="time-${cardId}">0:00 / ${fmtTime(s.duration_sec||0)}</div>
+              </div>
+            </div>`;
+        }
+      }
+      html += '</div></div>';
+    }
+  } else {
+    // Regular version samples
+    const samples = allSamples[vKey] || [];
+    if (samples.length) {
+      html += '<div class="sample-grid">';
+      for (const s of samples) {
+        const cardId = (vKey+'-'+s.file).replace(/[\/\.]/g,'-');
+        const mpath = s.file;
+        html += renderSampleCard(s, mpath, cardId);
+      }
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderArchitecture() {
+  return `
+  <div class="version-section">
+    <div class="version-info">
+      <h2>Modular Architecture <span class="phase-tag current">Phase 2 Active</span></h2>
+    </div>
+
+    <div class="arch-grid">
+      <!-- Model Spec -->
+      <div class="arch-card">
+        <h3><span class="icon">🧠</span> Base Model — aria-medium</h3>
+        <div class="arch-desc">
+          <strong>Parameters:</strong> <span class="arch-stat">650M</span><br>
+          <strong>Hidden:</strong> <span class="arch-stat">1536-dim</span>
+          <strong>Layers:</strong> <span class="arch-stat">16</span>
+          <strong>Heads:</strong> <span class="arch-stat">24</span><br>
+          <strong>Max Seq:</strong> <span class="arch-stat">8192 tokens</span>
+          <strong>Vocab:</strong> <span class="arch-stat">17,727</span><br>
+          <strong>Embedding:</strong> <span class="arch-stat">512-dim (emb_head)</span><br><br>
+          Pre-trained on <strong>~118만곡</strong> (Aria-MIDI dataset).<br>
+          Fine-tuned: v1(143만곡 전체) → v3(tier1 3,218곡 1epoch).
+        </div>
+      </div>
+
+      <!-- Prefix Tokens: Composer -->
+      <div class="arch-card">
+        <h3><span class="icon">🎼</span> Prefix — Composer (12)</h3>
+        <ul class="token-list">
+          <li><span class="tok-name">composer_bach</span><span class="tok-count">J.S. Bach</span></li>
+          <li><span class="tok-name">composer_beethoven</span><span class="tok-count">Beethoven</span></li>
+          <li><span class="tok-name">composer_chopin</span><span class="tok-count">Chopin</span></li>
+          <li><span class="tok-name">composer_debussy</span><span class="tok-count">Debussy</span></li>
+          <li><span class="tok-name">composer_liszt</span><span class="tok-count">Liszt</span></li>
+          <li><span class="tok-name">composer_mozart</span><span class="tok-count">Mozart</span></li>
+          <li><span class="tok-name">composer_rachmaninoff</span><span class="tok-count">Rachmaninoff</span></li>
+          <li><span class="tok-name">composer_ravel</span><span class="tok-count">Ravel</span></li>
+          <li><span class="tok-name">composer_scarlatti</span><span class="tok-count">Scarlatti</span></li>
+          <li><span class="tok-name">composer_schubert</span><span class="tok-count">Schubert</span></li>
+          <li><span class="tok-name">composer_schumann</span><span class="tok-count">Schumann</span></li>
+          <li><span class="tok-name">composer_scriabin</span><span class="tok-count">Scriabin</span></li>
+        </ul>
+      </div>
+
+      <!-- Prefix Tokens: Form -->
+      <div class="arch-card">
+        <h3><span class="icon">📐</span> Prefix — Form (8)</h3>
+        <ul class="token-list">
+          <li><span class="tok-name">form_etude</span><span class="tok-count">연습곡</span></li>
+          <li><span class="tok-name">form_fugue</span><span class="tok-count">푸가</span></li>
+          <li><span class="tok-name">form_nocturne</span><span class="tok-count">녹턴</span></li>
+          <li><span class="tok-name">form_prelude</span><span class="tok-count">전주곡</span></li>
+          <li><span class="tok-name">form_rondo</span><span class="tok-count">론도</span></li>
+          <li><span class="tok-name">form_scherzo</span><span class="tok-count">스케르초</span></li>
+          <li><span class="tok-name">form_sonata</span><span class="tok-count">소나타</span></li>
+          <li><span class="tok-name">form_waltz</span><span class="tok-count">왈츠</span></li>
+        </ul>
+      </div>
+
+      <!-- Prefix Tokens: Genre + Instrument -->
+      <div class="arch-card">
+        <h3><span class="icon">🎹</span> Prefix — Genre & Instrument</h3>
+        <div class="arch-desc" style="margin-top:0"><strong>Genre (2)</strong></div>
+        <ul class="token-list">
+          <li><span class="tok-name">genre_classical</span><span class="tok-count">클래식</span></li>
+          <li><span class="tok-name">genre_jazz</span><span class="tok-count">재즈</span></li>
+        </ul>
+        <div class="arch-desc" style="margin-top:0.5rem"><strong>Instrument (11)</strong></div>
+        <ul class="token-list">
+          <li><span class="tok-name">instrument_piano</span><span class="tok-count">피아노</span></li>
+          <li><span class="tok-name">instrument_guitar</span><span class="tok-count">기타</span></li>
+          <li><span class="tok-name">instrument_violin</span><span class="tok-count">바이올린</span></li>
+          <li><span class="tok-name">instrument_cello</span><span class="tok-count">첼로</span></li>
+          <li><span class="tok-name">instrument_flute</span><span class="tok-count">플룻</span></li>
+          <li><span class="tok-name">instrument_organ</span><span class="tok-count">오르간</span></li>
+          <li><span class="tok-name">instrument_harp</span><span class="tok-count">하프</span></li>
+          <li><span class="tok-name">instrument_drums</span><span class="tok-count">드럼</span></li>
+          <li><span class="tok-name">instrument_bass</span><span class="tok-count">베이스</span></li>
+          <li><span class="tok-name">instrument_strings</span><span class="tok-count">현악 앙상블</span></li>
+          <li><span class="tok-name">instrument_brass</span><span class="tok-count">금관</span></li>
+        </ul>
+      </div>
+
+      <!-- Limitation & Solution -->
+      <div class="arch-card" style="grid-column:1/-1; border-color:var(--yellow);">
+        <h3><span class="icon">⚠️</span> 내장 프리픽스 한계 — 클래식 편향</h3>
+        <div class="arch-desc">
+          <strong>문제:</strong> Aria 모델의 내장 프리픽스는 <strong>클래식 위주</strong>. 작곡가 12명 전원 클래식, 장르는 classical/jazz 2개뿐.
+          Pop, R&B, Electronic, Hip-hop, Lo-fi, Neo-soul 등 현대 장르 <strong>전무</strong>.
+          Form도 소나타/푸가/왈츠 등 클래식 형식만 존재.<br><br>
+
+          <strong>해결 — 우리의 클러스터 프리픽스:</strong><br>
+          내장 토큰에 의존하지 않고, <strong>데이터에서 스타일을 자동 발견</strong>하는 방식으로 전환.
+          aria-medium-embedding(512차원)으로 프레이즈를 벡터화 → K-Means 클러스터링 →
+          음역(register) x 셈여림(dynamic) x 밀도(texture) x 음역폭(span) 조합으로 자동 프로파일링.<br><br>
+
+          <strong>확장 가능성:</strong><br>
+          &#8226; <strong>Splice 피아노 루프</strong> → MIDI 변환 → RAG에 추가하면 현대 장르 프레이즈 포함<br>
+          &#8226; <strong>MuseScore 수집 데이터</strong>(143만곡)에는 팝/재즈/OST/게임 등 다양한 장르 포함<br>
+          &#8226; 클러스터가 자동으로 "jazz voicing", "pop ballad pattern", "rhythmic groove" 등을 구분<br>
+          &#8226; 내장 프리픽스 33개 → 클러스터 프리픽스 <strong>50~100개</strong>로 스타일 해상도 대폭 향상
+        </div>
+      </div>
+
+      <!-- Modular Pipeline -->
+      <div class="arch-card" style="grid-column:1/-1">
+        <h3><span class="icon">🔧</span> Modular Pipeline — Base + LoRA + RAG + Cluster Prefix</h3>
+        <div class="arch-flow">
+          <div class="arch-block fixed">Base Model<br><small>650M (frozen)</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block trainable">LoRA Adapter<br><small>~50MB/style</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block search">RAG Search<br><small>FAISS 512-dim</small></div>
+          <span class="arch-arrow">+</span>
+          <div class="arch-block cond">Cluster Prefix<br><small>K-Means tokens</small></div>
+          <span class="arch-arrow">→</span>
+          <div class="arch-block" style="border-color:var(--green);color:var(--green)">Generation<br><small>Style-conditioned</small></div>
+        </div>
+        <div class="arch-desc" style="margin-top:1rem">
+          <strong>LoRA (Low-Rank Adaptation):</strong> 베이스 모델의 가중치를 동결하고, 작은 어댑터(~50MB)만 학습.
+          작곡가별/장르별 스타일을 독립적으로 학습 가능. "From Generality to Mastery" 논문에서
+          <strong>161~307곡</strong>이면 작곡가 스타일 LoRA 학습 충분함을 검증.
+          <span class="phase-tag next">Phase 2.5</span><br><br>
+
+          <strong>RAG (Retrieval-Augmented Generation):</strong> aria-medium-embedding으로 프레이즈를 512차원 벡터로 변환 →
+          FAISS 인덱스로 유사 프레이즈 검색. 생성 시 참고 프레이즈를 컨텍스트에 추가.
+          <span class="phase-tag current">Phase 2 진행중</span><br><br>
+
+          <strong>Cluster Prefix:</strong> K-Means로 프레이즈를 50~100개 스타일 클러스터로 분류.
+          각 클러스터를 새로운 conditioning 토큰으로 사용. register(음역) × dynamic(셈여림) × texture(밀도) 조합.
+          <span class="phase-tag current">Phase 2 진행중</span><br><br>
+
+          <strong>3가지 스타일 전이 비교 실험 (예정):</strong><br>
+          ① <strong>Prefix-only:</strong> 클러스터 토큰만으로 스타일 제어<br>
+          ② <strong>Prepend:</strong> RAG 검색된 프레이즈를 프롬프트 앞에 붙이기<br>
+          ③ <strong>Cluster-LoRA:</strong> 클러스터별 LoRA 학습 + 프리픽스 조합
+          <span class="phase-tag planned">Phase 3</span>
+        </div>
+      </div>
+
+      <!-- Phase 2.5: Keyscape + Splice -->
+      <div class="arch-card" style="grid-column:1/-1">
+        <h3><span class="icon">🎵</span> Phase 2.5 — Keyscape VST + Splice Integration</h3>
+        <div class="arch-desc">
+          <strong>Keyscape VST 렌더링:</strong> 현재 Web Audio/SF2 음질 한계 → Spectrasonics Keyscape VST3로 상용 수준 피아노 음질 확보.
+          Pedalboard(Python) 라이브러리로 MIDI → WAV 오프라인 렌더링 파이프라인 구축.
+          Keyscape에 내장된 아티큘레이션(해머, 릴리즈 노이즈 등)을 활용.
+          <span class="phase-tag next">설계 확정</span><br><br>
+
+          <strong>Splice 피아노 루프:</strong> Splice 회원 보유. 프로 연주자의 피아노 루프(청크 단위)를 MIDI 변환 후
+          RAG 데이터베이스에 추가. 실제 연주 아티큘레이션/그루브가 담긴 데이터로 RAG 품질 향상.
+          <span class="phase-tag next">설계 확정</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEmbedding() {
+  if (!embeddingData) return '<div class="version-section"><p style="color:var(--muted)">Embedding data not loaded.</p></div>';
+  const d = embeddingData;
+  const s = d.stats;
+
+  // Version colors
+  const vColors = { 'v0 (base)':'#3b82f6', 'v1':'#22c55e', 'v2':'#ef4444', 'v3':'#eab308', 'unknown':'#71717a' };
+
+  // Histogram helper
+  function makeHistogram(values, bins=8, color='var(--accent)') {
+    const mn = Math.min(...values), mx = Math.max(...values);
+    const step = (mx - mn) / bins || 1;
+    const counts = Array(bins).fill(0);
+    values.forEach(v => { const b = Math.min(bins-1, Math.floor((v-mn)/step)); counts[b]++; });
+    const maxC = Math.max(...counts);
+    return counts.map((c,i) => {
+      const label = (mn + i*step).toFixed(1);
+      const pct = maxC ? (c/maxC*100) : 0;
+      return `<div class="dist-bar-wrap">
+        <span class="dist-label">${label}</span>
+        <div class="dist-bar" style="width:${pct}%;background:${color}"></div>
+        <span class="dist-val">${c}</span>
+      </div>`;
+    }).join('');
+  }
+
+  let html = `<div class="version-section">
+    <div class="version-info">
+      <h2>Phrase Embedding Analysis <span class="phase-tag current">Test Run</span></h2>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="emb-summary">
+      <div class="emb-stat"><div class="ev" style="color:var(--accent)">${d.total_phrases}</div><div class="el">Total Phrases</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--blue)">${d.total_files}</div><div class="el">MIDI Files</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--green)">${d.embedding_dim}</div><div class="el">Dimensions</div></div>
+      <div class="emb-stat"><div class="ev" style="color:var(--yellow)">${s.duration.avg}s</div><div class="el">Avg Duration</div></div>
+      <div class="emb-stat"><div class="ev">${s.notes_per_phrase.avg}</div><div class="el">Avg Notes</div></div>
+      <div class="emb-stat"><div class="ev">${s.avg_pitch.avg}</div><div class="el">Avg Pitch</div></div>
+      <div class="emb-stat"><div class="ev">${s.avg_velocity.avg}</div><div class="el">Avg Velocity</div></div>
+      <div class="emb-stat"><div class="ev" style="color:${d.cosine_sim.avg > 0.3 ? 'var(--yellow)' : 'var(--green)'}">${d.cosine_sim.avg}</div><div class="el">Avg Similarity</div></div>
+    </div>
+
+    <!-- Distribution Charts -->
+    <div class="dist-grid">
+      <div class="dist-card">
+        <h4>Duration Distribution (sec)</h4>
+        ${makeHistogram(d.tsne.map(p=>p.duration), 8, 'var(--accent)')}
+      </div>
+      <div class="dist-card">
+        <h4>Notes per Phrase</h4>
+        ${makeHistogram(d.tsne.map(p=>p.num_notes), 8, 'var(--blue)')}
+      </div>
+      <div class="dist-card">
+        <h4>Average Pitch (MIDI)</h4>
+        ${makeHistogram(d.tsne.map(p=>p.avg_pitch), 8, 'var(--green)')}
+      </div>
+      <div class="dist-card">
+        <h4>Average Velocity</h4>
+        ${makeHistogram(d.tsne.map(p=>p.avg_velocity), 8, 'var(--yellow)')}
+      </div>
+    </div>
+
+    <!-- t-SNE Visualization -->
+    <div class="tsne-wrap">
+      <h3>t-SNE 2D Projection — 250 Phrases, Colored by Model Version</h3>
+      <div class="tsne-canvas" id="tsne-container">
+        <canvas id="tsne-cvs"></canvas>
+        <div class="tsne-tooltip" id="tsne-tip"></div>
+      </div>
+      <div class="tsne-legend">
+        ${Object.entries(vColors).map(([k,c]) => `<div class="tsne-legend-item"><div class="tsne-legend-dot" style="background:${c}"></div>${k}</div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Top Similar Pairs -->
+    <div class="sim-section">
+      <h3>Top 5 Most Similar Phrase Pairs (Cosine Similarity)</h3>
+      ${d.top_similar_pairs.map(p => `
+        <div class="sim-pair">
+          <span class="sim-score">${p.sim.toFixed(4)}</span>
+          <span class="sim-files"><strong>${p.file_i}</strong> phrase #${p.phrase_i} ↔ <strong>${p.file_j}</strong> phrase #${p.phrase_j}</span>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Per-File Table -->
+    <div class="sim-section">
+      <h3>Per-File Breakdown</h3>
+      <table class="file-table">
+        <tr><th>File</th><th>Version</th><th>Phrases</th><th>Avg Duration</th><th>Avg Notes</th></tr>
+        ${d.per_file.map(f => `
+          <tr>
+            <td class="fname">${f.file}</td>
+            <td><span style="color:${vColors[f.version]||'#71717a'}">${f.version}</span></td>
+            <td>${f.phrases}</td>
+            <td>${f.avg_duration}s</td>
+            <td>${f.avg_notes}</td>
+          </tr>
+        `).join('')}
+      </table>
+    </div>
+
+    <!-- Analysis -->
+    <div class="analysis-card">
+      <h3>Analysis & Insights</h3>
+      <div class="analysis-text">
+        <strong>데이터 개요:</strong> Liszt 엔진의 생성 MIDI ${d.total_files}개에서 추출한 ${d.total_phrases}개 프레이즈를
+        aria-medium-embedding(${d.embedding_dim}차원)으로 임베딩한 결과입니다.<br><br>
+
+        <strong>임베딩 품질:</strong> 모든 벡터가 L2-normalized (norm=1.0).
+        코사인 유사도 범위 <span class="insight">${d.cosine_sim.min} ~ ${d.cosine_sim.max}</span>,
+        평균 <span class="insight">${d.cosine_sim.avg}</span>.
+        유사도가 1.0인 쌍이 존재 — 이는 같은 파일의 동일 프레이즈가 중복 등장한 것 (glob 패턴 중복, 추후 dedup 필요).<br><br>
+
+        <strong>프레이즈 분포:</strong> 평균 ${s.notes_per_phrase.avg}개 노트, 평균 ${s.duration.avg}초 길이.
+        7000토큰 대곡(gen_7000tok)에서 96개 프레이즈가 추출되어 가장 많은 비중을 차지.
+        평균 피치 ${s.avg_pitch.avg} (MIDI, ≈ D4~E4 근처), 평균 벨로시티 ${s.avg_velocity.avg}.<br><br>
+
+        <strong>버전별 특성 (t-SNE):</strong> t-SNE 시각화에서 같은 버전의 프레이즈들이 어떤 클러스터를 형성하는지 관찰 가능.
+        v0(base)와 v3(현재 최선)의 프레이즈가 얼마나 다른 영역을 차지하는지가 핵심 포인트.<br><br>
+
+        <strong>다음 단계:</strong><br>
+        &#8226; tier1 프로 연주 데이터 <span class="insight">13,444개 파일</span> → 본격 임베딩 (현재 전송 중)<br>
+        &#8226; K-Means 클러스터링 (k=50~100) → 스타일 자동 프로파일링<br>
+        &#8226; 클러스터별 대표 프레이즈 → 새 conditioning 토큰 후보<br>
+        &#8226; 3가지 스타일 전이 비교 실험: prefix-only vs prepend vs cluster-LoRA
+      </div>
+    </div>`;
+
+  // === Clustering Section ===
+  const cl = testSuiteReport.clustering;
+  if (cl && cl.profiles && cl.profiles.length > 0) {
+    const dynColors = { p:'var(--blue)', mp:'var(--green)', mf:'var(--yellow)', f:'var(--red)' };
+    const regColors = { alto:'var(--accent)', tenor:'var(--yellow)' };
+    const texColors = { dense:'#8b5cf6', moderate:'#3b82f6', virtuosic:'#ef4444', 'sparse/slow':'#71717a' };
+
+    // Sort by size descending, take top 20
+    const sorted = [...cl.profiles].sort((a,b) => b.size - a.size);
+    const top20 = sorted.slice(0, 20);
+
+    // Style distribution counts
+    const regCounts = {}, dynCounts = {}, texCounts = {}, spanCounts = {};
+    cl.profiles.forEach(p => {
+      regCounts[p.register] = (regCounts[p.register]||0) + 1;
+      dynCounts[p.dynamic] = (dynCounts[p.dynamic]||0) + 1;
+      texCounts[p.texture] = (texCounts[p.texture]||0) + 1;
+      spanCounts[p.span] = (spanCounts[p.span]||0) + 1;
+    });
+
+    function hbarChart(data, colorMap, defaultColor) {
+      const entries = Object.entries(data).sort((a,b) => b[1] - a[1]);
+      const maxVal = Math.max(...entries.map(e => e[1]));
+      return entries.map(([k,v]) => {
+        const pct = maxVal ? (v / maxVal * 100) : 0;
+        const col = (colorMap && colorMap[k]) || defaultColor || 'var(--accent)';
+        return '<div class="hbar-wrap">' +
+          '<span class="hbar-label">' + k + '</span>' +
+          '<div class="hbar" style="width:' + pct + '%;background:' + col + '"></div>' +
+          '<span class="hbar-val">' + v + '</span>' +
+        '</div>';
+      }).join('');
+    }
+
+    html += `
+    <!-- Clustering Results -->
+    <div class="cluster-section-title">
+      K-Means Clustering 결과 <span class="csub">— ${cl.total_phrases.toLocaleString()}개 프레이즈, K=${cl.k_optimal}</span>
+    </div>
+
+    <!-- K-value Search Chart -->
+    <div class="k-chart-wrap">
+      <h3>K-value 탐색 — Silhouette Score</h3>
+      <div class="k-chart-canvas">
+        <canvas id="k-chart-cvs"></canvas>
+      </div>
+    </div>
+
+    <!-- Style Distribution Summary -->
+    <div class="style-dist-grid">
+      <div class="style-dist-card">
+        <h4>Register 분포</h4>
+        ${hbarChart(regCounts, regColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Dynamic 분포</h4>
+        ${hbarChart(dynCounts, dynColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Texture 분포</h4>
+        ${hbarChart(texCounts, texColors)}
+      </div>
+      <div class="style-dist-card">
+        <h4>Span 분포</h4>
+        ${hbarChart(spanCounts, null, 'var(--accent2)')}
+      </div>
+    </div>
+
+    <!-- Top 20 Clusters -->
+    <div class="analysis-card">
+      <h3>Top 20 Clusters (by size)</h3>
+    </div>
+    <div class="cluster-grid">
+      ${top20.map(p => {
+        const dynClass = 'dyn-' + p.dynamic;
+        const regClass = 'reg-' + p.register;
+        return '<div class="cluster-card" style="border-left:3px solid ' + (dynColors[p.dynamic]||'var(--accent)') + '">' +
+          '<div class="cluster-card-head">' +
+            '<h4>Cluster #' + p.cluster_id + '</h4>' +
+            '<span class="cl-size">' + p.size.toLocaleString() + '개 (' + p.pct + '%)</span>' +
+          '</div>' +
+          '<div class="cluster-tags">' +
+            '<span class="cl-tag ' + regClass + '">' + p.register + '</span>' +
+            '<span class="cl-tag ' + dynClass + '">' + p.dynamic + '</span>' +
+            '<span class="cl-tag tex">' + p.texture + '</span>' +
+            '<span class="cl-tag span-tag">' + p.span + '</span>' +
+          '</div>' +
+          '<div class="cluster-stats">' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_pitch.toFixed(1) + '</div><div class="cl-sl">Avg Pitch</div></div>' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_velocity.toFixed(1) + '</div><div class="cl-sl">Avg Vel</div></div>' +
+            '<div class="cl-st"><div class="cl-sv">' + p.stats.avg_density_nps.toFixed(1) + '</div><div class="cl-sl">NPS</div></div>' +
+          '</div>' +
+          '<div class="cluster-sources">' +
+            '<strong>Top sources:</strong> ' + p.top_sources.slice(0,3).map(s => s.source.replace(/_/g,' ') + ' (' + s.count + ')').join(', ') +
+          '</div>' +
+        '</div>';
+      }).join('')}
+    </div>
+
+    <!-- Clustering Insights -->
+    <div class="analysis-card">
+      <h3>클러스터링 분석 요약</h3>
+      <div class="analysis-text">
+        <strong>규모:</strong> tier1 프로 연주 데이터 <span class="insight">${cl.total_files.toLocaleString()}개 파일</span>에서 추출한
+        <span class="insight">${cl.total_phrases.toLocaleString()}개 프레이즈</span>를 K=${cl.k_optimal}로 클러스터링했습니다.<br><br>
+
+        <strong>K-value 탐색:</strong> K=20~150 범위에서 Silhouette Score 비교 결과,
+        <span class="insight">K=20 (Score: ${cl.k_search[0].silhouette})</span>이 최고점이나
+        표현력 확보를 위해 K=${cl.k_optimal}를 선택했습니다. Score ${cl.k_search.find(r=>r.k===cl.k_optimal)?.silhouette || 'N/A'}.<br><br>
+
+        <strong>스타일 분포:</strong>
+        Register는 <span class="insight">alto(${regCounts['alto']||0})</span>가 압도적이며 tenor(${regCounts['tenor']||0})는 소수입니다.
+        Dynamic은 <span class="insight">mp(${dynCounts['mp']||0})</span>가 가장 많고, p(${dynCounts['p']||0}), mf(${dynCounts['mf']||0}), f(${dynCounts['f']||0}) 순입니다.
+        Texture는 <span class="insight">dense(${texCounts['dense']||0})</span>가 주류이며, moderate(${texCounts['moderate']||0}), virtuosic(${texCounts['virtuosic']||0})가 뒤따릅니다.<br><br>
+
+        <strong>활용 방향:</strong><br>
+        &#8226; 각 클러스터의 style_label을 conditioning token으로 활용 가능<br>
+        &#8226; 대표 프레이즈 선별 → few-shot prompting / prefix 생성<br>
+        &#8226; f/virtuosic 클러스터는 희소 → data augmentation 또는 특화 학습 필요<br>
+        &#8226; alto 편향 해소를 위한 register-balanced sampling 검토
+      </div>
+    </div>
+  </div>`;
+  } else {
+    html += '</div>';
+  }
+
+  return html;
+}
+
+function drawTSNE() {
+  if (!embeddingData) return;
+  const canvas = document.getElementById('tsne-cvs');
+  if (!canvas) return;
+  const container = document.getElementById('tsne-container');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = container.offsetWidth;
+  const h = 500;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const vColors = { 'v0 (base)':'#3b82f6', 'v1':'#22c55e', 'v2':'#ef4444', 'v3':'#eab308', 'unknown':'#71717a' };
+  const points = embeddingData.tsne;
+  const xs = points.map(p=>p.x), ys = points.map(p=>p.y);
+  const mnx = Math.min(...xs), mxx = Math.max(...xs);
+  const mny = Math.min(...ys), mxy = Math.max(...ys);
+  const pad = 30;
+
+  function tx(x) { return pad + (x-mnx)/(mxx-mnx) * (w-2*pad); }
+  function ty(y) { return pad + (y-mny)/(mxy-mny) * (h-2*pad); }
+
+  // Draw points
+  for (const p of points) {
+    const px = tx(p.x), py = ty(p.y);
+    const col = vColors[p.version] || '#71717a';
+    ctx.beginPath();
+    ctx.arc(px, py, 4, 0, Math.PI*2);
+    ctx.fillStyle = col + 'cc';
+    ctx.fill();
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Tooltip on hover
+  const tip = document.getElementById('tsne-tip');
+  canvas.onmousemove = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    let closest = null, minDist = 20;
+    for (let i = 0; i < points.length; i++) {
+      const px = tx(points[i].x), py = ty(points[i].y);
+      const dist = Math.sqrt((mx-px)**2 + (my-py)**2);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    }
+    if (closest !== null) {
+      const p = points[closest];
+      tip.style.display = 'block';
+      tip.style.left = (tx(p.x) + 12) + 'px';
+      tip.style.top = (ty(p.y) - 10) + 'px';
+      tip.innerHTML = `<strong>${p.file}</strong><br>
+        Version: ${p.version} | Phrase #${p.phrase_idx}<br>
+        Duration: ${p.duration}s | Notes: ${p.num_notes}<br>
+        Pitch: ${p.avg_pitch} (${p.pitch_range[0]}~${p.pitch_range[1]})<br>
+        Velocity: ${p.avg_velocity}`;
+    } else {
+      tip.style.display = 'none';
+    }
+  };
+  canvas.onmouseleave = () => { tip.style.display = 'none'; };
+}
+
+function drawKChart() {
+  const cl = testSuiteReport.clustering;
+  if (!cl || !cl.k_search) return;
+  const canvas = document.getElementById('k-chart-cvs');
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = parent.offsetWidth;
+  const h = 220;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  ctx.scale(dpr, dpr);
+
+  const data = cl.k_search;
+  const pad = { top:20, right:40, bottom:40, left:60 };
+  const cw = w - pad.left - pad.right;
+  const ch = h - pad.top - pad.bottom;
+
+  const ks = data.map(d => d.k);
+  const sils = data.map(d => d.silhouette);
+  const minK = Math.min(...ks), maxK = Math.max(...ks);
+  const minS = Math.min(...sils) * 0.9, maxS = Math.max(...sils) * 1.1;
+
+  function tx(k) { return pad.left + (k - minK) / (maxK - minK) * cw; }
+  function ty(s) { return pad.top + (1 - (s - minS) / (maxS - minS)) * ch; }
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+  }
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#6366f1';
+  ctx.lineWidth = 2;
+  data.forEach((d, i) => {
+    const x = tx(d.k), y = ty(d.silhouette);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Points
+  data.forEach(d => {
+    const x = tx(d.k), y = ty(d.silhouette);
+    const isOpt = d.k === cl.k_optimal;
+    ctx.beginPath();
+    ctx.arc(x, y, isOpt ? 7 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = isOpt ? '#22c55e' : '#6366f1';
+    ctx.fill();
+    ctx.strokeStyle = isOpt ? '#22c55e' : '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = '#fafafa';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.silhouette.toFixed(4), x, y - 12);
+  });
+
+  // X-axis labels
+  ctx.fillStyle = '#71717a';
+  ctx.font = '11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  data.forEach(d => {
+    ctx.fillText('K=' + d.k, tx(d.k), h - pad.bottom + 20);
+  });
+
+  // Y-axis label
+  ctx.save();
+  ctx.translate(15, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.fillText('Silhouette Score', 0, 0);
+  ctx.restore();
+
+  // Mark optimal
+  const optData = data.find(d => d.k === cl.k_optimal);
+  if (optData) {
+    ctx.fillStyle = '#22c55e';
+    ctx.font = 'bold 11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('← 선택', tx(optData.k) + 30, ty(optData.silhouette) + 4);
+  }
+}
+
+function renderInterview() {
+  return `
+  <div class="version-section">
+    <div class="itv-header">
+      <h2><span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Keyboardist Interview</span> Guide v3</h2>
+      <div class="itv-purpose">AI 음악 엔진(Liszt)이 MIDI에서 학습할 수 있는 <strong style="color:var(--text)">연주 패턴</strong>을 뮤지션의 언어로 끌어내기 위한 인터뷰 가이드</div>
+    </div>
+
+    <div class="itv-principle">
+      MIDI가 캡처하는 건 딱 4가지다:<br>
+      <strong>언제 치는가(타이밍)</strong>, <strong>얼마나 세게(벨로시티)</strong>, <strong>어떤 음을(보이싱)</strong>, <strong>얼마나 길게(듀레이션)</strong><br><br>
+      이 4가지 축 위에서, 뮤지션이 <strong>왜 그렇게 하는지</strong>를 깊이 파고들어야<br>
+      AI가 "규칙"이 아니라 "감각"을 배울 수 있다.
+    </div>
+
+    <!-- 축 1: 타이밍 -->
+    <div class="itv-axis">
+      <div class="itv-axis-head">
+        <span class="itv-icon">&#9201;</span>
+        <h3>축 1: 타이밍 — 언제 치는가 (When)</h3>
+      </div>
+      <div class="itv-axis-desc">MIDI onset time의 미세한 차이가 그루브를 만든다. 메트로놈 정중앙이 0ms라면, 실제 연주는 항상 &plusmn;수십ms를 움직인다.</div>
+      <div class="itv-q-grid">
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q1. 비트와의 관계</div>
+          <div class="itv-q-main">"당신은 드러머의 비트보다 앞에 치나, 뒤에 치나, 위에 치나?"</div>
+          <ul class="itv-q-sub">
+            <li>스스로 인식하고 있나? 아니면 무의식?</li>
+            <li>장르별로 다른가? (재즈 스윙 / 팝 발라드 / 펑크)</li>
+            <li>같은 곡인데 <strong>드러머가 바뀌면</strong> 위치도 바뀌나?</li>
+            <li>BPM에 따라 달라지나? (느린 곡 vs 빠른 곡)</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: onset time offset</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q2. 곡 안에서의 타이밍 변화</div>
+          <div class="itv-q-main">"같은 곡에서도 섹션마다 타이밍이 달라지나?"</div>
+          <ul class="itv-q-sub">
+            <li>인트로: 정확하게 시작? 느슨하게?</li>
+            <li>보컬 들어오는 순간: 뒤로 빠지나?</li>
+            <li>코러스: 앞으로 밀어붙이나?</li>
+            <li>솔로 섹션: 자유로워지나?</li>
+            <li>이 변화를 <strong>의식적으로</strong> 하나, <strong>자연스럽게</strong> 생기나?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: section-level onset drift</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q3. 스윙의 정도</div>
+          <div class="itv-q-main">"8분음표를 칠 때, 정확히 반반인가, 긴-짧은인가?"</div>
+          <ul class="itv-q-sub">
+            <li>재즈: 어느 정도 스윙? (3:1? 2:1? 곡마다?)</li>
+            <li>팝: 스트레이트? 약간의 셔플?</li>
+            <li>R&B/네오소울: 그 중간 어딘가?</li>
+            <li>스윙의 정도를 <strong>곡 중간에</strong> 바꾼 적 있나?</li>
+            <li>밴드원이 스윙 정도가 다르면 어떻게 맞추나?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: swing ratio</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q4. 밴드와의 타이밍 협상</div>
+          <div class="itv-q-main">"밴드가 '오늘 타이트하다' vs '오늘 루즈하다'고 느낄 때, 구체적으로 뭐가 다른가?"</div>
+          <ul class="itv-q-sub">
+            <li>그 차이를 ms 단위로 느끼나?</li>
+            <li>타이트한 날: 당신이 맞추는 건가, 밴드 전체가 그런 건가?</li>
+            <li>루즈한 날: 불편한가, 아니면 그것도 좋은 느낌인가?</li>
+            <li>처음 만난 드러머와 합을 맞출 때, 몇 곡 만에 타이밍이 잡히나?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: inter-instrument onset correlation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 축 2: 강약 -->
+    <div class="itv-axis">
+      <div class="itv-axis-head">
+        <span class="itv-icon">&#128266;</span>
+        <h3>축 2: 강약 — 얼마나 세게 (How Hard)</h3>
+      </div>
+      <div class="itv-axis-desc">MIDI velocity 0~127. 이 숫자 하나가 곡의 입체감을 만든다.</div>
+      <div class="itv-q-grid">
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q5. 역할별 벨로시티</div>
+          <div class="itv-q-main">"백킹할 때와 리드할 때, 건반을 누르는 힘이 얼마나 다른가?"</div>
+          <ul class="itv-q-sub">
+            <li>백킹: 대략 어느 정도? (살짝? 중간? 곡에 따라?)</li>
+            <li>리드/솔로: 확 올라가나? 점진적으로?</li>
+            <li>전환하는 데 몇 박 걸리나? 즉각적?</li>
+            <li><strong>같은 코드</strong>를 백킹으로 칠 때 vs 리드로 칠 때, 힘 외에 또 뭐가 다른가?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: velocity range by role</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q6. 보컬과의 다이나믹 관계</div>
+          <div class="itv-q-main">"보컬이 노래하는 동안, 당신의 손가락 힘은 어떻게 변하나?"</div>
+          <ul class="itv-q-sub">
+            <li>보컬이 크게 부르면 &rarr; 함께 올라가나? 오히려 빠지나?</li>
+            <li>보컬이 속삭이듯 부르면 &rarr; 당신은?</li>
+            <li>보컬이 쉬는 2마디 &rarr; 필라로 채우나? 벨로시티는?</li>
+            <li>보컬 감정 고조 시 <strong>선제적으로</strong> 올리나? <strong>따라가나</strong>?</li>
+            <li>보컬과 10년 vs 처음 합주, 반응 속도가 다른가?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: velocity response curve</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q7. 곡 전체의 다이나믹 아크</div>
+          <div class="itv-q-main">"곡 하나를 처음부터 끝까지 쳤을 때, 가장 약한 순간과 가장 강한 순간의 차이는?"</div>
+          <ul class="itv-q-sub">
+            <li>그 차이를 숫자로? ("가장 약할 때 30%, 가장 강할 때 100%")</li>
+            <li>그 곡선을 <strong>미리 계획</strong>하나, <strong>자연스럽게</strong> 나오나?</li>
+            <li>밴드 전체의 아크와 <strong>같이 가나</strong>? 엇갈리는 순간도?</li>
+            <li>같은 곡을 두 번 연주하면 이 아크가 비슷하나, 매번 다르나?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: velocity envelope over time</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 축 3: 음의 선택 -->
+    <div class="itv-axis">
+      <div class="itv-axis-head">
+        <span class="itv-icon">&#127929;</span>
+        <h3>축 3: 음의 선택 — 어떤 음을 (What Notes)</h3>
+      </div>
+      <div class="itv-axis-desc">같은 Cmaj7이라도 어떤 전위형으로, 어떤 음역대에서, 어떤 음을 추가하느냐.</div>
+      <div class="itv-q-grid">
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q8. 보이싱 (Voicing)</div>
+          <div class="itv-q-main">"같은 코드를 칠 때, 음의 배치를 어떻게 결정하나?"</div>
+          <ul class="itv-q-sub">
+            <li>예: Cmaj7 &mdash; 몇 개 음? 어떤 전위형? 음역대는?</li>
+            <li><strong>기타가 같은 코드</strong>를 치고 있으면 보이싱이 달라지나?</li>
+            <li><strong>베이스가 루트를 잡고 있으면</strong> 루트를 빼나?</li>
+            <li>재즈 보이싱 vs 팝 보이싱, 구체적 차이는?</li>
+            <li>같은 곡 같은 코드 2번째 반복 시 보이싱을 바꾸나? 왜?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: pitch set / register</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q9. 필라 & 런 (Fills & Runs)</div>
+          <div class="itv-q-main">"섹션이 바뀔 때 넣는 필라, 그건 어디서 나오는가?"</div>
+          <ul class="itv-q-sub">
+            <li><strong>미리 정해두나</strong> vs <strong>즉흥인가</strong>? 비율은?</li>
+            <li>같은 곡 10번 연주하면, 필라가 10번 다 다른가?</li>
+            <li>필라의 재료: 어떤 스케일? 아르페지오? 코드톤?</li>
+            <li>드럼 필라와 겹치면? 피하나? 같이 가나?</li>
+            <li><strong>실패한 필라</strong>의 특징은?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: fill pattern vocabulary</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q10. 즉흥 솔로</div>
+          <div class="itv-q-main">"솔로를 칠 때, 머릿속에서 뭐가 일어나나?"</div>
+          <ul class="itv-q-sub">
+            <li><strong>멜로디가 먼저</strong> 떠오르나, <strong>손가락이 먼저</strong> 움직이나?</li>
+            <li>솔로 구조: 조용하게 &rarr; 빌드업 &rarr; 클라이맥스? 항상?</li>
+            <li>솔로 중 밴드 반응을 듣고 방향을 바꾸나?</li>
+            <li>같은 코드 진행 10번 솔로 &mdash; 공통점과 다른 점?</li>
+            <li>리허설 때 안 하던 걸 라이브에서 하게 되는 경우?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: melodic contour / note density</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 축 4: 음의 길이 -->
+    <div class="itv-axis">
+      <div class="itv-axis-head">
+        <span class="itv-icon">&#9199;</span>
+        <h3>축 4: 음의 길이 — 얼마나 길게 (How Long)</h3>
+      </div>
+      <div class="itv-axis-desc">MIDI duration + sustain pedal. 음을 언제 떼느냐가 터치감을 결정한다.</div>
+      <div class="itv-q-grid">
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q11. 터치 & 아티큘레이션</div>
+          <div class="itv-q-main">"음을 '끊는 방법'에 대해"</div>
+          <ul class="itv-q-sub">
+            <li>레가토 vs 스타카토, 의식적으로 선택하나?</li>
+            <li>같은 코드 반복: 전부 같은 길이? 미묘하게 다른가?</li>
+            <li>빠른 패시지에서 음 길이가 달라지나?</li>
+            <li>장르별: 재즈 컴핑(짧게) / 발라드 아르페지오(길게) / 펑크(타이트)</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: note duration distribution</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q12. 페달 사용</div>
+          <div class="itv-q-main">"서스테인 페달을 밟는 타이밍과 길이는?"</div>
+          <ul class="itv-q-sub">
+            <li>코드가 바뀔 때마다 교체하나?</li>
+            <li>의도적으로 <strong>코드를 섞이게</strong> 놔두는 경우도?</li>
+            <li><strong>하프 페달</strong> (반만 밟기) 사용하나?</li>
+            <li>재즈 vs 팝에서 페달 사용이 다른가?</li>
+            <li><strong>페달 없이 손가락만으로</strong> 레가토를 만드는 경우는?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: CC64 sustain pedal events</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 축 5: 맥락 -->
+    <div class="itv-axis">
+      <div class="itv-axis-head">
+        <span class="itv-icon">&#127917;</span>
+        <h3>축 5: 맥락 — 이 모든 걸 바꾸는 변수들 (Context)</h3>
+      </div>
+      <div class="itv-axis-desc">위 4개 축의 값을 결정하는 조건 변수들. AI가 "상황별로 다르게 연주하는 법"을 배우려면 이 맥락이 태깅되어야 한다.</div>
+      <div class="itv-q-grid">
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q13. 밴드 구성의 영향</div>
+          <div class="itv-q-main">"트리오 vs 풀밴드 vs 듀오 — 당신의 연주가 어떻게 달라지나?"</div>
+          <ul class="itv-q-sub">
+            <li>트리오 (키보드/베이스/드럼): 화성+멜로디 둘 다?</li>
+            <li>풀밴드 (+기타, 보컬): 역할이 줄어드나? 어떻게?</li>
+            <li>듀오 (보컬+키보드): 모든 걸 혼자? 어떤 것부터 포기?</li>
+            <li>밴드 구성이 바뀌면 <strong>보이싱, 벨로시티, 타이밍 전부</strong> 다 바뀌나?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: conditioning token (ensemble type)</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q14. 장르 전환</div>
+          <div class="itv-q-main">"재즈 세션 끝나고 바로 팝 공연 가면, 손가락이 어떻게 바뀌나?"</div>
+          <ul class="itv-q-sub">
+            <li>의식적으로 전환하나? 몸이 알아서?</li>
+            <li>가장 크게 바뀌는 건? (타이밍? 벨로시티? 보이싱? 전부?)</li>
+            <li>한 곡 안에서 장르가 바뀌는 경우 (재즈&rarr;팝) 어떻게 처리?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: genre prefix token</span>
+        </div>
+        <div class="itv-q-card">
+          <div class="itv-q-num">Q15. 감정 & 컨디션</div>
+          <div class="itv-q-main">"같은 곡을 다시 칠 때, 그날의 기분이 연주에 반영되나?"</div>
+          <ul class="itv-q-sub">
+            <li>기분 좋은 날 vs 우울한 날, <strong>구체적으로</strong> 뭐가 다른가?</li>
+            <li>그게 타이밍인가? 벨로시티인가? 보이싱인가? 전부?</li>
+            <li>관객 에너지가 높은 공연 vs 조용한 카페, 변화는?</li>
+            <li>체력이 떨어진 공연 후반, <strong>무엇이 먼저 달라지나</strong>?</li>
+          </ul>
+          <span class="itv-q-midi">MIDI: expressive variation per take</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 핵심 요약 -->
+    <div class="itv-summary">
+      <h3>&#9889; 핵심 질문 요약 (시간 없으면 이것만)</h3>
+      <table>
+        <tr><th>#</th><th>축</th><th>질문</th><th>MIDI 학습 포인트</th></tr>
+        <tr><td class="qs-num">1</td><td>타이밍</td><td>드러머 비트 대비 앞/뒤/위? 장르별로?</td><td>onset time offset</td></tr>
+        <tr><td class="qs-num">2</td><td>타이밍</td><td>곡 안에서 섹션마다 타이밍 바뀌나?</td><td>구간별 패턴</td></tr>
+        <tr><td class="qs-num">3</td><td>강약</td><td>백킹 vs 리드, 힘의 차이 구체적으로?</td><td>velocity 범위</td></tr>
+        <tr><td class="qs-num">4</td><td>강약</td><td>보컬과의 다이나믹 관계? 선제적? 따라가기?</td><td>반응 패턴</td></tr>
+        <tr><td class="qs-num">5</td><td>음선택</td><td>필라는 즉흥? 정해진 것? 10번 중 몇 번 다른가?</td><td>변이 범위</td></tr>
+        <tr><td class="qs-num">6</td><td>음길이</td><td>페달 사용법? 코드마다 교체? 섞이게?</td><td>duration 패턴</td></tr>
+        <tr><td class="qs-num">7</td><td>맥락</td><td>트리오 vs 풀밴드, 연주가 어떻게 달라지나?</td><td>조건별 분기</td></tr>
+      </table>
+    </div>
+
+    <!-- 데이터 수집 / 협업 -->
+    <div class="itv-collab">
+      <h3>&#129309; 데이터 수집 & 협업 제안</h3>
+      <ul>
+        <li><strong>MIDI 녹음 3곡 &times; 5버전</strong>이면 시작 가능: (1) 메트로놈+혼자 (2) 드럼비트+혼자 (3) 트리오 (4) 풀밴드 (5) 보컬 곡</li>
+        <li><strong>추천 곡 3곡</strong>: 재즈 스탠더드 / 팝·발라드 / 펑크·그루브</li>
+        <li>각 녹음마다 메타데이터: 곡명 / 키 / BPM / 밴드 구성 / 본인 메모</li>
+        <li>AI 생성 결과 들어보고 피드백 &rarr; 반복 개선</li>
+        <li>크레딧: "연주 스타일 학습: [이름]"</li>
+        <li>관심 있으면 YouTube 시리즈 협업 (EP1: 키보디스트 인터뷰)</li>
+      </ul>
+    </div>
+  </div>`;
+}
+
+function render() {
+  const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'all';
+  let html = '';
+  if (activeTab === 'arch') {
+    html = renderArchitecture();
+  } else if (activeTab === 'embedding') {
+    html = renderEmbedding();
+  } else if (activeTab === 'interview') {
+    html = renderInterview();
+  } else {
+    for (const vKey of Object.keys(VERSIONS)) {
+      if (activeTab !== 'all' && activeTab !== vKey) continue;
+      html += renderVersion(vKey);
+    }
+  }
+  document.getElementById('main').innerHTML = html;
+
+  // Draw piano rolls
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.piano-roll canvas').forEach(canvas => {
+      const cardId = canvas.id.replace('cvs-','');
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      const btn = card.querySelector('.pbtn');
+      if (!btn) return;
+      const mpath = btn.getAttribute('onclick').match(/'([^']+\.mid[^']*)'/)?.[1];
+      if (mpath) drawPianoRoll(canvas.id, mpath);
+    });
+    // Draw t-SNE if embedding tab
+    if (activeTab === 'embedding') { drawTSNE(); drawKChart(); }
+  });
+}
+
+// === INIT ===
+async function init() {
+  // Load data
+  const [samplesResp, reportResp] = await Promise.all([
+    fetch('all_samples.json'),
+    fetch('test_suite_report.json'),
+  ]);
+  allSamples = await samplesResp.json();
+  testSuiteReport = await reportResp.json();
+  // Load embedding data from test_suite_report (merged) or standalone file
+  if (testSuiteReport.embedding) {
+    embeddingData = testSuiteReport.embedding;
+  } else {
+    try {
+      const embResp = await fetch('embedding_data.json');
+      if (embResp.ok) embeddingData = await embResp.json();
+    } catch(e) {}
+  }
+
+  // Build tabs
+  const tabsEl = document.getElementById('tabs');
+  const tabDefs = [
+    ['all','All Versions'],
+    ['baseline','Baseline'],
+    ['v1','v1 (Foundation)'],
+    ['v2','v2 (Overfitting)'],
+    ['v3','v3'],
+    ['v4','v4 (Style Cond.)'],
+    ['v5_pop','v5 Pop'],
+    ['v5_lora','v5 LoRA (Best)'],
+    ['v5_lora_q16','v5 LoRA Q16'],
+    ['v6_tempo','v6 Tempo'],
+    ['v7_grid','v7 Grid'],
+    ['v3_test','v3 Test Suite'],
+    ['arch','Architecture'],
+    ['embedding','Embedding'],
+    ['interview','Interview'],
+  ];
+  tabsEl.innerHTML = tabDefs.map(([k,l],i)=>
+    `<button class="tab ${i===0?'active':''}" data-tab="${k}">${l}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+    stopPlay();
+    tabsEl.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    t.classList.add('active');
+    render();
+  }));
+
+  render();
+  loadSF2();
+}
+
+init();
+</script>
+
+</body>
+</html>

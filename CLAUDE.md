@@ -4,6 +4,7 @@
 역할: AI 모델 파인튜닝(음악/영상/이미지/음성) + 하모니시티 시뮬. 5090(ogo)+RunPod.
 
 ## 통신
+- **내 클론 = 공유(`~/projects/agent-comm`) — 4분기 규율 적용**(독립 클론 아님. ari D237, 09-02 확인). push 전 동기화=`admin/scripts/sync_shared_clone.sh`(AGENT_ID=oven), 남의 dirty 섞이면 rebase·`--autostash` 금지·대기/통지.
 - 발신=**받는 쪽** `agent-comm:projects/{to}/messages/`, 파일명 `{to}_oven_YYYYMMDD_HHMMSS_{키워드}.json`, `from`=`oven`. 발신 후 `ls`로 생성 확인. `cc`는 실전달 아님.
 - 수신=`agent-comm:projects/oven/messages/`, 처리분 `processed/` 이관.
 - 커밋: `AGENT_ID=oven git -c user.name=oven -c user.email=oven@leomusic.os commit`(머신 전역 git config 변경 금지).

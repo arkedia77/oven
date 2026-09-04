@@ -1,0 +1,272 @@
+{
+  "display": {
+    "monitor": "Pro Display XDR",
+    "physical": "6016x3384",
+    "logical": "3008x1692",
+    "scale": 2,
+    "ace_window": {"x": 0, "y": 30, "w": 3008, "h": 1572}
+  },
+  "notes": {
+    "coordinate_system": "모든 좌표는 macOS 논리 좌표 (cliclick/screencapture 공통)",
+    "context_menu": "우클릭 위치(rc_x, rc_y) 기준 상대 offset으로 계산",
+    "qt_menus": "macOS 네이티브 메뉴 아님, 앱 내부 Qt 렌더링"
+  },
+
+  "top_bar": {
+    "project_name": {"note": "좌측 상단, 윈도우 타이틀 바 영역"},
+    "bpm": {"position": [1271, 36], "size": [62, 30], "note": "더블클릭으로 편집 시도 — Qt 위젯이라 직접 입력 불가할 수 있음"},
+    "time_signature": {
+      "numerator": {"position": [1349, 40], "size": [24, 22]},
+      "separator": {"position": [1373, 36]},
+      "denominator": {"position": [1349, 40], "size": [24, 22]}
+    },
+    "transport": {
+      "rewind": {"type": "AXButton", "position": [1429, 35], "size": [32, 32]},
+      "play": {"type": "AXCheckBox", "position": [1471, 35], "size": [32, 32]},
+      "record": {"type": "AXCheckBox", "position": [1513, 35], "size": [32, 32]},
+      "metronome_or_grid": {"type": "AXCheckBox", "position": [1555, 36], "size": [32, 32]},
+      "loop": {"type": "AXCheckBox", "position": [1597, 35], "size": [32, 32]},
+      "follow": {"type": "AXCheckBox", "position": [1639, 35], "size": [32, 32]}
+    },
+    "time_display": {"position": [1692, 35], "size": [46, 15], "note": "시:분:초 형식"},
+    "bar_display": {"position": [1692, 50], "size": [46, 15], "note": "마디.박 형식"},
+    "profile": {"type": "AXButton", "position": [2778, 36], "size": [32, 32]},
+    "export_button": {"icon": [2831, 36], "text": [2863, 43], "label": "내보내기"},
+    "share_button": {"icon": [2934, 36], "text": [2964, 36], "label": "공유"}
+  },
+
+  "bottom_toolbar": {
+    "note": "하단 중앙 6개 토글 버튼 (AXCheckBox) — AI 도구 패널 열기/닫기",
+    "tools": {
+      "vocal_voice": {"position": [1359, 1521], "size": [32, 32], "label": "보컬 신스 음성", "note": "V1/V2(Beta) 전환 가능, 음성 검색, 사전제작/복제/커뮤니티/혼합/협찬 탭"},
+      "ai_instrument": {"position": [1405, 1521], "size": [32, 32], "label": "AI 악기", "note": "Strings(13)/Brass(1)+ 카테고리, 사전제작/앙상블 탭"},
+      "enhance": {"position": [1465, 1521], "size": [32, 32], "label": "향상"},
+      "layer_add": {"position": [1511, 1521], "size": [32, 32], "label": "레이어 추가 (Beta)", "note": "먼저 캔버스 선택 영역 필요"},
+      "sound_effects": {"position": [1557, 1521], "size": [32, 32], "label": "사운드 효과"},
+      "creative_library": {"position": [1617, 1521], "size": [32, 32], "label": "크리에이티브 라이브러리", "note": "샘플 클립/곡 템플릿 탭, 내 컬렉션/검색"}
+    }
+  },
+
+  "bottom_right": {
+    "settings_gear": {"type": "AXButton", "position": [2749, 1521], "size": [32, 32], "note": "환경설정 다이얼로그 열기"},
+    "render_button": {"type": "AXButton", "position": [2801, 1521], "size": [32, 32]},
+    "ace_bridge": {"icon": [2858, 1526], "text": [2882, 1523], "label": "ACE Bridge"}
+  },
+
+  "settings_dialog": {
+    "tabs": {
+      "general": {"type": "AXRadioButton", "position": [1243, 525], "size": [95, 64]},
+      "audio": {"type": "AXRadioButton", "position": [1243, 581], "size": [95, 64]},
+      "rendering": {"type": "AXRadioButton", "position": [1243, 637], "size": [95, 64]},
+      "update": {"type": "AXRadioButton", "position": [1243, 693], "size": [95, 64]}
+    },
+    "general_tab": {
+      "interface_lang": "한국어",
+      "default_song_lang": "인터페이스 언어로",
+      "midi_octave_offset": "Oct ±0",
+      "ace_bridge_update": "플러그인 업데이트 버튼",
+      "mcp_server": {"type": "checkbox", "default": false, "note": "MCP 서버 활성화 — GUI 자동화 대신 프로그래밍 방식 제어 가능성"}
+    },
+    "audio_tab": {
+      "device_type": "CoreAudio",
+      "output": "Mac mini 스피커",
+      "sample_rate": 48000,
+      "buffer_size": 512,
+      "latency_compensation": "-50 ms",
+      "pre_count": "1 바"
+    },
+    "rendering_tab": {
+      "engine": "Verse25",
+      "turbo_mode": true,
+      "pre_rendering": true,
+      "note": "터보 모드: 로컬 GPU로 Verse25 렌더링 절반 처리"
+    }
+  },
+
+  "context_menu_empty_canvas": {
+    "trigger": "right-click on empty canvas (below tracks)",
+    "items_offset_from_click": {
+      "AI_도구": {"dy": 25, "note": "서브메뉴: 영감받기/레이어추가/음악향상기/음성변환기/스템분리기/사운드효과"},
+      "붙여넣기": {"dy": 55},
+      "모두_선택": {"dy": 85},
+      "가져오기": {"dy": 117, "note": "서브메뉴: 오디오/MIDI/MusicXML/Utaformatix"},
+      "선택_구간_루프": {"dy": 147},
+      "그리드_및_스냅": {"dy": 177}
+    }
+  },
+  "context_menu_on_clip": {
+    "trigger": "right-click on a clip/track area",
+    "items": ["AI 도구▸", "복사⌘C", "붙여넣기⌘V", "복제⌘D", "잘라내기⌘X", "분할⌘E", "통합⌘J", "오디오로 변환", "삭제", "모두 선택⌘A", "비활성화 0", "선택 구간 루프⌘L", "그리드 및 스냅▸", "색상 팔레트"],
+    "note": "빈 캔버스 메뉴보다 항목이 많음"
+  },
+  "context_menu_track_header": {
+    "trigger": "right-click on track header (left panel)",
+    "items": ["복사⌘C", "붙여넣기⌘V", "복제⌘D", "잘라내기⌘X", "삭제⌫", "트랙 삽입⌘T", "색상 팔레트"],
+    "verified": "2026-04-28"
+  },
+  "ai_tools_submenu": {
+    "trigger": "hover on AI 도구 in context menu",
+    "items": ["영감 받기", "레이어 추가", "음악 향상기", "음성 변환기", "스템 분리기", "사운드 효과"],
+    "item_spacing": 30,
+    "verified": "2026-04-26"
+  },
+  "import_submenu": {
+    "trigger": "hover on 가져오기 → move right to submenu",
+    "items": ["오디오", "MIDI", "MusicXML", "Utaformatix"],
+    "workflow": "rc:canvas → m:가져오기 → w:800 → m:submenu_x,item_y → c:item",
+    "submenu_x_offset": 120,
+    "item_spacing": 30
+  },
+  "clip_double_click_popup": {
+    "trigger": "double-click on MIDI clip",
+    "items_offset_from_click": {
+      "MIDI에서_보컬_생성": {"dy": 25},
+      "MIDI에서_악기_생성": {"dy": 85},
+      "오디오_또는_MIDI_가져오기": {"dy": 110}
+    },
+    "verified_example": {
+      "double_click_at": [300, 365],
+      "보컬_생성": [400, 390],
+      "악기_생성": [400, 450]
+    }
+  },
+  "vocal_panel": {
+    "trigger": "click MIDI에서_보컬_생성 in popup OR bottom toolbar tool 1",
+    "title": "보컬 신스 음성",
+    "version_tabs": ["V2 (Beta)", "V1"],
+    "v2_note": "V2: Research preview model. Fast, expressive, 8 languages, but unstable.",
+    "search_bar": "음성 검색",
+    "category_tabs": ["사전 제작", "복제됨", "커뮤니티", "혼합", "협찬"],
+    "known_voices_v2": ["Elirah", "Mangus", "Ember Rose", "Anderson", "Drex L", "Golden G", "Jayden", "Zinny", "Rebecca", "Zalo", "Jessica", "Emma"],
+    "grid": "3열, 행 간격 ~50px, 열 간격 ~230px",
+    "singer_card": "썸네일 + 이름 + 언어태그 + '+' 버튼",
+    "create_action": "'+' 버튼 클릭 → 새 보컬 트랙 생성 (MIDI 노트 복사됨)",
+    "note": "썸네일 클릭은 미리듣기, '+' 버튼이 실제 생성",
+    "verified": "2026-04-26, Elirah Singer → 보컬 트랙 'Elirah 클립 1' 생성 성공"
+  },
+  "instrument_panel": {
+    "trigger": "click MIDI에서_악기_생성 in popup OR bottom toolbar tool 2",
+    "title": "AI 악기",
+    "search_bar": "악기 검색",
+    "tabs": ["사전 제작", "앙상블"],
+    "categories": {
+      "Strings": {"count": 13, "items": ["Violin - Gabriele B", "Vintage Violin 1", "Vintage Violin 3", "Vintage Violin 4", "Viola - Nico", "Modern Viola", "Cello - HR Sounds", "Vintage Cello 1", "Vintage Cello 3"]},
+      "Brass": {"count": 1, "items": ["Trumpet - Xiaochu"]}
+    },
+    "instrument_click": "click thumbnail → creates NEW instrument track with MIDI copied",
+    "plus_button": "옆의 + 버튼으로도 추가 가능"
+  },
+  "file_dialog": {
+    "type": "macOS standard NSOpenPanel",
+    "default_path": "~/ACE_Studio/project/temp_workspace/working_document/",
+    "select_file": "double-click file in list OR Cmd+Shift+G for path",
+    "keyboard": {
+      "go_to_folder": "Cmd+Shift+G",
+      "open": "Return",
+      "cancel": "Escape"
+    }
+  },
+  "export_dialog": {
+    "trigger": "click top-right '내보내기' button OR 파일 메뉴 → 오디오 내보내기",
+    "options": {
+      "렌더링된_트랙": {
+        "choices": ["마스터", "선택된 트랙", "모든 개별 트랙"],
+        "dropdown_arrow": [1644, 624],
+        "text": [1432, 619],
+        "note": "'모든 개별 트랙' = 스템 내보내기"
+      },
+      "이펙트_없이_내보내기": {"type": "checkbox", "position": [1426, 655]},
+      "내보내기_범위": {
+        "choices": ["전체 프로젝트", "루프"],
+        "dropdown_arrow": [1644, 694],
+        "text": [1432, 689]
+      },
+      "채널": {"choices": ["스테레오", "모노"], "text": [1432, 825], "dropdown_arrow": [1528, 830]},
+      "형식": {"choices": [".WAV", ".MP3"], "text": [1432, 871], "dropdown_arrow": [1528, 876]},
+      "샘플레이트": {"choices": ["44100 Hz", "48000 Hz", "96000 Hz"], "text": [1432, 917], "dropdown_arrow": [1528, 922]},
+      "비트레이트": {"choices": ["192 kbps"], "text": [1432, 963], "dropdown_arrow": [1528, 968], "note": "MP3일 때만 표시"},
+      "비트_길이": {"note": "WAV일 때만 표시: 16/24/32 Bit"}
+    },
+    "buttons": {
+      "cancel": "취소 (좌측)",
+      "export": "내보내기 (우측, 보라색)"
+    },
+    "save_dialog": {
+      "type": "macOS NSSavePanel",
+      "default_name": "제목 없음",
+      "default_path": "~/ACE_Studio/project/temp_workspace/working_document/",
+      "keyboard": {"save": "Return", "cancel": "Escape"}
+    },
+    "verified": "2026-04-26 WAV 성공, 2026-04-28 드롭다운 옵션 검증"
+  },
+  "share_panel": {
+    "trigger": "click top-right '공유' button",
+    "features": ["트랙 공유하기", "리허설", "데모 리뷰", "비공개 공유"],
+    "cloud_storage": "10.0 GB",
+    "note": "프로젝트 저장 후 공유 가능"
+  },
+  "keyboard_shortcuts": {
+    "export_audio": "상단 '내보내기' 버튼",
+    "export_midi": "파일 메뉴 → MIDI 내보내기 (Cmd+Shift+E 미작동)",
+    "new_project": "Cmd+N",
+    "save_project": "Cmd+S",
+    "save_as": "Cmd+Shift+S",
+    "open_project": "Cmd+O",
+    "insert_track": "Cmd+T",
+    "undo": "Cmd+Z",
+    "redo": "Cmd+Shift+Z",
+    "play_stop": "Space",
+    "record": "R",
+    "select_all": "Cmd+A",
+    "library_toggle": "Shift+S",
+    "toggle_editor": "보기 → 편집기 열기",
+    "quantize": "편집 → 퀀타이즈",
+    "computer_keyboard": "편집 → 컴퓨터 키보드"
+  },
+  "macos_menu_bar": {
+    "available": ["Apple", "ACE Studio", "파일", "편집", "보기", "도움말"],
+    "note": "파일/편집/보기 메뉴는 프로젝트에 콘텐츠가 있을 때만 표시됨",
+    "파일_menu": {
+      "items": ["새 프로젝트", "프로젝트 열기", "프로젝트 저장", "다른 이름으로 저장", "모든 파일을 수집하여 저장", "최근 프로젝트 열기▸", "가져오기▸", "오디오 내보내기", "MIDI 내보내기", "크리에이티브 라이브러리용 파일 내보내기▸", "비디오 내보내기"],
+      "가져오기": ["오디오 파일", "비디오 파일", "MIDI 파일", "MusicXML 파일", "UtaFormatix 파일"],
+      "크리에이티브_라이브러리": ["선택 영역을 보컬 샘플로 내보내기", "프로젝트를 곡 템플릿으로 내보내기"]
+    },
+    "편집_menu": ["실행 취소", "다시 실행", "복사", "붙여넣기", "복제", "잘라내기", "분할", "통합", "삭제", "모두 선택", "선택 구간 루프", "퀀타이즈", "컴퓨터 키보드", "글쓰기 도구▸", "자동 완성▸", "받아쓰기 시작", "이모지 및 기호"],
+    "보기_menu": {
+      "편곡": ["전체 보기", "그리드 및 스냅▸"],
+      "편집기": ["편집기 열기", "전체 보기", "그리드 및 스냅▸"],
+      "기타": ["전체 화면 시작"],
+      "그리드_옵션": ["자동 좁히기", "자동-중간", "자동-와이드", "1~16 셀/비트", "스냅 오프"]
+    },
+    "도움말_menu": ["문제 피드백", "번역 개선에 도움을 주세요", "위키 문서", "계정", "로그아웃"],
+    "verified": "2026-04-28 전체 구조 재검증"
+  },
+  "save_confirm_dialog": {
+    "window_name": "공지",
+    "message": "닫기 전에 변경 사항을 저장하시겠습니까?",
+    "buttons": ["취소", "저장하지 않음", "저장"],
+    "access": "AppleScript: click button '저장하지 않음' of window '공지'",
+    "verified": "2026-04-28"
+  },
+  "record_options_dialog": {
+    "window_name": "녹음 옵션",
+    "message": "무엇을 녹음하시겠습니까?",
+    "options": ["없음", "MIDI", "오디오"],
+    "note": "새 프로젝트 생성 후 나타남. '없음' 클릭으로 닫기",
+    "verified": "2026-04-26"
+  },
+  "file_dialog_navigation": {
+    "method": "클립보드 붙여넣기",
+    "workflow": "pbcopy로 경로 복사 → Cmd+Shift+G → Cmd+A → Delete → Cmd+V → Return",
+    "note": "keystroke로 경로 입력 시 자동완성 드롭다운이 방해함. pbcopy+paste가 유일하게 안정적",
+    "verified": "2026-04-26"
+  },
+  "mcp_server": {
+    "location": "환경설정 → 일반 → 플러그인 → MCP",
+    "checkbox_label": "MCP 서버",
+    "default": false,
+    "doc_link": "How to use ACE Studio MCP? Learn more",
+    "note": "활성화 시 MCP 프로토콜로 ACE Studio 프로그래밍 방식 제어 가능 — GUI 자동화 대체 가능성",
+    "discovered": "2026-04-28"
+  }
+}
