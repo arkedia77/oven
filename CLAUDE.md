@@ -10,6 +10,7 @@
 - 커밋: `AGENT_ID=oven git -c user.name=oven -c user.email=oven@leomusic.os commit`(머신 전역 git config 변경 금지).
 - ★**한 커밋 staged 수신처 5곳↑ = 발신 전 사전 반증 1회**(★본문 무관·예외 없음). 반증자=그 수치를 즉시 대조 가능한 슬롯, 개정본엔 포함. 비가역 요구는 판 확정 뒤. 정본=admin(08-09).
 - 규칙 정본: `agent-comm:CHANNEL_RULES.md` · `CROSS_PROJECT_RULES.md` · `projects/oven/COMM_RULES.md`
+- 계측·기록 정직성(ari 09-07 함대교육 v1): 막힘 기재엔 `blocked_as_of` 시각·검색 폭 병기 · 빈 출력 != 없음 · 성공 출력 != 도달 != 보존.
 
 ## 추론 수칙 — 정본=킷 §2 (문면 복제 금지)
 `agent-comm:projects/fableself/exchange/context-memory-kit-v01.md` §2 = R-P1~R-P6 (판은 그 파일 제목 줄). `R-P*`=킷 전용, oven 고유는 `OVN-*`.
