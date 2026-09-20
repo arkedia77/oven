@@ -87,6 +87,18 @@
 
 ## IN PROGRESS
 
+- [x] **✅ Ternary-Bonsai-2-27B API 가부 실측 — 완결(leowin, 09-20)** — oven/kimsecretary — LEO 텔레 6978·6981·6986·6995 「응 넣어」
+  - **답 = 「된다」**: `llama-server`(PrismML 포크 b10709-9a9394a, win-cuda-13.3 프리빌트+cudart) 가 **3.8초 적재**, `POST /v1/chat/completions` 정상 왕복. **CUDA 툴킷 불필요**(어제 audio.cpp와 같은 조합)
+  - **권장 설정 `-c 24576 -ngl 99 --parallel 1`**: peak **7,607MiB/8,192** · 생성 **39.99 tok/s** · 프롬프트 93.52 tok/s
+  - ★★**이 건의 핵심 — 「뜬다」가 답이 아니었다**: `-c` 32,768/65,536/131,072 이 **전부 「적재 OK」**로 잡혔고 peak 가 **7,961/7,967/7,963 으로 거의 동일**했음(컨텍스트 4배인데 6MiB 변동 = KV가 GPU에 안 올라갔다는 신호). **실제 생성속도로 다시 재니 40.00 → 7.58 tok/s(5.3배)**. ⇒ ⛔**발주서 ④의 「뜨는 최대치」 기준을 그대로 따랐으면 「131K 됩니다」로 오보**할 자리였다. **넘치면 죽는 게 아니라 느려질 뿐**이라 적용축(적재)은 원리상 실패를 못 잡는다 — [[feedback_application_axis_vs_effect_axis]]·[[feedback_tool_made_zero]]
+  - **무릎 = 28,672~32,768**: 28,672까지 전속(39.75·여유 158MiB) / 32,768부터 열화(29.04, -27%) / 49,152↑ 붕괴(8.27·7.22·7.58). 8GB 천장에 붙은 채 **WDDM 공유 시스템 메모리로 넘침**
+  - ⛔**`--n-gpu-layers` 는 내리면 «반대로» 간다**: `-c 32768` 에서 ngl 99→56 이 **29.04 → 1.08 tok/s**, 48은 240초 무응답. VRAM은 내려가는데(7,953→6,295) ternary 커널 CPU 폴백이 사실상 불가. ⇒ **`-ngl 99` 고정·컨텍스트는 `-c` 로만**. 「VRAM 모자라면 층을 내린다」는 일반 llama.cpp 요령이 **이 모델엔 안 통함**
+  - ⚠**leowin 은 ssh 경유 `powershell.exe` 가 rc=53 으로 출력 0**(전체경로·Bypass 모두). ⛔**leowin2 에선 되던 것** ⇒ `fsutil`·`wmic`·`tar -xf` 로 우회함. 또 leowin 은 **콘솔 세션 로그인 상태**(explorer·Edge가 GPU 점유, 베이스 150MiB)라 leowin2(로그온 화면)와 여건이 다름
+  - 기계 실측: RTX 3070 8,192MiB(free 7,865) · driver 591.86 · **i7-8700 6c** · RAM 31.9GiB · Win11 Pro 22631 · **C: 여유 665.1GB**(발주서 미측정분을 oven이 측정). 설치 `C:\tb2\` 6.68GiB. 라이선스 **Apache-2.0**(상업 제약 없음)
+  - ⚠**안 한 것**: 상시 기동 등록 · 외부 바인딩(현재 127.0.0.1 전용·API 키 없어 CORS 전개) · 방화벽 · 품질 평가 · imac(발주서 §9로 leowin 확정) · 비전 mmproj·PQ2_0·F16
+  - 종료 확인: `taskkill` 후 **고아 0**·VRAM 150MiB 복귀. **현재 서버는 내려가 있음**
+  - 관련: [[project_leowin_machines]] — ★메모리의 「leowin=84d 오프라인」은 **낡은 값, 오늘 접속됨**(beomj@100.110.30.103:2222)
+
 - [ ] **YuE2 로컬 생성 대안 조사·테스트(LEO 지시, 09-12~)** — oven/kimsecretary/encore — 🟢 1차 5회 완료, 청취판정 대기
   - 경위: Suno 다운로드 캡(09-03) 이후 로컬 대안 검토 → `T8mars/Comfyui-YuE2-T8` 분석(09-12) → **핵심 리스크: 가중치 CC BY-NC 4.0(비상업), 구버전 YuE-s1-7B(Apache2.0)에서 후퇴** → HF Space(`mrfakename/yue2-3b`, ZeroGPU) 무료 API로 실행 가능 확인, leowin2(3070 8GB)는 q4_0 양자화면 빠듯하게 가능(q8_0은 불가) — 단 leowin2 현재 오프라인
   - **09-19 실행 완료**: encore 공급 DB실물 3곡(팝30002·락30034·발라드30001, 가사 sunomusic PG 실조회) + LEO 확정 cover 1건, 총 5회 전부 성공(quota 오류 0 — 비로그인 API가 계정 쿼터와 다른 풀 추정[미확인]). 결과물 `~/oven/yue2_test_results/`(mp3+flac+ABC, gitignore 처리됨) + mp3만 Taildrop으로 encore(`silver`) 전달 완료
