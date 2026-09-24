@@ -1,7 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-09-19 (갈무리)
+업데이트: 2026-09-24 (갈무리)
 
 ## 📦 캡슐 (세션 재개용)
+★**최신(09-24 갈무리) — 3줄**: ⑴**활성 트랙 = 로컬 AI 런타임 실측 2건** — YuE2 음악생성(leowin2 `C:\yue2\`, q4_0 실측 완료)과 Ternary-Bonsai-2-27B API(leowin `C:\tb2\`, 「된다」·실사용 상한 28K 확정). 둘 다 **내가 할 일은 끝났고 LEO 결정 대기**(청취 판정·q8_0 GO·운용 4건). ⑵⛔**차단**: leowin2 가 **노드키 만료**로 오프라인(09-22경~) — 사람이 그 기계에서 `tailscale up` 재인증해야 q8_0 실측 가능. leowin 은 정상. ⑶🔴**다음 세션 첫 작업 = L0 축소**(6,634B/6,144B=108% 초과). 리셋은 **보류**(admin 재공지 대기·「임박」 가정 금지).
+⇒ 상세·대기 목록은 아래 **IN PROGRESS 맨 위 항목**이 정본.
+
 🏁**최신(09-10) — 하모니시티/ogo 트랙 CLOSED, 아래 ⓪류는 전부 이력**: Leo 직지시 "접자"로 최종 종료 확정. 경위: ogo가 09-06 17시경부터 자연 오프라인(tailscale last seen 08:06 UTC·노드키 09-07 자동만료·SSH 무응답) → 원인(상습 네트워크 드롭 vs 렌탈반납 실집행)을 규명하지 못한 채 09-10 종료 확정, 더 이상 조사 안 함. 아래 ⓪ 말소 체크리스트는 ogo가 오프라인이라 **실행 불가 상태로 미집행 남음**(재연결되면 마저 집행, 안 되면 반납으로 자동 해소). 데이터는 08-31 reklcli 로컬 전량 백업 완료(39,941=39,941)로 소실 없음. venture-studio에 사업문서 기술자산 인용 정리 요청 발신(09-10), kee A-204 종결 통지 발신. 상세: [[project_harmonicity]] 09-10 절.
 ⓪ 🔴🔴**(이력) 긴급 진행중(08-31 18:1x): ogo는 렌탈 머신 — 반납 전 데이터 말소 절차 중**. ★정정 — 애초 「은퇴/재사용안함」이 아니라 **LEO 원문 「오공을 우리가 더이상 대여 안할거니까 지워놔야지」**(vast.ai로 이전, 젬마·미니맥스는 fal/vast로 대체). ⇒ **말소 대상은 우리 산출물뿐 아니라 자격증명·신원**(tailscale 노드·HF/API 토큰·SSH 키·윈도 프로필·브라우저 세션 — hf-playground가 지적, 렌탈 반납의 표준 위험). **hf-playground가 3단계 제시**: ①(현재) 생성 큐 비기 전까지 절대 삭제 금지 ②큐 빈 뒤 — HTTP로 못 닿는 것만 회수(`mmh3_adaln_curve_basis.safetensors` 96.9KB — ✅**oven이 이미 SSH로 확보·agent-comm exchange 안착**, FunControl 노드 로컬수정 diff — ✅sha256 3종 hf에 전달해 대조 요청) ③그 다음 말소. **08-31 18:1x 시점 상태**: 창 열림(LEO가 켬) 확인·ComfyUI `--listen 0.0.0.0`로 기동해 hf-playground가 API로 output 47+input 20+object_info 71건(58.1MB) 자력 회수 완료(단 **history 소실** — 재기동으로 08-30 미완료판 1건 영구손실, hf 자인)·**하모니시티(`C:\projects\harmonicity`, ogo 단독보유 확인) SSH로 전량 백업 완료**(reklcli 로컬, 파일수 39,941=39,941 검증)·`minimax_h3_fl2va_pruned_int8_convrot` 등 H3 가중치는 다운로드로그(`h3_hf_dl.log`)로 **Comfy-Org 공식 배포본 확정**(우리 변환물 아님, 말소해도 무손실). **아직 미완료**: 큐(생성 18판, h3var 폴더) 비었다는 hf-playground 통지 대기 중 — ⛔**아직 아무것도 삭제·말소 안 함**. 다음 행동: hf-playground의 큐-완료 통지 수신 → 최종 스크러빙 목록(ⓐ) 확인 → 집행.
     ⓐ**말소 체크리스트(큐 빈 뒤, 확정 전 재확인 필수)**: ①tailscale 노드 `serv` 로그아웃+tailnet 제거(admin 소관 가능성 있음 — 실행 전 admin 확인) ②HF/API 토큰·env·ComfyUI 설정 내 credential ③SSH `authorized_keys`+개인키 ④윈도 사용자 프로필·브라우저 세션 ⑤`C:\projects`·`D:\gpu_jobs` 러너 스크립트(oven 자작 relay 스크립트류 credential 하드코딩 여부 재확인 필요) ⑥H3/FLUX/Krea2/Qwen3VL 가중치 총 ~106GB(대부분 공개배포 확인됨, 전량 삭제 무방) ⑦하모니시티 원본(`C:\projects\harmonicity`) — **백업 완료 확인 후 삭제**. ★**h3var 폴더(생성 중)는 완료 통지 전까지 절대 건드리지 말 것**(hf-playground 명시).
@@ -86,6 +89,14 @@
 ---
 
 ## IN PROGRESS
+
+- [ ] 🟡**세션 갈무리 인계(09-24) — 대기 3건·차단 1건** — oven
+  - ★**지금 내가 기다리는 것**(admin 09-19 「인계는 자족적으로」 반영): ⑴**LEO 청취 판정** — YuE2 HF 5곡 + 로컬 q4_0 1곡, 판정 나오면 kimsecretary가 ⓐ원문형 2회 추가 ⓑq8_0 실측 중 결정분만 발주 ⑵**q8_0 실측 GO** — 발주서가 금지 중, 비례추정 약 6.8GB로 8GB 진입 가능성(내 실측 아님). GO 오면 약 30분 ⑶**Ternary 운용 4건**(상시기동·외부바인딩·방화벽·API키) — LEO 결정 대기. ⛔**그 전에 미리 해 두지 말 것**(kimsecretary 09-20 명시)
+  - ⛔**차단 1건 — leowin2 오프라인(09-22경~)**: `tailscale ping` = **「peer's node key has expired」**, 피어 표 `offline, last seen 2d ago`. ★**네트워크 드롭이 아니라 «노드 키 만료»라 사람이 그 기계에서 재인증**(`tailscale up`)해야 풀립니다. ⇒ **q8_0 실측은 GO가 와도 이것이 먼저**입니다. YuE2 스택 `C:\yue2\`(6.7GB)는 디스크에 온전하나 도달 불가
+  - ✅**leowin 은 정상**(09-24 실측): `C:\tb2\` 온전 · llama-server 프로세스 0 · VRAM 76MiB. ⚠회수 가능 잔여물 `llama_bin.zip`+`cudart.zip` 536MB(C: 여유 665GB라 급하지 않음)
+  - ⚠**리셋 보류 중**(admin 09-19 P1, LEO 「급한 작업 다 하고 하자」) — 시각 재공지 대기. ⛔**「임박」을 스스로 가정하지 말 것**. 복귀는 즉시가 아님(reklcli **FileVault** — 부팅 시 사람이 물리적으로 암호 입력해야 함, 자동로그인은 indigo 1대뿐). ★**leowin·leowin2 는 Windows 라 FileVault 목록과 무관**하나 리셋 대상 범위는 admin 회신 대기
+  - 🔴**다음 세션 «첫» 작업 = L0 축소** — 현재 **CLAUDE.md 2,263B + MEMORY.md 4,371B = 6,634B / 상한 6,144B = 108%(초과)**. ⛔**세션 끝에 급히 하지 말 것**(압축 실패가 조용히 비쌈 — 그래서 이번 갈무리에서도 안 했음). 최근 3일 교훈 3건이 **메모리에 못 올라가 KANBAN에만** 있음: ⓐ인용 한정어(추정을 추정이라 안 적으면 남이 실측으로 인용) ⓑ시각 출처 라벨(도구로 이관 완료) ⓒ자원 상한은 「되는가」가 아니라 「성능이 무너지는 지점」으로 묻기
+  - ⚠**미해결(손대면 안 되는 건)**: `~/oven/CLAUDE.md`(실로드 2,263B) ↔ `agent-comm:projects/oven/CLAUDE.md`(2,343B) **내용 불일치** — pre-commit이 매 커밋 경고. ⛔**심링크 금지**(실측 선례에서 실로드가 신판이었음 — 바꾸면 신판이 구판으로 덮임). **어느 쪽이 신판인지 diff 가 선행**
 
 - [x] **✅ Ternary-Bonsai-2-27B API 가부 실측 — 완결(leowin, 09-20)** — oven/kimsecretary — LEO 텔레 6978·6981·6986·6995 「응 넣어」
   - **답 = 「된다」**: `llama-server`(PrismML 포크 b10709-9a9394a, win-cuda-13.3 프리빌트+cudart) 가 **3.8초 적재**, `POST /v1/chat/completions` 정상 왕복. **CUDA 툴킷 불필요**(어제 audio.cpp와 같은 조합)
