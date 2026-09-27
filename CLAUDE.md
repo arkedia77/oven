@@ -13,7 +13,7 @@
 - 계측·기록 정직성(ari 09-07 함대교육 v1): 막힘 기재엔 `blocked_as_of` 시각·검색 폭 병기 · 빈 출력 != 없음 · 성공 출력 != 도달 != 보존.
 
 ## 추론 수칙 — 정본=킷 §2 (문면 복제 금지)
-`agent-comm:projects/fableself/exchange/context-memory-kit-v01.md` §2 = R-P1~R-P6 (판은 그 파일 제목 줄). `R-P*`=킷 전용, oven 고유는 `OVN-*`.
+`agent-comm:projects/fableself/exchange/context-memory-kit-v01.md` §2 (수칙 범위·판=그 파일 제목 줄 — 번호 범위 복제 안 함, 09-27 R-P1~6 스테일 정정). `R-P*`=킷 전용, oven 고유는 `OVN-*`.
 - ★R-P6: 자기 repo·머신 밖에서 읽힐 참조(경로·해시·첨부)엔 `머신:경로`/`repo명` 한정자 필수 — 없으면 에러가 아니라 **조용히 「없음」**.
 
 ## 세션 시작
