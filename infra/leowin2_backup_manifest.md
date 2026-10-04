@@ -1,6 +1,6 @@
 # leowin2 백업 목록 (manifest v1 · 2026-10-04)
 
-원칙(LEO 10-04): **내용 = 그 경로를 쓰는 에이전트가 정함 · 실행 = 관리자 oven 1곳**(기계당 백업 작업 1개 → NAS DS420+ `/volume2/leofamily/backup/leowin2/`, 삭제 방어 = NAS 스냅샷).
+원칙(LEO 10-04): **내용 = 그 경로를 쓰는 에이전트가 정함 · 실행 = 관리자 oven 1곳**(기계당 백업 작업 1개 → NAS DS420+ 공유 `leowin_backup`(volume2) `\\172.30.1.41\leowin_backup\leowin2` — admin 174649: 스냅샷이 공유 단위라 leofamily 하위에서 분리, 삭제 방어 = NAS 스냅샷).
 **기본값 = 포함.** 아래 «뺄 것»에 주인이 명시한 것만 뺀다. 주인 미상 경로는 포함.
 원자료: `agent-comm:projects/oven/messages/processed/` — vocia 174503 · 3070 174522 · hitmaking 174549.
 
@@ -40,4 +40,4 @@
 `C:\Users\leowin2\GPT-SoVITS` · `arena_tts_test` · `…KSKH97R\.cache\suno`(2.2GB) · `C:\amt_tools\inbox`의 3070_* 외 낱개 wav
 
 ## 열린 것
-NAS 공유·백업 전용 SMB 계정·스냅샷(admin 청구 174325) · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
+NAS 공유 `leowin_backup`·전용 계정 `leowin_bk`·Snapshot Replication = **LEO 손(DSM, NAS root 필요 — admin 174649)** · 스크립트 `infra/leowin2_backup.ps1`(미배포) · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
