@@ -32,9 +32,10 @@ $Jobs = @(
 
 Add-Type -AssemblyName System.Security
 $pw = [Text.Encoding]::UTF8.GetString([Security.Cryptography.ProtectedData]::Unprotect([IO.File]::ReadAllBytes($CredBin), $null, 'LocalMachine'))
-Remove-SmbMapping -RemotePath $Share -Force -ErrorAction SilentlyContinue   # cmdlet 사용: 비밀번호가 명령줄(프로세스 목록)에 안 남고, PS 5.1 네이티브 stderr+Stop 중단도 없음
-New-SmbMapping -RemotePath $Share -UserName $BkUser -Password $pw -Persistent $false | Out-Null
-Remove-Variable pw
+# New-PSDrive -Credential: 비밀번호가 명령줄에 안 남음. ⛔New-SmbMapping 은 ssh·서비스 세션에서 오류 1312(로그온 세션 없음) — 10-04 실측
+$cred = New-Object System.Management.Automation.PSCredential($BkUser, (ConvertTo-SecureString $pw -AsPlainText -Force)); Remove-Variable pw
+Get-PSDrive OVBK -ErrorAction SilentlyContinue | Remove-PSDrive -Force
+New-PSDrive -Name OVBK -PSProvider FileSystem -Root $Share -Credential $cred | Out-Null
 try {
   $LogDir = "$Dest\_logs"; New-Item -ItemType Directory -Force $LogDir | Out-Null
   $summary = @()
@@ -58,5 +59,5 @@ try {
   $line
   if (-not $allOk) { exit 8 }
 } finally {
-  Remove-SmbMapping -RemotePath $Share -Force -ErrorAction SilentlyContinue
+  Remove-PSDrive OVBK -Force -ErrorAction SilentlyContinue
 }

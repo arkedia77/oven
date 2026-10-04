@@ -28,7 +28,7 @@
 | `C:\Users\leowin2\arena_tts_test\.venv` · `C:\Users\leowin2\GPT-SoVITS`(전체) | 3070(수행)·vocia(가치 판단, LEO 10-04) | 재설치 — GPT-SoVITS 학습 가중치 0 · ⚠로컬 수정 여부 미확인(3070) |
 | `C:\so-vits-svc-fork\.venv` | 3070 | venv |
 | `C:\RVC\.venv` · `venv` · `rvc\models` · `ffmpeg_temp` · `logs\*\{sliced_audios,sliced_audios_16k,f0,f0_voiced,extracted,eval}` | vocia | 재설치·재다운로드·전처리 재생성 |
-| `C:\RVC\logs\*\G_*.pth` · `D_*.pth` | vocia | ⚠**3070의 NAS 이관이 끝난 뒤부터** 제외 — 그 전엔 포함 |
+| `C:\RVC\logs\*\G_*.pth` · `D_*.pth` | vocia | ⚠NAS 이관(이제 oven 몫, vocia 224705)이 끝난 뒤부터 제외 — 그 전엔 포함. 첫 백업이 NAS에 사본을 만듦 → 대조 후 C: 삭제는 win_remote_delete 드라이런→kee→LEO |
 | `C:\amt_tools\hitmaking_gpu\venv` · `venv` · `omnizart_env` · `YourMT3*` · `hf_cache` · `test_audio` · `SongFormer`(단 `*.log`는 포함) | hitmaking | 재설치·공개 저장소·가중치 |
 | 공통 | — | `AppData\Local\Temp` · `INetCache` |
 
