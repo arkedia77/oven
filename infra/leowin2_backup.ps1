@@ -1,5 +1,5 @@
-# leowin2 → NAS 백업 (oven 관리 · manifest = infra/leowin2_backup_manifest.md)
-# ⚠배포 시 UTF-8 BOM 으로 저장(Windows PowerShell 5.1 은 BOM 없는 파일을 ANSI 로 읽음 — 주석 한글만 영향) · 10-04 ParseFile 0 errors(leowin2)
+﻿# leowin2 → NAS 백업 (oven 관리 · manifest = infra/leowin2_backup_manifest.md)
+# ⛔이 파일은 UTF-8 **BOM 포함**으로 유지 — PS 5.1 은 BOM 없으면 CP949 로 읽어 한글 주석이 줄바꿈을 삼킨다(10-04 실측: BOM 없이 파싱 오류 6, BOM 넣고 0). 「주석만 영향」이라던 앞 기재는 틀렸음.
 # 실행: 예약 작업(매일 04:00) 또는 수동 `powershell -NoProfile -File C:\scripts\leowin2_backup.ps1 [-DryRun]`
 # 삭제 방어는 NAS 스냅샷이 맡는다 — robocopy /MIR 은 «최신 동기»만 (원본 삭제가 사본에도 번진다).
 # 로그·결과는 C: 가 아니라 NAS 쪽에 쓴다(성공도 기록 — 성공 0 줄 = 「안 돌았다」).
@@ -20,7 +20,7 @@ $Jobs = @(
   @{ Src='C:\Users\leo.LEOWIN2'; Name='home_leo.LEOWIN2';
      XD=@('lora_stage','.cache','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache'); XF=@() },
   @{ Src='C:\Users\leowin2'; Name='leowin2_projects';
-     XD=@('ACE-Step-1.5\.venv','ACE-Step-1.5\checkpoints','fish-speech\.venv','fish-speech\checkpoints'); XF=@() },
+     XD=@('ACE-Step-1.5\.venv','ACE-Step-1.5\checkpoints','fish-speech\.venv','fish-speech\checkpoints','arena_tts_test\.venv','GPT-SoVITS'); XF=@() },  # vocia 203553: GPT-SoVITS=설치본뿐·arena .venv 재설치
   @{ Src='C:\RVC'; Name='RVC';
      # ⚠ G_*.pth·D_*.pth 는 3070 NAS 이관 완료 뒤에만 XF 에 추가(manifest)
      XD=@('.venv','venv','rvc\models','ffmpeg_temp','sliced_audios','sliced_audios_16k','f0','f0_voiced','extracted','eval'); XF=@() },

@@ -25,6 +25,7 @@
 | `C:\Users\leo.LEOWIN2\.cache` | (설계 v0) | HF·torch 캐시 |
 | `C:\Users\leowin2\ACE-Step-1.5\.venv` · `checkpoints` | 3070 | 재설치·공개 가중치 |
 | `C:\Users\leowin2\fish-speech\.venv` · `checkpoints` | 3070 | 재설치·공개 가중치 |
+| `C:\Users\leowin2\arena_tts_test\.venv` · `C:\Users\leowin2\GPT-SoVITS`(전체) | 3070(수행)·vocia(가치 판단, LEO 10-04) | 재설치 — GPT-SoVITS 학습 가중치 0 · ⚠로컬 수정 여부 미확인(3070) |
 | `C:\so-vits-svc-fork\.venv` | 3070 | venv |
 | `C:\RVC\.venv` · `venv` · `rvc\models` · `ffmpeg_temp` · `logs\*\{sliced_audios,sliced_audios_16k,f0,f0_voiced,extracted,eval}` | vocia | 재설치·재다운로드·전처리 재생성 |
 | `C:\RVC\logs\*\G_*.pth` · `D_*.pth` | vocia | ⚠**3070의 NAS 이관이 끝난 뒤부터** 제외 — 그 전엔 포함 |
@@ -33,11 +34,11 @@
 
 ## 지킬 것(유일본 — 검증 시 표본 해시 대상)
 - 3070: `egmd\s1\run_*` · `bp_train\runs\*` · `embed_3070*` · `ACE-Step-1.5\{instrument_test_output,k015_output,k3018_output,pipeline_e2e,topline_genre_test}` · `so-vits-svc-fork\{logs,dataset,dataset_raw,separated}` (≈12.5GB)
-- vocia: `C:\RVC\logs\{gummy,lyn,sung_sikyung}` 모델·index · `C:\RVC\datasets` (≈3.2GB)
+- vocia: `C:\RVC\logs\{gummy,lyn,sung_sikyung}` 모델·index · `C:\RVC\datasets` (≈3.2GB) · `C:\Users\leowin2\arena_tts_test\{results,outputs,reference_voices,scripts}`·*.py (3070 예전 TTS 비교 실험 유일본 — vocia 203553)
 - hitmaking: `amt_tools\hitmaking_gpu\{scripts,work}` · `amt_tools\output` · `SongFormer\*.log` · venv 재생성 근거 `amt_tools\hitmaking_gpu\requirements_freeze_20261004.txt`(54줄) · `amt_tools\requirements_freeze_20261004_venv.txt`(88줄) — hitmaking 174828
 
 ## 주인 미상(기본 포함 · 확인 대기)
-`C:\Users\leowin2\GPT-SoVITS` · `arena_tts_test` · `…KSKH97R\.cache\suno`(2.2GB) · `C:\amt_tools\inbox`의 3070_* 외 낱개 wav
+`…KSKH97R\.cache\suno`(2.2GB) · `C:\amt_tools\inbox`의 3070_* 외 낱개 wav
 
 ## 열린 것
 NAS 공유 `leowin_backup`·전용 계정 `leowin_bk`·Snapshot Replication = **LEO 손(DSM, NAS root 필요 — admin 174649)** · 스크립트 `infra/leowin2_backup.ps1`(미배포) · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
