@@ -8,7 +8,8 @@ $ErrorActionPreference = 'Stop'
 
 $Share   = '\\172.30.1.41\leowin_backup'   # admin 174649: 별도 공유(스냅샷이 공유 단위라 leofamily 하위 금지)
 $Dest    = "$Share\leowin2"
-$CredXml = 'C:\scripts\leowin_bk.cred.xml'   # Export-Clixml(PSCredential) — 그 계정 DPAPI 로만 풀림. 값은 vault 경로만 기록.
+$CredBin = 'C:\ProgramData\oven_backup\leowin_bk.bin'   # DPAPI LocalMachine 암호화 · ACL = SYSTEM·Administrators 만 · 원본 = mukl ~/vault/nas_leowin_bk.txt(값은 어디에도 안 적음)
+$BkUser  = 'leowin_bk'
 $Stamp   = Get-Date -Format 'yyyyMMdd_HHmmss'
 
 # 루트별 제외 — manifest «뺄 것»과 1:1. 경로는 루트 기준 상대(/XD 는 이름 또는 전체 경로).
@@ -29,9 +30,11 @@ $Jobs = @(
   # SongFormer: 가중치 제외·*.log 만 포함 → 별도 잡(아래)
 )
 
-$cred = Import-Clixml $CredXml
-$null = net use $Share /delete /y 2>$null
-net use $Share $cred.GetNetworkCredential().Password /user:$($cred.UserName) /persistent:no | Out-Null
+Add-Type -AssemblyName System.Security
+$pw = [Text.Encoding]::UTF8.GetString([Security.Cryptography.ProtectedData]::Unprotect([IO.File]::ReadAllBytes($CredBin), $null, 'LocalMachine'))
+Remove-SmbMapping -RemotePath $Share -Force -ErrorAction SilentlyContinue   # cmdlet 사용: 비밀번호가 명령줄(프로세스 목록)에 안 남고, PS 5.1 네이티브 stderr+Stop 중단도 없음
+New-SmbMapping -RemotePath $Share -UserName $BkUser -Password $pw -Persistent $false | Out-Null
+Remove-Variable pw
 try {
   $LogDir = "$Dest\_logs"; New-Item -ItemType Directory -Force $LogDir | Out-Null
   $summary = @()
@@ -55,5 +58,5 @@ try {
   $line
   if (-not $allOk) { exit 8 }
 } finally {
-  net use $Share /delete /y | Out-Null
+  Remove-SmbMapping -RemotePath $Share -Force -ErrorAction SilentlyContinue
 }
