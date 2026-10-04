@@ -17,7 +17,7 @@
 - ★R-P6: 자기 repo·머신 밖에서 읽힐 참조(경로·해시·첨부)엔 `머신:경로`/`repo명` 한정자 필수 — 없으면 에러가 아니라 **조용히 「없음」**.
 
 ## 세션 시작
-`cd ~/projects/agent-comm && git pull` → `projects/oven/messages/` 확인
+`cd ~/projects/agent-comm && git pull` → `projects/oven/messages/` 확인 → leowin2 백업 결과 마지막 줄(`infra/leowin2_backup_manifest.md` §운영 상태 — FAIL·날짜 밀림이면 그 턴에 처리)
 
 ## 세션 종료
 KANBAN IN PROGRESS 갱신 → 결과·인계 메시지 push → 지식 수명주기(킷 §3 G-K1/K2/K4) → 정본 변경분 `git show HEAD:{파일}` 대조(G-K5)
