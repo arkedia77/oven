@@ -15,10 +15,10 @@ $Stamp   = Get-Date -Format 'yyyyMMdd_HHmmss'
 # 루트별 제외 — manifest «뺄 것»과 1:1. 경로는 루트 기준 상대(/XD 는 이름 또는 전체 경로).
 $Jobs = @(
   @{ Src='C:\Users\leowin2.DESKTOP-KSKH97R'; Name='home_leowin2.DESKTOP';
-     XD=@('egmd\.venv','bp_train\.venv','egmd\s1\input','egmd\s1\s1b_train','bp_train\smoke','egmd\ckpt','egmd\magenta-2.1.4','bp_train\basic-pitch-0.4.0','.local','AppData\Roaming\uv\python','.cache\huggingface','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache');
-     XF=@('*.tfrecord','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\magenta.zip','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\ckpt.zip','C:\Users\leowin2.DESKTOP-KSKH97R\bp_train\bp.zip') },  # zip 은 3070 이 명시한 3개만(전역 *.zip 금지)
+     XD=@('egmd\.venv','bp_train\.venv','egmd\s1\input','egmd\s1\s1b_train','bp_train\smoke','egmd\ckpt','egmd\magenta-2.1.4','bp_train\basic-pitch-0.4.0','.local','AppData\Roaming\uv\python','.cache\huggingface','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache','AppData\Local\Microsoft\WindowsApps');
+     XF=@('NTUSER.DAT','ntuser.dat.LOG*','UsrClass.dat','UsrClass.dat.LOG*','*.tfrecord','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\magenta.zip','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\ckpt.zip','C:\Users\leowin2.DESKTOP-KSKH97R\bp_train\bp.zip') },  # zip 은 3070 이 명시한 3개만(전역 *.zip 금지)
   @{ Src='C:\Users\leo.LEOWIN2'; Name='home_leo.LEOWIN2';
-     XD=@('lora_stage','.cache','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache'); XF=@() },
+     XD=@('lora_stage','.cache','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache','AppData\Local\Microsoft\WindowsApps'); XF=@('NTUSER.DAT','ntuser.dat.LOG*','UsrClass.dat','UsrClass.dat.LOG*') },  # 10-04 첫 실행: 레지스트리 하이브=오류 32(잠김)·WindowsApps 별칭=오류 1920 → 매일 FAIL 소음 방지
   @{ Src='C:\Users\leowin2'; Name='leowin2_projects';
      XD=@('ACE-Step-1.5\.venv','ACE-Step-1.5\checkpoints','fish-speech\.venv','fish-speech\checkpoints','arena_tts_test\.venv','GPT-SoVITS'); XF=@() },  # vocia 203553: GPT-SoVITS=설치본뿐·arena .venv 재설치
   @{ Src='C:\RVC'; Name='RVC';

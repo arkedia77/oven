@@ -40,5 +40,11 @@
 ## 주인 미상(기본 포함 · 확인 대기)
 `…KSKH97R\.cache\suno`(2.2GB) · `C:\amt_tools\inbox`의 3070_* 외 낱개 wav
 
+## 운영 상태(10-04 23:5x)
+- 첫 실행 22:36~23:39(≈93GB·63분, 1Gbps 유선) → 레지스트리 하이브(오류 32)·WindowsApps 별칭(오류 1920) 실패로 FAIL → 제외 추가 → 2회차 23:40 OK(175초).
+- 검증: 표본 3 SHA256 일치(gummy 모델·embed_3070 파일·so-vits D_ 체크포인트) · 복원 시험 1회 일치.
+- 예약 `OvenBackupDaily`(SYSTEM·매일 04:00·최대 4시간) → NAS 스냅샷 06:00(admin). 결과 = `\\172.30.1.41\leowin_backup\leowin2\_logs\_results.txt`(성공도 1줄).
+- 자격 = leowin2 `C:\ProgramData\oven_backup\leowin_bk.bin`(DPAPI LocalMachine·SYSTEM/Administrators) ← 원본 mukl ~/vault/nas_leowin_bk.txt.
+
 ## 열린 것
-NAS 공유 `leowin_backup`·전용 계정 `leowin_bk`·Snapshot Replication = **LEO 손(DSM, NAS root 필요 — admin 174649)** · 스크립트 `infra/leowin2_backup.ps1`(미배포) · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
+스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
