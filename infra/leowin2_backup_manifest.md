@@ -34,7 +34,7 @@
 ## 지킬 것(유일본 — 검증 시 표본 해시 대상)
 - 3070: `egmd\s1\run_*` · `bp_train\runs\*` · `embed_3070*` · `ACE-Step-1.5\{instrument_test_output,k015_output,k3018_output,pipeline_e2e,topline_genre_test}` · `so-vits-svc-fork\{logs,dataset,dataset_raw,separated}` (≈12.5GB)
 - vocia: `C:\RVC\logs\{gummy,lyn,sung_sikyung}` 모델·index · `C:\RVC\datasets` (≈3.2GB)
-- hitmaking: `amt_tools\hitmaking_gpu\{scripts,work}` · `amt_tools\output` · `SongFormer\*.log`
+- hitmaking: `amt_tools\hitmaking_gpu\{scripts,work}` · `amt_tools\output` · `SongFormer\*.log` · venv 재생성 근거 `amt_tools\hitmaking_gpu\requirements_freeze_20261004.txt`(54줄) · `amt_tools\requirements_freeze_20261004_venv.txt`(88줄) — hitmaking 174828
 
 ## 주인 미상(기본 포함 · 확인 대기)
 `C:\Users\leowin2\GPT-SoVITS` · `arena_tts_test` · `…KSKH97R\.cache\suno`(2.2GB) · `C:\amt_tools\inbox`의 3070_* 외 낱개 wav
