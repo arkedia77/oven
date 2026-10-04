@@ -10,6 +10,7 @@
 | `E:\사진` | 7.7GB | 사진 |
 | `E:\어머니 사진 백업` | 0.7GB | 가족 사진 |
 | `E:\leo1_backup` · `E:\backup_c` · `E:\temp_keygen` | <0.1GB | 작음 — 포함 |
+| `C:\RVC\logs\{gummy,sung_sikyung}`의 `*_e_*s.pth`·`*.index`·`config.json`·`model_info.json`·`training_data.json` | ≈1.3GB | 학습된 목소리 모델 유일본(재다운로드 불가) — 3070 224405 제보·oven 실측 22:4x. ★leowin gummy ≠ leowin2 gummy(같은 이름·날짜, G·모델 파일 크기 다름 — 별개 학습본) |
 
 ## 제외(백업만 안 함 · leowin 에서 지우는 것 아님)
 | 경로 | 크기 | 사유 |
@@ -24,4 +25,5 @@
 | `E:\exist\$Recycle.Bin` · `$RECYCLE.BIN` · `System Volume Information` · `Recovery` · `OneDriveTemp` | — | 시스템 |
 
 ## 열린 것
+- `C:\RVC\logs\gummy\G_*·D_*.pth`(≈13GB, 학습 재개 전용) — vocia 판단 대기(기본 = 미포함, LEO 「중요한 것만」 기준)
 leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 슬롯 목록 미청구(Ternary-Bonsai `C:\tb2` = oven, 재다운로드 가능 → 제외 예정)
