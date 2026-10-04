@@ -1,4 +1,5 @@
 # leowin2 → NAS 백업 (oven 관리 · manifest = infra/leowin2_backup_manifest.md)
+# ⚠배포 시 UTF-8 BOM 으로 저장(Windows PowerShell 5.1 은 BOM 없는 파일을 ANSI 로 읽음 — 주석 한글만 영향) · 10-04 ParseFile 0 errors(leowin2)
 # 실행: 예약 작업(매일 04:00) 또는 수동 `powershell -NoProfile -File C:\scripts\leowin2_backup.ps1 [-DryRun]`
 # 삭제 방어는 NAS 스냅샷이 맡는다 — robocopy /MIR 은 «최신 동기»만 (원본 삭제가 사본에도 번진다).
 # 로그·결과는 C: 가 아니라 NAS 쪽에 쓴다(성공도 기록 — 성공 0 줄 = 「안 돌았다」).
@@ -14,7 +15,7 @@ $Stamp   = Get-Date -Format 'yyyyMMdd_HHmmss'
 $Jobs = @(
   @{ Src='C:\Users\leowin2.DESKTOP-KSKH97R'; Name='home_leowin2.DESKTOP';
      XD=@('egmd\.venv','bp_train\.venv','egmd\s1\input','egmd\s1\s1b_train','bp_train\smoke','egmd\ckpt','egmd\magenta-2.1.4','bp_train\basic-pitch-0.4.0','.local','AppData\Roaming\uv\python','.cache\huggingface','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache');
-     XF=@('*.tfrecord','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\magenta.zip','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\ckpt.zip','C:\Users\leowin2.DESKTOP-KSKH97R\bp_train\bp.zip') }  # zip 은 3070 이 명시한 3개만(전역 *.zip 금지),
+     XF=@('*.tfrecord','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\magenta.zip','C:\Users\leowin2.DESKTOP-KSKH97R\egmd\ckpt.zip','C:\Users\leowin2.DESKTOP-KSKH97R\bp_train\bp.zip') },  # zip 은 3070 이 명시한 3개만(전역 *.zip 금지)
   @{ Src='C:\Users\leo.LEOWIN2'; Name='home_leo.LEOWIN2';
      XD=@('lora_stage','.cache','AppData\Local\Temp','AppData\Local\Microsoft\Windows\INetCache'); XF=@() },
   @{ Src='C:\Users\leowin2'; Name='leowin2_projects';
