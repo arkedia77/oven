@@ -32,7 +32,7 @@ leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 �
 - 스크립트 `infra/leowin_backup.ps1` → leowin `C:\scripts\leowin_backup.ps1`(SHA256 9a4f13e8…·파싱 오류 0).
 - 자격 파일 설치(22:2x, LEO 승인·권한 규칙 추가 뒤): `C:\ProgramData\oven_backup\leowin_bk.bin` 246B · NAS 공유 접근 확인 · ACL = SYSTEM·Administrators.
 - 드라이런 `20261006_222444 DRYRUN OK`(전 잡 rc 1 · 실패 열 0 · 약 30분 소요): E_work 205.7GB/58,979파일 · 사진 7.16GB · 어머니 사진 0.67GB · gummy 0.66GB(13) · sung_sikyung 0.56GB(5) · 기타 <0.1GB ⇒ 합 ≈215GB. ※E_work 로그에 ERROR/오류 문자열 72줄 — 실패 열 0 이라 파일명 일치로 추정(미확인).
-- 첫 실행: 22:56 SSH 전경으로 시작(reklcli 백그라운드 작업 — SSH 끊기면 중단·재실행하면 이어감). **실측 속도 ≈0.3MB/s**(robocopy 읽기 0.23·쓰기 0.37MB/s, 23:00) · 디스크 사용률 0% ⇒ 병목 = 무선(Realtek 8812BU USB · 5GHz 신호 55% · NAS ping 평균 67ms·최대 410ms). 이 속도면 215GB ≈ 8일 — 유선 연결 또는 무선 개선 없이는 완주 비현실적. 소파일 다수 구간이라 과소일 수 있음(대용량 구간 속도 미측정).
+- 첫 실행: 22:56 SSH 전경으로 시작(reklcli 백그라운드 작업 — SSH 끊기면 중단·재실행하면 이어감). **실측 속도 ≈0.3MB/s**(robocopy 읽기 0.23·쓰기 0.37MB/s, 23:00) · 디스크 사용률 0% ⇒ 병목 = 무선(Realtek 8812BU USB · 5GHz 신호 55% · NAS ping 평균 67ms·최대 410ms). 이 속도면 215GB ≈ 8일 — 유선 연결 또는 무선 개선 없이는 완주 비현실적. ★정정(23:03 재측정): 대용량 파일(953MB zip) 구간 읽기 2.23MB/s · 누적 0.39GB/7분 ⇒ 8일은 소파일 구간 과소 추정 — 대용량 기준 215GB ≈ 27시간(구간 혼합이라 그 이상). 여전히 유선(leowin2 = 93GB/63분)의 1/10 이하.
 - ⛔예약 작업 `OvenBackupDaily` 미등록 — 등록 명령이 Claude Code 자동 모드 분류기에 거부(Unauthorized Persistence, 22:56). LEO 손 또는 권한 규칙 필요.
 - 해결: leowin PowerShell 기동 불가(`System32\mscoree.dll` 없음·0xC0000135) → `sfc /verifyonly` 위반 1건 → LEO 승인 `sfc /scannow` 복구(21:4x). 없어진 원인 미규명.
 - SSH = `-p 2222 leo@100.110.30.103` · 콘솔 로그온 = beomj(17:51~).
