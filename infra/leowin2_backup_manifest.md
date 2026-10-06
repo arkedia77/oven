@@ -45,6 +45,7 @@
 - 검증: 표본 3 SHA256 일치(gummy 모델·embed_3070 파일·so-vits D_ 체크포인트) · 복원 시험 1회 일치.
 - 예약 `OvenBackupDaily`(SYSTEM·매일 04:00·최대 4시간) → NAS 스냅샷 06:00(admin). 결과 = `\\172.30.1.41\leowin_backup\leowin2\_logs\_results.txt`(성공도 1줄).
 - 자격 = leowin2 `C:\ProgramData\oven_backup\leowin_bk.bin`(DPAPI LocalMachine·SYSTEM/Administrators) ← 원본 mukl ~/vault/nas_leowin_bk.txt.
+- 10-06 21:4x 결과 줄 열람(NAS `_results.txt`): `20261005_040001 RUN OK` · `20261006_040001 RUN OK`(전 잡 rc 0~1) — 예약 2회 연속 정상.
 
 ## 열린 것
 스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)

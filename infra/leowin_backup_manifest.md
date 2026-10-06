@@ -28,9 +28,8 @@
 ## 열린 것
 leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 슬롯 목록 미청구(Ternary-Bonsai `C:\tb2` = oven, 재다운로드 가능 → 제외 예정)
 
-## 운영 상태(10-06 21:4x) — ⛔미가동
-- 스크립트 `infra/leowin_backup.ps1` 작성(leowin2 판 파생 · 포함 경로 8잡 · RVC 는 파일 패턴) — **leowin 에 미배포·미실행(드라이런도 안 함)**.
-- 막힘 ⑴ leowin PowerShell 기동 불가: `C:\Windows\System32\mscoree.dll` 없음(SysWOW64·WinSxS 에는 있음) → powershell.exe 종료 코드 0xC0000135 · cscript 도 실패. cmd·robocopy 는 됨. 원인 미규명(10-06 17:51 재부팅 뒤 첫 관측, blocked_as_of 21:42 · CBS.log 에 설치 세션 없음 — 적용성 평가만).
-- 막힘 ⑵ 자격 파일 `C:\ProgramData\oven_backup\leowin_bk.bin` 없음 · `C:\scripts` 없음 · 예약 작업 없음.
-- 실측: SSH = `-p 2222 leo@100.110.30.103` · 네트워크 = USB 무선(Realtek 8812BU, 표시 866Mbps) 뿐 · C: 여유 700GB · gummy `*e_*s.pth` 10개+index · sung_sikyung 폴더 584MB.
-
+## 운영 상태(10-06 21:5x) — ⛔미가동(자격 파일만 남음)
+- 스크립트 `infra/leowin_backup.ps1`(포함 경로 8잡 · RVC 는 파일 패턴) → leowin `C:\scripts\leowin_backup.ps1` 배포(SHA256 일치 9a4f13e8…·파싱 오류 0·원본 8경로 존재). **드라이런·실행 안 함**.
+- 해결: leowin PowerShell 기동 불가 — `C:\Windows\System32\mscoree.dll` 없음(0xC0000135) → `sfc /verifyonly` 위반 1건(그 파일뿐) → LEO 승인 `sfc /scannow` 복구 → PowerShell 5.1.22621.6133 기동 확인(21:4x). 없어진 원인 미규명(17:51 재부팅 뒤 첫 관측 · CBS.log 설치 세션 없음).
+- ⛔막힘(blocked_as_of 21:5x): 자격 파일 `C:\ProgramData\oven_backup\leowin_bk.bin` 없음 — mukl 금고 → leowin DPAPI 설치 명령이 Claude Code 자동 모드 분류기에 거부(Secret-Store Writes). LEO 가 승인했으나 분류기 통과는 별개 — LEO 직접 실행 또는 권한 규칙 필요. 예약 작업 없음.
+- 실측: SSH = `-p 2222 leo@100.110.30.103` · 네트워크 = USB 무선(Realtek 8812BU, 표시 866Mbps) 뿐 → 첫 ≈230GB 는 `-Ipg` 검토 · C: 여유 700GB.
