@@ -1,7 +1,10 @@
 # oven (Quincy/Liszt) KANBAN
-업데이트: 2026-09-24 (갈무리)
+업데이트: 2026-10-06 18:0x (reklcli 재부팅 전 갈무리)
 
 ## 📦 캡슐 (세션 재개용)
+★**최신(10-06 재부팅 전) — 3줄**: ⑴**신규 소관 = leowin·leowin2 관리 실무 전부(LEO 10-04 지정, admin 빠짐)** — INC-20261004-leowin2(3070 홈 삭제) 계획 집행 완료·leowin2 sshd 키 전용·Guest 끔·**NAS 백업 가동**(`infra/leowin2_backup.ps1`·manifest, 매일 04:00 SYSTEM → `\\172.30.1.41\leowin_backup\leowin2`, 첫 93GB·해시·복원 검증 OK) · leowin NVIDIA `NvContainerLocalSystem` 누수(rundll32 8천개) → 서비스 Disabled·재부팅으로 해결(10-06 17:51). ⑵**대기**: leowin 백업 스크립트(≈232GB, `infra/leowin_backup_manifest.md`) 미작성 · leowin2 RVC G/D 24GB C: 정리 = win_remote_delete 드라이런→kee→LEO · NAS 스냅샷 보존(일14·주8)=LEO DSM · leowin/leowin2 공용 비밀번호 평문 노출 → 교체 LEO 결정 대기 · ogo 은퇴(GPU 청구는 leowin·leowin2로). ⑶**reklcli 재부팅(LEO, 10-06 18:0x~)**: 새 GUI 앱 실행이 전부 시작 직후 정지(T·32KB) — syspolicyd·amfid 재시작 무효·runningboardd 종료 불가(SIP 추정) → 재부팅. **복귀 후 확인**: 메모 앱 실행 · `com.leo.reklcli.nodisplaysleep` caffeinate 복귀(hitmaking 화면 자동화용, LEO 10-04 지시 — 모니터는 LEO가 직접 끔·DDC 불가) · tailscale · kee 공지 180505의 「18:1x」는 미실측 오기(발신 18:05).
+⇒ 이전 캡슐(09-24)은 아래 이력.
+
 ★**최신(09-24 갈무리) — 3줄**: ⑴**활성 트랙 = 로컬 AI 런타임 실측 2건** — YuE2 음악생성(leowin2 `C:\yue2\`, q4_0 실측 완료)과 Ternary-Bonsai-2-27B API(leowin `C:\tb2\`, 「된다」·실사용 상한 28K 확정). 둘 다 **내가 할 일은 끝났고 LEO 결정 대기**(청취 판정·q8_0 GO·운용 4건). ⑵⛔**차단**: leowin2 가 **노드키 만료**로 오프라인(09-22경~) — 사람이 그 기계에서 `tailscale up` 재인증해야 q8_0 실측 가능. leowin 은 정상. ⑶🔴**다음 세션 첫 작업 = L0 축소**(6,634B/6,144B=108% 초과). 리셋은 **보류**(admin 재공지 대기·「임박」 가정 금지).
 ⇒ 상세·대기 목록은 아래 **IN PROGRESS 맨 위 항목**이 정본.
 
