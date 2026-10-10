@@ -1,0 +1,62 @@
+[
+ {
+  "q": "조선 시대 세종대왕의 주요 업적 세 가지를 각각 한 문장으로 설명해 주세요.",
+  "a": null,
+  "reasoning_chars": 26069,
+  "finish": "length",
+  "usage": {
+   "prompt_tokens": 72,
+   "completion_tokens": 6000,
+   "total_tokens": 6072,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  },
+  "t": 271.7593684196472
+ },
+ {
+  "q": "회사 동료에게 보내는 정중한 회의 일정 변경 요청 이메일을 5문장 이내로 써 주세요. 회의는 원래 목요일 오후 2시였고 금요일 오전 10시로 옮기고 싶습니다.",
+  "a": null,
+  "reasoning_chars": 19223,
+  "finish": "length",
+  "usage": {
+   "prompt_tokens": 97,
+   "completion_tokens": 6000,
+   "total_tokens": 6097,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  },
+  "t": 250.31252574920654
+ },
+ {
+  "q": "다음 문장을 자연스러운 한국어로 고쳐 주세요: '나는 어제 친구를 만나서 영화를 봤는데 그 영화가 매우 재미있어서 다시 볼 것을 원한다.'",
+  "a": null,
+  "reasoning_chars": 12051,
+  "finish": "length",
+  "usage": {
+   "prompt_tokens": 86,
+   "completion_tokens": 6000,
+   "total_tokens": 6086,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  },
+  "t": 255.42220187187195
+ },
+ {
+  "q": "파이썬에서 리스트와 튜플의 차이를 초보자에게 설명하고, 각각의 예시 코드를 한 줄씩 보여 주세요. 반드시 한국어로 답하세요.",
+  "a": "- **list**: can change after creation, uses `[]`\n- **tuple**: cannot change after creation, uses `()`\n\n```python\nlst = [1, 2, 3]; lst[0] = 10  # list can change\ntpl = (1, 2, 3); tpl[0] = 10  # tuple cannot change (error)\n```",
+  "reasoning_chars": 1390,
+  "finish": "stop",
+  "usage": {
+   "prompt_tokens": 89,
+   "completion_tokens": 548,
+   "total_tokens": 637,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  },
+  "t": 34.44050335884094
+ }
+]

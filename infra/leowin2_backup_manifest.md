@@ -46,6 +46,7 @@
 - 예약 `OvenBackupDaily`(SYSTEM·매일 04:00·최대 4시간) → NAS 스냅샷 06:00(admin). 결과 = `\\172.30.1.41\leowin_backup\leowin2\_logs\_results.txt`(성공도 1줄).
 - 자격 = leowin2 `C:\ProgramData\oven_backup\leowin_bk.bin`(DPAPI LocalMachine·SYSTEM/Administrators) ← 원본 mukl ~/vault/nas_leowin_bk.txt.
 - 10-06 21:4x 결과 줄 열람(NAS `_results.txt`): `20261005_040001 RUN OK` · `20261006_040001 RUN OK`(전 잡 rc 0~1) — 예약 2회 연속 정상.
+- 10-10 15:3x: 결과 줄 10-07~10-10 전부 `RUN OK` · C: 여유 6.7GB · RVC G_/D_ 40개(26,188,736,760B) = 매일 사본 40/40 같은 크기·별도 보관 사본 `_archive\RVC_GD_20261010\`(40개 일치·표본 SHA256 3/3) 신설 · **C: 삭제는 kee→LEO 결재 대기(154215)** — GO 뒤 삭제 + XF 추가.
 
 ## 열린 것
 스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)

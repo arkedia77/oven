@@ -1,0 +1,283 @@
+{
+ "started": "2026-10-07 18:18:43",
+ "status": {
+  "service": "strata",
+  "model": "qwen3.8-flash-next-coder-iq1_m",
+  "loaded": true,
+  "auto_load": true,
+  "structured_output": {
+   "formats": [
+    "json_object",
+    "json_schema"
+   ],
+   "method": "prompt_and_validate",
+   "constrained_decoding": false,
+   "stream_buffered": true
+  },
+  "engine": "0.1.40",
+  "started": 1791364668,
+  "uptime_s": 54,
+  "cache_max_tokens": 32768,
+  "context": {
+   "native": 32768,
+   "max_positions": 32768
+  },
+  "concurrency": {
+   "serving": 1,
+   "requested": 1
+  },
+  "dialects": [
+   "/v1/chat/completions",
+   "/v1/messages",
+   "/v1/responses"
+  ],
+  "vision": {
+   "enabled": false,
+   "available": false,
+   "error": null
+  },
+  "activity": {
+   "requests": 0,
+   "in_flight": 0,
+   "last_request_at": null
+  },
+  "last_timings": null,
+  "vram": {
+   "elastic": false
+  },
+  "machine": {
+   "at": 1791364723,
+   "gpu": {
+    "name": "NVIDIA GeForce RTX 3070",
+    "used_mib": 7200.0,
+    "total_mib": 8192.0,
+    "util_pct": 0,
+    "temp_c": 38,
+    "power_w": 6.329
+   },
+   "ram": {
+    "used_gib": 23.7,
+    "total_gib": 31.9
+   }
+  }
+ },
+ "speed_short": [
+  {
+   "t_first": 7.167597532272339,
+   "t_total": 51.835246324539185,
+   "usage": {
+    "prompt_tokens": 75,
+    "completion_tokens": 500,
+    "total_tokens": 575,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 11.193783723099463,
+   "chars": 296,
+   "reasoning_chars": 1637,
+   "head": "def merge_intervals(intervals):\n    \"\"\"Merge overlapping intervals and return them sorted by start.\"\"\"\n    if not intervals:\n        return []\n\n    intervals = sorted(intervals)\n    merged = [list(intervals[0])]\n\n    for start, end in intervals[1:]:\n        if start <= merged[-1][1]:\n           "
+  },
+  {
+   "t_first": 0.4849357604980469,
+   "t_total": 30.83804988861084,
+   "usage": {
+    "prompt_tokens": 75,
+    "completion_tokens": 500,
+    "total_tokens": 575,
+    "prompt_tokens_details": {
+     "cached_tokens": 70
+    }
+   },
+   "decode_tok_s": 16.472774354869383,
+   "chars": 216,
+   "reasoning_chars": 1707,
+   "head": "def merge_intervals(intervals):\n    \"\"\"Merge overlapping intervals and return them sorted by start.\"\"\"\n    if not intervals:\n        return []\n\n    intervals = sorted(intervals, key=lambda x: x[0])\n    merged = [list"
+  },
+  {
+   "t_first": 0.3012375831604004,
+   "t_total": 27.558665990829468,
+   "usage": {
+    "prompt_tokens": 75,
+    "completion_tokens": 500,
+    "total_tokens": 575,
+    "prompt_tokens_details": {
+     "cached_tokens": 70
+    }
+   },
+   "decode_tok_s": 18.34362334266726,
+   "chars": 426,
+   "reasoning_chars": 1360,
+   "head": "from typing import List, Tuple\n\ndef merge_intervals(intervals: List[Tuple[int, int]]) -> List[Tuple[int, int]]:\n    \"\"\"Merge overlapping intervals and return sorted non-overlapping intervals.\"\"\"\n    if not intervals:\n        return []\n\n    intervals.sort(key=lambda x: x[0])\n    merged = [list(interv"
+  }
+ ],
+ "prefill": [
+  {
+   "chars": 16000,
+   "t_first": 84.7508864402771,
+   "t_total": 85.51258158683777,
+   "usage": {
+    "prompt_tokens": 7497,
+    "completion_tokens": 16,
+    "total_tokens": 7513,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "prompt_tok_s": 88.45925175405738,
+   "text": "",
+   "reasoning_chars": 77
+  },
+  {
+   "chars": 48000,
+   "t_first": 252.96757054328918,
+   "t_total": 253.69741201400757,
+   "usage": {
+    "prompt_tokens": 22713,
+    "completion_tokens": 16,
+    "total_tokens": 22729,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "prompt_tok_s": 89.78621232444982,
+   "text": "",
+   "reasoning_chars": 77
+  }
+ ],
+ "korean": [
+  {
+   "q": "조선 시대 세종대왕의 주요 업적 세 가지를 각각 한 문장으로 설명해 주세요.",
+   "a": "",
+   "reasoning_chars": 6249,
+   "t_first": 2.5770044326782227,
+   "t_total": 77.38431429862976,
+   "usage": {
+    "prompt_tokens": 72,
+    "completion_tokens": 1500,
+    "total_tokens": 1572,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 20.05151639175202
+  },
+  {
+   "q": "회사 동료에게 보내는 정중한 회의 일정 변경 요청 이메일을 5문장 이내로 써 주세요. 회의는 원래 목요일 오후 2시였고 금요일 오전 10시로 옮기고 싶습니다.",
+   "a": "",
+   "reasoning_chars": 2847,
+   "t_first": 2.999768018722534,
+   "t_total": 75.62868404388428,
+   "usage": {
+    "prompt_tokens": 97,
+    "completion_tokens": 1500,
+    "total_tokens": 1597,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 20.65293112016619
+  },
+  {
+   "q": "다음 문장을 자연스러운 한국어로 고쳐 주세요: '나는 어제 친구를 만나서 영화를 봤는데 그 영화가 매우 재미있어서 다시 볼 것을 원한다.'",
+   "a": "",
+   "reasoning_chars": 3578,
+   "t_first": 2.7051925659179688,
+   "t_total": 73.36305642127991,
+   "usage": {
+    "prompt_tokens": 86,
+    "completion_tokens": 1500,
+    "total_tokens": 1586,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 21.22905955762447
+  },
+  {
+   "q": "파이썬에서 리스트와 튜플의 차이를 초보자에게 설명하고, 각각의 예시 코드를 한 줄씩 보여 주세요.",
+   "a": "- **list**: 可修改（mutable）\n- **tuple**: 不可修改（immutable）\n\n```python\nlst = [1, 2, 3]; lst[0] = 99\n```\n\n```python\ntup = (1, 2, 3)  # cannot do tup[0] = 99\n```",
+   "reasoning_chars": 626,
+   "t_first": 2.6119744777679443,
+   "t_total": 20.532710552215576,
+   "usage": {
+    "prompt_tokens": 83,
+    "completion_tokens": 304,
+    "total_tokens": 387,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 16.96358892498059
+  },
+  {
+   "q": "철수는 사과 12개를 가지고 있었습니다. 영희에게 5개를 주고, 가게에서 8개를 더 샀습니다. 그 뒤 절반을 동생에게 주었습니다. 철수에게 남은 사과는 몇 개인지 풀이와 함께 답하세요.",
+   "a": "풀이:\n\n1. 철수 처음 had 12 apples.  \n   \\[\n   12\n   \\]\n\n2. He gave 5 apples to Younghee.  \n   \\[\n   12 - 5 = 7\n   \\]\n\n3. He bought 8 more apples.  \n   \\[\n   7 + 8 = 15\n   \\]\n\n4. He gave half of the apples to his younger sibling.  \n   \\[\n   15 \\div 2 = 7.5\n   \\]\n\n5. Therefore, the apples remaining for Cholsu are also half:  \n   \\[\n   7.5\n   \\]\n\n**Answer: 7.5 apples**, meaning **7 apples and a half apple**.\n\nIf apples must remain whole apples, then the problem is not perfectly consistent because 15 apples cannot be split into two equal whole numbers.",
+   "reasoning_chars": 2863,
+   "t_first": 3.0861432552337646,
+   "t_total": 75.2067506313324,
+   "usage": {
+    "prompt_tokens": 106,
+    "completion_tokens": 1212,
+    "total_tokens": 1318,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    }
+   },
+   "decode_tok_s": 16.805182930304422
+  }
+ ],
+ "anthropic_plain": {
+  "id": "msg_39185709093243e0b3006481",
+  "type": "message",
+  "role": "assistant",
+  "model": "qwen3.8-flash-next-coder-iq1_m",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "We need to respond exactly: PONG. User says Reply with exactly: PONG. So final should be PONG only. Ensure no extra.\n",
+    "signature": ""
+   },
+   {
+    "type": "text",
+    "text": "PONG"
+   }
+  ],
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 58,
+   "output_tokens": 36,
+   "cache_read_input_tokens": 0
+  }
+ },
+ "anthropic_tool": {
+  "id": "msg_eef786c2baf34f6b91724578",
+  "type": "message",
+  "role": "assistant",
+  "model": "qwen3.8-flash-next-coder-iq1_m",
+  "content": [
+   {
+    "type": "thinking",
+    "thinking": "The user wants me to read a file. This is straightforward—I'll use the read_file tool with the given path.\n",
+    "signature": ""
+   },
+   {
+    "type": "tool_use",
+    "id": "call_57271655cb1244bd8f9e4e8a",
+    "name": "read_file",
+    "input": {
+     "path": "C:/tmp/notes.txt"
+    }
+   }
+  ],
+  "stop_reason": "tool_use",
+  "stop_sequence": null,
+  "usage": {
+   "input_tokens": 310,
+   "output_tokens": 57,
+   "cache_read_input_tokens": 0
+  }
+ },
+ "finished": "2026-10-07 18:31:49"
+}
