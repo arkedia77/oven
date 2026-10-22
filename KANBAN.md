@@ -110,6 +110,7 @@
 ---
 
 ## IN PROGRESS
+- **[10-22 13:35 reklcli 리부트 갈무리 — oven]** 돌던 작업 **0**(reklcli 프로세스·발주 없음, 회신 대기 발주 0). 재개 첫 1스텝=`cd ~/projects/agent-comm && AGENT_ID=oven admin/scripts/sync_shared_clone.sh` → 수신함 확인. 미결 3건: ⑴로컬 Time Machine 스냅샷 방침(시간당 재생성→여유 잠식) — LEO 결정 대기 ⑵`reklcli:/Volumes/hitdata/_shared/hf_restore_20261015/`(HF 캐시 사본 30GB) 삭제 여부 — 1주 보관 만료(10-22), 삭제는 encore 등 사용 슬롯 확인 뒤 ⑶A-177 후속(`notes/plan.md` 위치 미정·스터디 큐·자기 발제) 미착수. 산출물: `reklcli:/Volumes/hitdata/_shared/oven_personal_backup_20261015/`(사진·메일 백업). 리부트 뒤 `/Volumes/hitdata` 마운트 확인 필요.
 - **[10-10] leowin·leowin2 관리 — 대기 목록(정본)**: ① 10-11 04:00 뒤 `_archive\RVC_GD_20261010` 잔존 실측(oven) ② leowin 백업 예약 등록(LEO 손 — `OvenBackupDaily` SYSTEM 매일 04:00, 명령 초안은 scratchpad 소멸 → `infra/leowin2_backup_manifest.md` 예약 줄 참고해 재작성) ③ leowin `C:\strata`·`C:\Strata-data`·`C:\strata_engine_src` 삭제 여부(LEO/kee) ④ leowin2 `C:\yue2` 4.6GB(q8_0 GO 여부 LEO 결정에 묶임) ⑤ leowin2 큰 폴더(amt_tools 34.8GB=hitmaking·so-vits 14.3GB=3070·poc 11.1GB·dev 7.1GB 주인 미확인) 추가 정리는 주인별 청구 ⑥ `C:\freevideo` 는 백업 목록 밖(생성 로그 사본 없음 — kimsecretary 요청 오면 추가). 상세 = `infra/leowin_backup_manifest.md`·`infra/leowin2_backup_manifest.md`·`infra/strata_poc_20261007/`.
 
 - [ ] 🟡**세션 갈무리 인계(09-24) — 대기 3건·차단 1건** — oven
