@@ -14,12 +14,24 @@
 | `C:\amt_tools\inbox` 안의 파일만(폴더 유지) | 6.2GB | hitmaking | **지움** (152310) | |
 | `C:\Users\leo.LEOWIN2\hitmaking_gpu` | 5.4GB | hitmaking | **지움** (152310) | |
 | `C:\amt_tools\venv`·`YourMT3`·`YourMT3_spaces`·`hf_cache`·`hitmaking_gpu` | ≈21.7GB | hitmaking | 남김 (운영 경로) | |
-| `C:\RVC` | 16.8GB | vocia | 대기 | |
-| `C:\so-vits-svc-fork` | 14.3GB | vocia 판단 | 대기 | |
-| `C:\Users\leowin2\fish-speech`·`GPT-SoVITS`·`arena_tts_test` | 7.3·4.6·5.0GB | vocia 판단 | 대기 | |
-| HF 캐시 `leo.LEOWIN2` | 8.4GB | hf-playground(+vocia 음성 모델) | 대기 | |
-| HF 캐시 `leowin2.DESKTOP-KSKH97R` | 10.4GB | hf-playground(+vocia 음성 모델) | 대기 | |
+| `C:\RVC` | 16.8GB | vocia | **NAS 보관 후 지움**: logs·datasets·*.log·test_*.wav·스크립트 → NAS / .venv·rvc·assets = 지움 (152355) | |
+| `C:\so-vits-svc-fork` | 14.3GB | vocia 판단 | **NAS 보관 후 지움**: dataset·dataset_raw·logs·infer_out → NAS / .venv·코드 = 지움 (152355) | |
+| `C:\Users\leowin2\fish-speech` | 7.3GB | vocia 판단 | **NAS 보관 후 지움**: 루트 *.wav·*.npy → NAS / checkpoints·.venv·코드 = 지움 (152355) | |
+| `C:\Users\leowin2\GPT-SoVITS` | 4.6GB | vocia 판단 | **지움** (152355) | |
+| `C:\Users\leowin2\arena_tts_test` | 5.0GB | vocia 판단 | **NAS 보관 후 지움**: outputs·results·reference_voices·scripts·*.py → NAS / .venv = 지움 (152355) | |
+| HF 캐시 `leo.LEOWIN2` | 8.4GB | hf-playground(+vocia 음성 모델) | vocia 음성 모델 = 지움(152355) · hf 판단 대기 | |
+| HF 캐시 `leowin2.DESKTOP-KSKH97R` | 10.4GB | hf-playground(+vocia 음성 모델) | vocia 음성 모델 = 지움(152355) · hf 판단 대기 | |
 | `C:\comfyui_moss` 가중치 | 19.6GB | oven | 지움 예정(leowin 이미지 전담 확정 뒤) | |
 | `C:\Users\leowin2.DESKTOP-KSKH97R\AppData\Local\CrashDumps` | 2.7GB | 시스템 | 지움 | |
 
 하드웨어(10-23 실측): RAM DDR4 DIMM 16GB(2667)+8GB(3200) · 슬롯 2개 모두 사용 · 보드 최대 64GB → 8GB를 16GB로 교체 시 32GB. 디스크 = Crucial P3 500GB NVMe 1개뿐(두 번째 하드 OS 미인식).
+
+## NAS 보관 규칙 (vocia 152355)
+- 실존 가수 자료(gummy·lyn·lee_suhyun·sung_sikyung)는 NAS에 보관하고 지우지 않음 — A-244 LEO 「중앙라이브러리화」.
+- 보관 폴더에 README 1줄: 「실존 인물 목소리 · 내부 시험만 · 권리·동의 미기재 = 사용 금지 · 출처 3070 2026-03~06」.
+- 이동·삭제 집행 = oven.
+
+## vocia 가 leowin2 로 가져갈 것 (vocia 152355)
+- 필수: venv_qwen 은 복사하지 않고 재생성(vocia freeze 목록) · HF Qwen3-TTS-12Hz-1.7B-Base·1.7B-VoiceDesign · ecapa · `C:\vocia\scripts`
+- 선택(나중): VoxCPM2 + venv · Qwen3-ASR-1.7B-hf + venv_qasr
+- 크기: vocia 가 16:30 뒤 실측해 1줄
