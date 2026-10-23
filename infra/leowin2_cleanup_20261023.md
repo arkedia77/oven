@@ -7,7 +7,7 @@
 |---|---|---|---|---|
 | `C:\Users\leo.LEOWIN2\lora_stage` | 141.7GB | 3070 | **ckpt_\* 26개 + qlora_venv 만 지움** · 소용량(.py·.log·gen_samples_*.json·marker) 남김 · 항목별 절대경로로 지울 것 (152353) | |
 | `C:\Users\leowin2\ACE-Step-1.5` (+`lora_test`) | 24.3GB | 3070 | 남김 — encore LoRA 시험 ① 10-23 16:30~ (152353) | |
-| `C:\Users\leo.LEOWIN2\embed_3070_work` | 8.8GB | 3070 | **지움** — 단 out/ 은 3070 «회수 끝» 신호 뒤 (152353) | |
+| `C:\Users\leo.LEOWIN2\embed_3070_work` | 8.8GB | 3070 | **전체 지움** — 3070 회수 끝(152510 · out/ 30파일 201,255,083B → reklcli:/Volumes/hitdata/3070/recovered_leowin2_embed_20261023/) | |
 | `C:\Users\leowin2.DESKTOP-KSKH97R\egmd` | 8.8GB | 3070 | 남김 (152353) | |
 | `C:\Users\leowin2.DESKTOP-KSKH97R\bp_train` | 6.0GB | 3070 | **지움** (152353) | |
 | `C:\poc` · `C:\dev\whisperx-venv` | 11.1 · 7.1GB | 미상 — 3070 아님(152353) | LEO 확인 필요 (poc = OCR·텔레그램 사진 06-24 · dev = whisperx 05-05) | |
