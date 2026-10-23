@@ -20,8 +20,8 @@
 | `C:\Users\leowin2\fish-speech` | 7.3GB | vocia 판단 | **NAS 보관 후 지움**: 루트 *.wav·*.npy → NAS / checkpoints·.venv·코드 = 지움 (152355) | |
 | `C:\Users\leowin2\GPT-SoVITS` | 4.6GB | vocia 판단 | **지움** (152355) | |
 | `C:\Users\leowin2\arena_tts_test` | 5.0GB | vocia 판단 | **NAS 보관 후 지움**: outputs·results·reference_voices·scripts·*.py → NAS / .venv = 지움 (152355) | |
-| HF 캐시 `leo.LEOWIN2` | 8.4GB | hf-playground(+vocia 음성 모델) | vocia 음성 모델 = 지움(152355) · hf 판단 대기 | |
-| HF 캐시 `leowin2.DESKTOP-KSKH97R` | 10.4GB | hf-playground(+vocia 음성 모델) | vocia 음성 모델 = 지움(152355) · hf 판단 대기 | |
+| HF 캐시 `leo.LEOWIN2` | 8.4GB | hf-playground(+vocia 음성 모델) | **지움** — hf 통째 지움(152516)·vocia 음성 모델 지움(152355). token 파일 제외 | |
+| HF 캐시 `leowin2.DESKTOP-KSKH97R` | 10.4GB | hf-playground(+vocia 음성 모델) | **큰 모델 4개만 지움**(Qwen2.5-1.5B·Qwen3-TTS 0.6B 2종·XTTS-v2 ≈9.2GB) — 이 계정 = hitmaking 운영 계정이라 1GB 미만 모델은 남김(oven 판단). token 제외 | |
 | `C:\comfyui_moss` 가중치 | 19.6GB | oven | 지움 예정(leowin 이미지 전담 확정 뒤) | |
 | `C:\Users\leowin2.DESKTOP-KSKH97R\AppData\Local\CrashDumps` | 2.7GB | 시스템 | 지움 | |
 
