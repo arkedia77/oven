@@ -35,4 +35,5 @@
 ## vocia 가 leowin2 로 가져갈 것 (vocia 152355)
 - 필수: venv_qwen 은 복사하지 않고 재생성(vocia freeze 목록) · HF Qwen3-TTS-12Hz-1.7B-Base·1.7B-VoiceDesign · ecapa · `C:\vocia\scripts`
 - 선택(나중): VoxCPM2 + venv · Qwen3-ASR-1.7B-hf + venv_qasr
-- 크기: vocia 가 16:30 뒤 실측해 1줄
+- 크기(vocia 164302 실측·HF 이중계수 보정 추정): 필수 ≈13.5GB(1.7B-Base ≈4.2 · 1.7B-VoiceDesign ≈4.2 · ecapa 0.08 · venv_qwen 재생성 ≈5.0 — 목록 leowin `C:\vocia\venv_qwen_freeze_after.txt`) · 선택 VoxCPM2 ≈4.6+venv 5.3 · Qwen3-ASR ≈3.8+venv 4.8
+- leowin 잔여물: `C:\vocia\sz_tmp.py`(vocia 임시 스크립트)
