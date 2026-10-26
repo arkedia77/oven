@@ -49,5 +49,7 @@
 - 10-10 15:3x: 결과 줄 10-07~10-10 전부 `RUN OK` · C: 여유 6.7GB · RVC G_/D_ 40개(26,188,736,760B) = 매일 사본 40/40 같은 크기·별도 보관 사본 `_archive\RVC_GD_20261010\`(40개 일치·표본 SHA256 3/3) 신설 · **C: 삭제는 kee→LEO 결재 대기(154215)** — GO 뒤 삭제 + XF 추가.
 - **10-10 16:2x: C: 의 G_/D_ 40개 삭제 완료**(kee 전결 162118 · win_remote_delete.py 40/40) → 여유 6.7GB → 33.9GB · 스크립트 RVC 잡 XF = `G_*.pth`·`D_*.pth`(재배포 SHA256 ea376592…) · 되살리기 = `_archive\RVC_GD_20261010\`. ⏳10-11 04:00 실행 뒤 `_archive` 40개 잔존 실측 확인 남음.
 
+- **10-26 22:10: 음성 4폴더(C:\RVC·so-vits-svc-fork 내용 · leowin2\fish-speech·arena_tts_test) NAS `_archive\voice_20261026\` 별도 보관(12,995파일·19.07GB 일치·SHA256 4/4) 뒤 C: 삭제** — RVC·so-vits 잡은 빈 원본을 /MIR 하므로 일일 사본도 빔(정상) · 위 «지킬 것» vocia·3070 so-vits 항목의 보관처 = `_archive\voice_20261026`.
+
 ## 열린 것
 스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)

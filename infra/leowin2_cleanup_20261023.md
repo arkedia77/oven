@@ -1,6 +1,6 @@
 # leowin2 C: 일제 정리 (LEO 10-23 «하드 정리 일제히 하자»)
 
-시작 여유 19.8GB/465 (10-23 12:2x) → 37.5GB(④ 후) → 55.7GB(⑤ 후, 10-23 16:4x) → 29.7GB(10-25 11:2x 직전 — vocia `C:\vocia` 설치분 포함) → **239.6GB**(10-25 11:26 · LEO 「지워」 · 39항목 개수 재검증 후 실행 · 214.4GB(=199.7GiB) LEFT=0). 삭제 = `admin/scripts/win_remote_delete.py` 드라이런 → LEO 승인 → `--execute --expect-count`. 판단 기한 10-24 12:00 · 답 없는 폴더는 안 지움.
+시작 여유 19.8GB/465 (10-23 12:2x) → 37.5GB(④ 후) → 55.7GB(⑤ 후, 10-23 16:4x) → 29.7GB(10-25 11:2x 직전 — vocia `C:\vocia` 설치분 포함) → **239.6GB**(10-25 11:26 · LEO 「지워」 · 39항목 개수 재검증 후 실행 · 214.4GB(=199.7GiB) LEFT=0) → **≈262GB(244.0GiB)**(10-26 22:10 · LEO 「NAS 옮기는 것도 진행해」 · 음성 4폴더 NAS 보관 19.07GB 대조 후 100항목 46.65GB 삭제 · C:\RVC·C:\so-vits-svc-fork 는 빈 폴더만 남음 — 백업 잡 /MIR 원본이 비어 일일 사본도 비워짐, 되살리기 = `_archive\voice_20261026`). 삭제 = `admin/scripts/win_remote_delete.py` 드라이런 → LEO 승인 → `--execute --expect-count`. 판단 기한 10-24 12:00 · 답 없는 폴더는 안 지움.
 판단 주체(LEO 직지시): HF 캐시 = hf-playground · 음성 파일 = vocia(가져다 쓸지) · 나머지 = 주인.
 
 | 경로 | 크기 | 주인 | 판단 | 상태 |
@@ -15,11 +15,11 @@
 | `C:\amt_tools\inbox` 안의 파일만(폴더 유지) | 6.2GB | hitmaking | **지움** (152310) | ✅ 10-25 11:26 · LEFT=0 |
 | `C:\Users\leo.LEOWIN2\hitmaking_gpu` | 5.4GB | hitmaking | **지움** (152310) | ✅ 10-25 11:26 · LEFT=0 |
 | `C:\amt_tools\venv`·`YourMT3`·`YourMT3_spaces`·`hf_cache`·`hitmaking_gpu` | ≈21.7GB | hitmaking | 남김 (운영 경로) | |
-| `C:\RVC` | 16.8GB | vocia | **NAS 보관 후 지움**: logs·datasets·*.log·test_*.wav·스크립트 → NAS / .venv·rvc·assets = 지움 (152355) | |
-| `C:\so-vits-svc-fork` | 14.3GB | vocia 판단 | **NAS 보관 후 지움**: dataset·dataset_raw·logs·infer_out → NAS / .venv·코드 = 지움 (152355) | |
-| `C:\Users\leowin2\fish-speech` | 7.3GB | vocia 판단 | **NAS 보관 후 지움**: 루트 *.wav·*.npy → NAS / checkpoints·.venv·코드 = 지움 (152355) | |
+| `C:\RVC` | 16.8GB | vocia | **NAS 보관 후 지움**: logs·datasets·*.log·test_*.wav·스크립트 → NAS / .venv·rvc·assets = 지움 (152355) | ✅ 10-26 22:10 · NAS `\\172.30.1.41\leowin_backup\leowin2\_archive\voice_20261026\` 개수·바이트 일치+SHA256 표본 4/4 → C: 삭제 LEFT=0 |
+| `C:\so-vits-svc-fork` | 14.3GB | vocia 판단 | **NAS 보관 후 지움**: dataset·dataset_raw·logs·infer_out → NAS / .venv·코드 = 지움 (152355) | ✅ 10-26 22:10 · NAS `\\172.30.1.41\leowin_backup\leowin2\_archive\voice_20261026\` 개수·바이트 일치+SHA256 표본 4/4 → C: 삭제 LEFT=0 |
+| `C:\Users\leowin2\fish-speech` | 7.3GB | vocia 판단 | **NAS 보관 후 지움**: 루트 *.wav·*.npy → NAS / checkpoints·.venv·코드 = 지움 (152355) | ✅ 10-26 22:10 · NAS `\\172.30.1.41\leowin_backup\leowin2\_archive\voice_20261026\` 개수·바이트 일치+SHA256 표본 4/4 → C: 삭제 LEFT=0 |
 | `C:\Users\leowin2\GPT-SoVITS` | 4.6GB | vocia 판단 | **지움** (152355) | ✅ 10-25 11:26 · LEFT=0 |
-| `C:\Users\leowin2\arena_tts_test` | 5.0GB | vocia 판단 | **NAS 보관 후 지움**: outputs·results·reference_voices·scripts·*.py → NAS / .venv = 지움 (152355) | |
+| `C:\Users\leowin2\arena_tts_test` | 5.0GB | vocia 판단 | **NAS 보관 후 지움**: outputs·results·reference_voices·scripts·*.py → NAS / .venv = 지움 (152355) | ✅ 10-26 22:10 · NAS `\\172.30.1.41\leowin_backup\leowin2\_archive\voice_20261026\` 개수·바이트 일치+SHA256 표본 4/4 → C: 삭제 LEFT=0 |
 | HF 캐시 `leo.LEOWIN2` | 8.4GB | hf-playground(+vocia 음성 모델) | **지움** — hf 통째 지움(152516)·vocia 음성 모델 지움(152355). token 파일 제외 | ✅ 10-25 11:26 · LEFT=0 |
 | HF 캐시 `leowin2.DESKTOP-KSKH97R` | 10.4GB | hf-playground(+vocia 음성 모델) | **큰 모델 4개만 지움**(Qwen2.5-1.5B·Qwen3-TTS 0.6B 2종·XTTS-v2 ≈9.2GB) — 이 계정 = hitmaking 운영 계정이라 1GB 미만 모델은 남김(oven 판단). token 제외 | ✅ 10-25 11:26 · LEFT=0 |
 | `C:\comfyui_moss` 가중치 5개 | 18.26GB | oven | **지움** — LEO 직접 「5번 지워」 | ✅ 10-23 16:4x · 5/5 LEFT=0 · ComfyUI 코드·venv 는 남음 |
@@ -27,7 +27,7 @@
 
 하드웨어(10-23 실측): RAM DDR4 DIMM 16GB(2667)+8GB(3200) · 슬롯 2개 모두 사용 · 보드 최대 64GB → 8GB를 16GB로 교체 시 32GB. 디스크 = Crucial P3 500GB NVMe 1개뿐(두 번째 하드 OS 미인식).
 
-## NAS 보관 규칙 (vocia 152355)
+## NAS 보관 규칙 (vocia 152355) — ✅ 10-26 집행: README.txt 첫 줄 = 아래 문구 · 보관 범위는 vocia 목록보다 넓게(venv·공개 가중치·.git·RVC\rvc·assets·ffmpeg 만 뺌)
 - 실존 가수 자료(gummy·lyn·lee_suhyun·sung_sikyung)는 NAS에 보관하고 지우지 않음 — A-244 LEO 「중앙라이브러리화」.
 - 보관 폴더에 README 1줄: 「실존 인물 목소리 · 내부 시험만 · 권리·동의 미기재 = 사용 금지 · 출처 3070 2026-03~06」.
 - 이동·삭제 집행 = oven.
