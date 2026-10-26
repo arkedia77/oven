@@ -49,9 +49,11 @@ try {
     $rc = $LASTEXITCODE
     $summary += [pscustomobject]@{ job=$j.Name; rc=$rc; ok=($rc -lt 8) }
   }
-  # SongFormer 는 *.log 만
-  & robocopy 'C:\amt_tools\SongFormer' "$Dest\amt_tools_SongFormer_logs" '*.log' '/R:1' '/W:1' '/NP' "/LOG:$LogDir\$Stamp`_SongFormer_logs.log" $(if ($DryRun) { '/L' }) | Out-Null
-  $summary += [pscustomobject]@{ job='SongFormer_logs'; rc=$LASTEXITCODE; ok=($LASTEXITCODE -lt 8) }
+  # SongFormer 는 *.log 만 · 원본 폴더는 10-25 정리로 삭제됨(hitmaking 152310) → 없으면 건너뜀(robocopy rc 16 = 10-26 FAIL 원인). NAS 사본 5파일은 /MIR 아니라 그대로 남음
+  if (Test-Path -LiteralPath 'C:\amt_tools\SongFormer') {
+    & robocopy 'C:\amt_tools\SongFormer' "$Dest\amt_tools_SongFormer_logs" '*.log' '/R:1' '/W:1' '/NP' "/LOG:$LogDir\$Stamp`_SongFormer_logs.log" $(if ($DryRun) { '/L' }) | Out-Null
+    $summary += [pscustomobject]@{ job='SongFormer_logs'; rc=$LASTEXITCODE; ok=($LASTEXITCODE -lt 8) }
+  } else { $summary += [pscustomobject]@{ job='SongFormer_logs'; rc='skip'; ok=$true } }
 
   $allOk = -not ($summary | Where-Object { -not $_.ok })
   $line = '{0} {1} {2} {3}' -f $Stamp, $(if ($DryRun) { 'DRYRUN' } else { 'RUN' }), $(if ($allOk) { 'OK' } else { 'FAIL' }), (($summary | ForEach-Object { "$($_.job)=$($_.rc)" }) -join ' ')

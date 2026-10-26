@@ -50,6 +50,7 @@
 - **10-10 16:2x: C: 의 G_/D_ 40개 삭제 완료**(kee 전결 162118 · win_remote_delete.py 40/40) → 여유 6.7GB → 33.9GB · 스크립트 RVC 잡 XF = `G_*.pth`·`D_*.pth`(재배포 SHA256 ea376592…) · 되살리기 = `_archive\RVC_GD_20261010\`. ⏳10-11 04:00 실행 뒤 `_archive` 40개 잔존 실측 확인 남음.
 
 - **10-26 22:10: 음성 4폴더(C:\RVC·so-vits-svc-fork 내용 · leowin2\fish-speech·arena_tts_test) NAS `_archive\voice_20261026\` 별도 보관(12,995파일·19.07GB 일치·SHA256 4/4) 뒤 C: 삭제** — RVC·so-vits 잡은 빈 원본을 /MIR 하므로 일일 사본도 빔(정상) · 위 «지킬 것» vocia·3070 so-vits 항목의 보관처 = `_archive\voice_20261026`.
+- **10-26 04:00 RUN FAIL**(SongFormer_logs=16 — 원본 `C:\amt_tools\SongFormer` 를 10-25 정리에서 지운 탓 · robocopy 오류 2 «지정된 파일을 찾을 수 없음» · oven 이 정리 전에 백업 잡 원본 대조를 안 했음) → 10-26 22:39 스크립트 수리(원본 없으면 skip · SHA256 c611e043ed30…) 재배포 · DRYRUN OK. NAS `amt_tools_SongFormer_logs` 5파일(29,311B)은 /MIR 아님이라 보존. ⏳10-27 04:00 결과 줄 확인.
 
 ## 열린 것
 스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)
