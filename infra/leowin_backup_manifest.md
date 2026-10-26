@@ -11,6 +11,7 @@
 | `E:\어머니 사진 백업` | 0.7GB | 가족 사진 |
 | `E:\leo1_backup` · `E:\backup_c` · `E:\temp_keygen` | <0.1GB | 작음 — 포함 |
 | `C:\RVC\logs\{gummy,sung_sikyung}`의 `*_e_*s.pth`·`*.index`·`config.json`·`model_info.json`·`training_data.json` | ≈1.3GB | 학습된 목소리 모델 유일본(재다운로드 불가) — 3070 224405 제보·oven 실측 22:4x. ★leowin gummy = 40k · leowin2 gummy = 48k 비교 쌍[vocia 추정·A-244 폴더명] — 둘 다 보관 |
+- `E:\comfyui_out` — 이미지 상시 서버 산출(hf-playground 224521 ⒜ · **/E 복사만, /MIR 아님** — leowin 에서 지워도 NAS 사본 남음 · archy2 studio-data 백업 0 ⇒ 유일한 두 번째 사본) · 10-26 22:47 첫 사본 401파일 0.48GB
 
 ## 제외(백업만 안 함 · leowin 에서 지우는 것 아님)
 | 경로 | 크기 | 사유 |
@@ -37,3 +38,5 @@ leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 �
 - 드라이런 `20261006_222444 DRYRUN OK`(≈30분). ※E_work 로그 ERROR/오류 문자열 72줄 = 실패 열 0·수량 일치로 파일명 일치 판정.
 - 해결 이력: leowin PowerShell 기동 불가(`System32\mscoree.dll` 없음·0xC0000135) → LEO 승인 `sfc /scannow` 복구(10-06 21:4x) · 없어진 원인 미규명.
 - SSH = `-p 2222 leo@100.110.30.103`.
+
+- **10-26 22:4x 공백 실측**(자기 발제 A-177): 10-06 뒤 20일 실행 0 · 기존 8잡 DRYRUN rc 0(실손 0) · `E:\comfyui_out` 잡 추가·재배포 · 22:47 RUN OK(E_comfyui_out=1 → 재 DRYRUN 0). ⛔예약 여전히 없음 = LEO 손 1줄(OvenBackupDaily · SYSTEM · 매일 05:00 — leowin2 04:00 과 엇갈림·NAS 스냅샷 06:00 앞).

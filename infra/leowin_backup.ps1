@@ -24,7 +24,8 @@ $Jobs = @(
   @{ Src='E:\backup_c';          Name='E_backup_c';        XD=@(); XF=@() },
   @{ Src='E:\temp_keygen';       Name='E_temp_keygen';     XD=@(); XF=@() },
   @{ Src='C:\RVC\logs\gummy';        Name='RVC_logs_gummy';        Files=$RvcFiles; XD=$RvcXD; XF=@('G_*.pth','D_*.pth') },   # G/D 제외 = vocia 224705 동의
-  @{ Src='C:\RVC\logs\sung_sikyung'; Name='RVC_logs_sung_sikyung'; Files=$RvcFiles; XD=$RvcXD; XF=@('G_*.pth','D_*.pth') }
+  @{ Src='C:\RVC\logs\sung_sikyung'; Name='RVC_logs_sung_sikyung'; Files=$RvcFiles; XD=$RvcXD; XF=@('G_*.pth','D_*.pth') },
+  @{ Src='E:\comfyui_out';       Name='E_comfyui_out';     XD=@(); XF=@(); NoMir=$true }   # 이미지 상시 서버 산출 · hf-playground 224521 ⒜ · /E(/MIR 아님) = leowin 에서 지워도 NAS 사본 남음 · archy2 studio-data 백업 0 이라 유일한 두 번째 사본
 )
 
 Add-Type -AssemblyName System.Security
@@ -41,7 +42,7 @@ try {
     $xd = $j.XD | ForEach-Object { Join-Path $j.Src $_ }
     $ra = @($j.Src, "$Dest\$($j.Name)")
     if ($j.Files) { $ra += $j.Files }
-    $ra += @('/MIR', '/R:1', '/W:1', '/NP', '/FFT', '/XJ', "/LOG:$LogDir\$Stamp`_$($j.Name).log")
+    $ra += @($(if ($j.NoMir) { '/E' } else { '/MIR' }), '/R:1', '/W:1', '/NP', '/FFT', '/XJ', "/LOG:$LogDir\$Stamp`_$($j.Name).log")
     if ($xd)      { $ra += '/XD'; $ra += $xd }
     if ($j.XF)    { $ra += '/XF'; $ra += $j.XF }
     if ($Ipg -gt 0) { $ra += "/IPG:$Ipg" }
