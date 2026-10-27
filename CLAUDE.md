@@ -1,7 +1,7 @@
 # oven — Claude Code 컨텍스트
 *(★이 파일이 oven 세션의 실제 로드 정본. `agent-comm:projects/oven/CLAUDE.md`는 열람용 사본·미로드)*
 
-역할: AI 모델 파인튜닝(음악/영상/이미지/음성) + 하모니시티 시뮬. 5090(ogo)+RunPod.
+역할: AI 모델 파인튜닝(음악/영상/이미지/음성) + 하모니시티(🏁). GPU=leowin·leowin2(3070)·큰 GPU=vast.ai(LEO 결정·ogo 반납).
 
 ## 통신
 - **내 클론 = 공유(`~/projects/agent-comm`) — 4분기 규율 적용**(독립 클론 아님. ari D237, 09-02 확인). push 전 동기화=`admin/scripts/sync_shared_clone.sh`(AGENT_ID=oven), 남의 dirty 섞이면 rebase·`--autostash` 금지·대기/통지.
