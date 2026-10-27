@@ -43,6 +43,12 @@ else
 fi
 
 # 3) 보관 정리 — 5090 + NAS 둘 다 RETAIN_DAYS 초과분 삭제
+# ⛔오늘 복사가 둘 다 성공했을 때만 청소(10-27 admin 실측: 09-01부터 복사 0 · 청소만 성공 → 2차 폴더 15개 전부 빔)
+if ! { [ "$CNT5090" -gt 0 ] 2>/dev/null && [ "${CNTNAS:-0}" -gt 0 ] 2>/dev/null; }; then
+  log "SKIP prune: 오늘 복사 실패(5090='$CNT5090' NAS='${CNTNAS:-}') — 옛 사본 보존"
+  log "===== backup end ====="
+  exit 1
+fi
 $SSH "powershell -Command \"Get-ChildItem C:/projects/harmonicity/data_backup -Directory | Where-Object { \$_.LastWriteTime -lt (Get-Date).AddDays(-$RETAIN_DAYS) } | Remove-Item -Recurse -Force\"" 2>>"$LOG" \
   && log "5090 prune OK (>$RETAIN_DAYS days removed)" || log "WARN: 5090 prune 실패"
 if [ -d "$NAS" ]; then
