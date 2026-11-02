@@ -27,7 +27,7 @@
 | `C:\Users\leowin2\fish-speech\.venv` · `checkpoints` | 3070 | 재설치·공개 가중치 |
 | `C:\Users\leowin2\arena_tts_test\.venv` · `C:\Users\leowin2\GPT-SoVITS`(전체) | 3070(수행)·vocia(가치 판단, LEO 10-04) | 재설치 — GPT-SoVITS 학습 가중치 0 · ⚠로컬 수정 여부 미확인(3070) |
 | `C:\so-vits-svc-fork\.venv` | 3070 | venv |
-| `C:\RVC\.venv` · `venv` · `rvc\models` · `ffmpeg_temp` · `logs\*\{sliced_audios,sliced_audios_16k,f0,f0_voiced,extracted,eval}` | vocia | 재설치·재다운로드·전처리 재생성 |
+| `C:\RVC\.venv` · `venv` · `env` · `.uvcache` · `.pipcache` · `rvc\models` · `Applio\rvc\models` · `Applio\.git` · `ffmpeg_temp` · 이름으로(어느 깊이든) `sliced_audios`·`sliced_audios_16k`·`f0`·`f0_voiced`·`extracted`·`eval`·`__pycache__` | vocia | 재설치·재다운로드·전처리 재생성 · ⚠11-02 정정: 전처리 폴더는 그전까지 `C:\RVC\f0` 처럼 루트 경로로만 빠졌음(기재와 실제 불일치) → XDN(이름) 으로 수리 |
 | `C:\RVC\logs\*\G_*.pth` · `D_*.pth` | vocia | ⚠NAS 이관(이제 oven 몫, vocia 224705)이 끝난 뒤부터 제외 — 그 전엔 포함. 첫 백업이 NAS에 사본을 만듦 → 대조 후 C: 삭제는 win_remote_delete 드라이런→kee→LEO |
 | `C:\amt_tools\hitmaking_gpu\venv` · `venv` · `omnizart_env` · `YourMT3*` · `hf_cache` · `test_audio` · `SongFormer`(단 `*.log`는 포함) | hitmaking | 재설치·공개 저장소·가중치 |
 | 공통 | — | `AppData\Local\Temp` · `INetCache` |
@@ -50,6 +50,7 @@
 - **10-10 16:2x: C: 의 G_/D_ 40개 삭제 완료**(kee 전결 162118 · win_remote_delete.py 40/40) → 여유 6.7GB → 33.9GB · 스크립트 RVC 잡 XF = `G_*.pth`·`D_*.pth`(재배포 SHA256 ea376592…) · 되살리기 = `_archive\RVC_GD_20261010\`. ⏳10-11 04:00 실행 뒤 `_archive` 40개 잔존 실측 확인 남음.
 
 - **10-26 22:10: 음성 4폴더(C:\RVC·so-vits-svc-fork 내용 · leowin2\fish-speech·arena_tts_test) NAS `_archive\voice_20261026\` 별도 보관(12,995파일·19.07GB 일치·SHA256 4/4) 뒤 C: 삭제** — RVC·so-vits 잡은 빈 원본을 /MIR 하므로 일일 사본도 빔(정상) · 위 «지킬 것» vocia·3070 so-vits 항목의 보관처 = `_archive\voice_20261026`.
+- **11-02 18:3x: vocia Applio 설치(C:\RVC\Applio·env 7.62GB·.uvcache 7.59GB) 대응** — 그대로면 04:00 에 ≈15GB+ NAS 행 → RVC 잡 제외 추가(위 표) · 재배포 sha256 EF69AA2D…8A36 = repo · RVC 잡 /L 실측 195파일·195.7MB(rc 1). ⏳11-03 04:00 결과 줄 확인.
 - **10-26 04:00 RUN FAIL**(SongFormer_logs=16 — 원본 `C:\amt_tools\SongFormer` 를 10-25 정리에서 지운 탓 · robocopy 오류 2 «지정된 파일을 찾을 수 없음» · oven 이 정리 전에 백업 잡 원본 대조를 안 했음) → 10-26 22:39 스크립트 수리(원본 없으면 skip · SHA256 c611e043ed30…) 재배포 · DRYRUN OK. NAS `amt_tools_SongFormer_logs` 5파일(29,311B)은 /MIR 아님이라 보존. ✅10-27 04:00 RUN OK(SongFormer_logs=skip · 나머지 rc ≤2) — 수리 확인.
 
 ## 열린 것

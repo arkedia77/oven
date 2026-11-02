@@ -23,7 +23,8 @@ $Jobs = @(
      XD=@('ACE-Step-1.5\.venv','ACE-Step-1.5\checkpoints','fish-speech\.venv','fish-speech\checkpoints','arena_tts_test\.venv','GPT-SoVITS'); XF=@() },  # vocia 203553: GPT-SoVITS=설치본뿐·arena .venv 재설치
   @{ Src='C:\RVC'; Name='RVC';
      # G_*.pth·D_*.pth(학습 재개용) = 10-10 NAS 별도 보관(_archive\RVC_GD_20261010, 40개 대조) 뒤 제외 · kee 전결 162118 · vocia 224705
-     XD=@('.venv','venv','rvc\models','ffmpeg_temp','sliced_audios','sliced_audios_16k','f0','f0_voiced','extracted','eval'); XF=@('G_*.pth','D_*.pth') },
+     # 11-02: vocia Applio 설치(C:\RVC\Applio · env · .uvcache) — 재설치·재다운로드분 제외 · 전처리 폴더는 이름(XDN)으로 — 경로 붙이면 C:\RVC\f0 만 빠져 하위 logs\<모델>\f0 이 안 빠졌음(10-04~ 기재와 실제 불일치)
+     XD=@('.venv','venv','env','.uvcache','.pipcache','rvc\models','Applio\rvc\models','Applio\.git','ffmpeg_temp'); XDN=@('sliced_audios','sliced_audios_16k','f0','f0_voiced','extracted','eval','__pycache__'); XF=@('G_*.pth','D_*.pth') },
   @{ Src='C:\so-vits-svc-fork'; Name='so-vits-svc-fork'; XD=@('.venv'); XF=@() },
   @{ Src='C:\amt_tools'; Name='amt_tools';
      XD=@('hitmaking_gpu\venv','venv','omnizart_env','YourMT3','YourMT3_spaces','YourMT3_code','hf_cache','test_audio'); XF=@() }
@@ -42,7 +43,7 @@ try {
   foreach ($j in $Jobs) {
     $xd = $j.XD | ForEach-Object { Join-Path $j.Src $_ }
     $ra = @($j.Src, "$Dest\$($j.Name)", '/MIR', '/R:1', '/W:1', '/NP', '/FFT', '/XJ', "/LOG:$LogDir\$Stamp`_$($j.Name).log")
-    if ($xd)      { $ra += '/XD'; $ra += $xd }
+    if ($xd -or $j.XDN) { $ra += '/XD'; if ($xd) { $ra += $xd }; if ($j.XDN) { $ra += $j.XDN } }   # XDN = 이름만(어느 깊이든)
     if ($j.XF)    { $ra += '/XF'; $ra += $j.XF }
     if ($DryRun)  { $ra += '/L' }
     & robocopy @ra | Out-Null
