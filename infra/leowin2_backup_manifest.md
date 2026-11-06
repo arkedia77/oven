@@ -50,7 +50,7 @@
 - **10-10 16:2x: C: 의 G_/D_ 40개 삭제 완료**(kee 전결 162118 · win_remote_delete.py 40/40) → 여유 6.7GB → 33.9GB · 스크립트 RVC 잡 XF = `G_*.pth`·`D_*.pth`(재배포 SHA256 ea376592…) · 되살리기 = `_archive\RVC_GD_20261010\`. ⏳10-11 04:00 실행 뒤 `_archive` 40개 잔존 실측 확인 남음.
 
 - **10-26 22:10: 음성 4폴더(C:\RVC·so-vits-svc-fork 내용 · leowin2\fish-speech·arena_tts_test) NAS `_archive\voice_20261026\` 별도 보관(12,995파일·19.07GB 일치·SHA256 4/4) 뒤 C: 삭제** — RVC·so-vits 잡은 빈 원본을 /MIR 하므로 일일 사본도 빔(정상) · 위 «지킬 것» vocia·3070 so-vits 항목의 보관처 = `_archive\voice_20261026`.
-- **11-02 18:3x: vocia Applio 설치(C:\RVC\Applio·env 7.62GB·.uvcache 7.59GB) 대응** — 그대로면 04:00 에 ≈15GB+ NAS 행 → RVC 잡 제외 추가(위 표) · 재배포 sha256 EF69AA2D…8A36 = repo · RVC 잡 /L 실측 195파일·195.7MB(rc 1). ⏳11-03 04:00 결과 줄 확인.
+- **11-02 18:3x: vocia Applio 설치(C:\RVC\Applio·env 7.62GB·.uvcache 7.59GB) 대응** — 그대로면 04:00 에 ≈15GB+ NAS 행 → RVC 잡 제외 추가(위 표) · 재배포 sha256 EF69AA2D…8A36 = repo · RVC 잡 /L 실측 195파일·195.7MB(rc 1). ✅11-06 23:2x 확인: 11-03~06 04:00 4회 연속 `RUN OK`(RVC=0~1) · NAS `leowin2\RVC` = 251파일 1.96GiB(env·.uvcache·G_/D_ 0 · 모델 7개 × ≈250MB = `Applio\logs\qF_*` 최종 .pth·.index + Applio 루트 .exe 2개 167MB(ffmpeg 류 · 재다운로드 가능 · 작아서 그대로 둠)).
 - **10-26 04:00 RUN FAIL**(SongFormer_logs=16 — 원본 `C:\amt_tools\SongFormer` 를 10-25 정리에서 지운 탓 · robocopy 오류 2 «지정된 파일을 찾을 수 없음» · oven 이 정리 전에 백업 잡 원본 대조를 안 했음) → 10-26 22:39 스크립트 수리(원본 없으면 skip · SHA256 c611e043ed30…) 재배포 · DRYRUN OK. NAS `amt_tools_SongFormer_logs` 5파일(29,311B)은 /MIR 아님이라 보존. ✅10-27 04:00 RUN OK(SongFormer_logs=skip · 나머지 rc ≤2) — 수리 확인.
 
 ## 열린 것
