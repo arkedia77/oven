@@ -40,3 +40,4 @@ leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 �
 - SSH = `-p 2222 leo@100.110.30.103`.
 
 - **10-26 22:4x 공백 실측**(자기 발제 A-177): 10-06 뒤 20일 실행 0 · 기존 8잡 DRYRUN rc 0(실손 0) · `E:\comfyui_out` 잡 추가·재배포 · 22:47 RUN OK(E_comfyui_out=1 → 재 DRYRUN 0). ⛔예약 여전히 없음 = LEO 손 1줄(OvenBackupDaily · SYSTEM · 매일 05:00 — leowin2 04:00 과 엇갈림·NAS 스냅샷 06:00 앞).
+- **11-02 예약 등록 → 11-06 23:2x 확인**: `OvenBackupDaily`(SYSTEM·Highest·05:00) 첫 실행 11-03 05:00 부터 4회 연속 `RUN OK`(전 잡 rc 0, E_comfyui_out=1). ⚠설정이 leowin2 판과 어긋남 — ExecutionTimeLimit=PT72H(기본값)·StartWhenAvailable=False(05:00 에 꺼져 있으면 그날 조용히 빠짐). 맞출 값 PT12H·True = LEO 손 1줄(`notes/study_schtask_settings.md`).
