@@ -8,7 +8,14 @@ ComfyUI 는 API 그래프에서 빠진 required 칸을 기본값으로 채우지
 받기:  curl -s http://<host>:<port>/object_info > before.json   (교체 전 · 교체 후 각각)
 쓰기:  python3 -I comfy_upgrade_diff.py before.json after.json [--nodes nodes.txt] [--json]
        nodes.txt = 꼭 있어야 할 노드 이름(공백·줄바꿈 구분). 없으면 before 의 모든 노드를 대상으로 봄.
-종료 코드: 0 = 위험 0 · 1 = 위험 있음(지정 노드 없음 / 새 required 칸 / required 칸 사라짐·타입 변화) · 2 = 입력 오류
+종료 코드: 0 = 위험 0 · 1 = 위험 있음(지정 노드 없음 / 새 required 칸 / 타입 변화 / 선택지 사라짐 / min·max 좁아짐) · 2 = 입력 오류
+
+판정 기준(11-13 스터디 · leowin 0.44.2 execution.py validate_inputs 대조, reklcli:~/oven/notes/study_comfy_input_validation.md):
+  빠진 required 칸 → 400 required_input_missing (기본값 안 채움 · `advanced` 표시 칸도 똑같이 required)
+  빠진 optional 칸 → 통과(노드 함수의 파이썬 기본값 · object_info 의 default 아님)
+  모르는 칸(사라진 칸) → 검사 없이 조용히 버려짐(400 아님) → 위험 아님·참고로 표시, 동작 바뀜은 실생성으로 확인
+  콤보 값이 선택지 밖 → 400 value_not_in_list (콤보 표기 2가지: [[선택지…], {..}] 와 V3 ["COMBO", {"options": [...]}])
+  min 미만 / max 초과 → 400 value_smaller_than_min / value_bigger_than_max
 """
 import argparse
 import json
@@ -34,9 +41,26 @@ def inputs(node):
 
 
 def type_label(t):
-    if isinstance(t, list):  # 콤보(선택지) — 선택지 변화는 타입 변화로 안 봄
+    if isinstance(t, list):  # 옛 표기 콤보 = V3 "COMBO" 와 같은 타입으로 봄(선택지는 따로 비교)
         return "COMBO"
     return str(t)
+
+
+def extra_of(node, name):
+    for cat in ("required", "optional"):
+        spec = (node.get("input", {}).get(cat) or {}).get(name)
+        if isinstance(spec, list) and len(spec) > 1 and isinstance(spec[1], dict):
+            return spec[1]
+    return {}
+
+
+def options_of(t, extra):
+    """콤보 선택지. 옛 표기 = 타입 자리에 목록, V3 표기 = "COMBO" + extra["options"]. 콤보 아니면 None."""
+    if isinstance(t, list):
+        return t
+    if t == "COMBO":
+        return list(extra.get("options") or [])
+    return None
 
 
 def default_of(node, name):
@@ -61,7 +85,7 @@ def diff_node(name, b, a):
                 note.append(f"새 optional 칸 {k} ({type_label(ai[k][1])})")
         elif k not in ai:
             if bi[k][0] == "required":
-                risk.append(f"required 칸 {k} 사라짐 — 이 칸을 보내는 그래프는 확인 필요")
+                note.append(f"required 칸 {k} 사라짐 — 보내도 조용히 버려짐(400 아님) · 동작 바뀜은 실생성으로 확인")
             else:
                 note.append(f"optional 칸 {k} 사라짐")
         else:
@@ -73,10 +97,17 @@ def diff_node(name, b, a):
                     risk.append(f"칸 {k} optional → required")
                 else:
                     note.append(f"칸 {k} required → optional (옛 그래프 그대로 통과)")
-            if isinstance(bt, list) and isinstance(at, list):
-                gone = [x for x in bt if x not in at]
+            be, ae = extra_of(b, k), extra_of(a, k)
+            bo, ao = options_of(bt, be), options_of(at, ae)
+            if bo is not None and ao is not None:
+                gone = [x for x in bo if x not in ao]
                 if gone:
-                    risk.append(f"칸 {k} 선택지 사라짐 {gone[:5]}{' …' if len(gone) > 5 else ''}")
+                    risk.append(f"칸 {k} 선택지 사라짐 {gone[:5]}{' …' if len(gone) > 5 else ''} — 그 값 보내면 400")
+            for lim, narrower in (("min", lambda o, n: n > o), ("max", lambda o, n: n < o)):
+                if lim in ae and (lim not in be or narrower(be[lim], ae[lim])):
+                    risk.append(f"칸 {k} {lim} {be.get(lim)!r} → {ae[lim]!r} — 범위 밖 옛 값은 400")
+            if be.get("default") != ae.get("default"):
+                note.append(f"칸 {k} 기본값 {be.get('default')!r} → {ae.get('default')!r} (값 보내는 API 그래프엔 영향 없음)")
     if [o for o in b.get("output", [])] != [o for o in a.get("output", [])]:
         risk.append(f"출력 {b.get('output')} → {a.get('output')} — 연결 번호 확인 필요")
     return risk, note
