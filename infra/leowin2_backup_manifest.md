@@ -53,5 +53,7 @@
 - **11-02 18:3x: vocia Applio 설치(C:\RVC\Applio·env 7.62GB·.uvcache 7.59GB) 대응** — 그대로면 04:00 에 ≈15GB+ NAS 행 → RVC 잡 제외 추가(위 표) · 재배포 sha256 EF69AA2D…8A36 = repo · RVC 잡 /L 실측 195파일·195.7MB(rc 1). ✅11-06 23:2x 확인: 11-03~06 04:00 4회 연속 `RUN OK`(RVC=0~1) · NAS `leowin2\RVC` = 251파일 1.96GiB(env·.uvcache·G_/D_ 0 · 모델 7개 × ≈250MB = `Applio\logs\qF_*` 최종 .pth·.index + Applio 루트 .exe 2개 167MB(ffmpeg 류 · 재다운로드 가능 · 작아서 그대로 둠)).
 - **10-26 04:00 RUN FAIL**(SongFormer_logs=16 — 원본 `C:\amt_tools\SongFormer` 를 10-25 정리에서 지운 탓 · robocopy 오류 2 «지정된 파일을 찾을 수 없음» · oven 이 정리 전에 백업 잡 원본 대조를 안 했음) → 10-26 22:39 스크립트 수리(원본 없으면 skip · SHA256 c611e043ed30…) 재배포 · DRYRUN OK. NAS `amt_tools_SongFormer_logs` 5파일(29,311B)은 /MIR 아님이라 보존. ✅10-27 04:00 RUN OK(SongFormer_logs=skip · 나머지 rc ≤2) — 수리 확인.
 
+- **11-13 08:2x: NAS 주소 .41→.113 대응**(11-11 공유기 교체 · admin 11-12 DHCP 예약 .113) — 11-13 04:00 예약 결과 LastTaskResult **1**(평소 0 · FAIL=8 도 아님 = 스크립트가 결과 줄 쓰기 전 NAS 연결에서 멈춘 것으로 봄 · 결과 줄·robocopy 로그가 NAS 에만 있어 몇 밤 빠졌는지는 미측정, 11-12·13 두 밤 이상 추정) · 실측: .41:445 닫힘(leowin·leowin2·reklcli·mukl 넷 다) · .113:445 열림 → `$Share` 한 줄 고침·재배포 sha256 AD9932CA9AFB55E2… = repo · ⚠DRYRUN 의도였으나 ssh 기본 셸이 인자를 갈라 `-DryRun` 이 안 먹어 **실실행** `20261113_082346 RUN OK`(DESKTOP=3·나머지 0·SongFormer skip) = 04:00 분 따라잡기와 같음.
+
 ## 열린 것
 스냅샷 보존 정책(일 14·주 8) = LEO DSM 1회(admin 202152 — 지금은 안 지움) · 결과 FAIL 감시(누가·언제 읽나) 미정 · 실행 시각(매일 04:00 — GPU 학습과 대조) · leowin 목록(별도 파일)

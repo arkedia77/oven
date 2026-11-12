@@ -7,7 +7,7 @@
 param([switch]$DryRun, [int]$Ipg = 0)   # -Ipg = robocopy /IPG(패킷 간 ms). leowin 은 USB 무선(10-06 실측 Realtek 8812BU) — 첫 ≈230GB 가 다른 사용을 막으면 지정
 $ErrorActionPreference = 'Stop'
 
-$Share   = '\\172.30.1.41\leowin_backup'
+$Share   = '\\172.30.1.113\leowin_backup'
 $Dest    = "$Share\leowin"
 $CredBin = 'C:\ProgramData\oven_backup\leowin_bk.bin'   # DPAPI LocalMachine 암호화 · ACL = SYSTEM·Administrators 만 · 원본 = mukl ~/vault/nas_leowin_bk.txt(값은 어디에도 안 적음)
 $BkUser  = 'leowin_bk'

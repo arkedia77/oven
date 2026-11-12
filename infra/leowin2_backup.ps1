@@ -6,7 +6,7 @@
 param([switch]$DryRun)
 $ErrorActionPreference = 'Stop'
 
-$Share   = '\\172.30.1.41\leowin_backup'   # admin 174649: 별도 공유(스냅샷이 공유 단위라 leofamily 하위 금지)
+$Share   = '\\172.30.1.113\leowin_backup'   # admin 174649: 별도 공유(스냅샷이 공유 단위라 leofamily 하위 금지)
 $Dest    = "$Share\leowin2"
 $CredBin = 'C:\ProgramData\oven_backup\leowin_bk.bin'   # DPAPI LocalMachine 암호화 · ACL = SYSTEM·Administrators 만 · 원본 = mukl ~/vault/nas_leowin_bk.txt(값은 어디에도 안 적음)
 $BkUser  = 'leowin_bk'
