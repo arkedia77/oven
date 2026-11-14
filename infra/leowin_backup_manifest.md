@@ -26,7 +26,7 @@
 | `E:\archive\movies` · `E:\models` · `E:\hf_models` · `E:\seed-vc` · `E:\UTIL` · `E:\MV` | 140·138·4.8·5.1·9.2·1.7GB | 영화·공개 가중치·공개 코드·설치본 |
 | `E:\exist\$Recycle.Bin` · `$RECYCLE.BIN` · `System Volume Information` · `Recovery` · `OneDriveTemp` | — | 시스템 |
 
-- **11-13 08:2x: NAS 주소 .41→.113 대응** — 11-13 05:00 LastTaskResult **1**(결과 줄 못 씀 · 몇 밤 빠졌는지 미측정) · `$Share` 한 줄 고침·재배포 sha256 224F84DB4BA17B31… = repo · `20261113_082712 DRYRUN OK`(8잡 0 · E_comfyui_out=1 = 새 산출만) → 실복사는 11-14 05:00 예약분.
+- **11-13 08:2x: NAS 주소 .41→.113 대응** — 11-13 05:00 LastTaskResult **1**(결과 줄 못 씀 · 몇 밤 빠졌는지 미측정) · `$Share` 한 줄 고침·재배포 sha256 224F84DB4BA17B31… = repo · `20261113_082712 DRYRUN OK`(8잡 0 · E_comfyui_out=1 = 새 산출만) → 실복사는 11-14 05:00 예약분. · ✅**11-14 05:00 예약 LastTaskResult 0**(oven 실측 11-14 13:4x) = 수리 확인
 
 ## 열린 것
 leowin C:(286GB 사용)의 사용자 홈 범위 — 미측정 · leowin 사용 슬롯 목록 미청구(Ternary-Bonsai `C:\tb2` = oven, 재다운로드 가능 → 제외 예정)
